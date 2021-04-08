@@ -5,10 +5,12 @@ In caso notaste degli errori potete aprire una *issue* o anche contribuire al pr
 
 
 
+
 ## Specifiche
 Gli appunti sono stati presi utilizzando **[Typora](https://typora.io/)**, dunque in **Markdown**.
 Tuttavia, alcune parti sono scritte in **LaTeX**, in particolare le formule matematiche.
 Altre ancora in **mermaid**, un linguaggio di scripting simil-markdown utilizzato per creare grafi.
+
 
 
 
