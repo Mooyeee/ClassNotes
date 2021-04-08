@@ -321,7 +321,7 @@ In particolare, questa formula sta *proiettando* la nostra funzione $f(x)$ in un
 
 In questo modo passiamo da una rappresentazione nel tempo del segnale ad una rappresentazione nello spazio delle frequenze.
 
-![TempoFrequenze](C:\Users\danie\Desktop\TCDM\TempoFrequenze.png)
+![TempoFrequenze](./img/007.png)
 
 I due domini sono ovviamente corrispondenti; notiamo che nel dominio delle frequenze abbiamo delle $\delta$ che hanno una certa ampiezza $A$, che ci dice quanto il segnale rappresentato da quella $\delta$ influisce sulla creazione del segnale originario. Se prendiamo ogni frequenza individuata nel dominio delle frequenze e le combiniamo linearmente con i vari pesi $A$, otterremo il segnale di partenza. C'è quindi una ***corrispondenza biunivoca*** tra di essi.
 
@@ -351,7 +351,7 @@ La differenza è che prima avevamo una grandezza $R_k$ discreta e quindi ottenev
 
 
 
-![Screenshot (157)](C:\Users\danie\Pictures\Screenshots\Screenshot (157).png)
+![FT-DTFT](./img/008.png)
 
 ## TRASFORMATA DI FOURIER 1D
 
