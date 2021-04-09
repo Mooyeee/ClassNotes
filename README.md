@@ -19,7 +19,7 @@ Trovate in ogni cartella sia il *sorgente* degli appunti in formato markdown che
 Per chi volesse buildare da solo il pdf:
 - Scaricare il sorgente *(insieme alle eventuali immagini)*
 - Aprire **Typora** ed andare in `File` > `Impostazioni` > `Markdown` *(oppure premere Ctrl + , per apprire le impostazioni)*
-- Abilitare la voce `Math inline ( i.e: $\LaTeX$ )`
+- Abilitare la voce `Math inline ( i.e: $\LaTeX$ )` sotto la voce **Supporto sintassi**
 - Riavviare **Typora**
 - Aprire il sorgente `*.md` in **Typora**
 - Esportare tramite il menù `File` > `Esporta`
