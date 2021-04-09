@@ -461,7 +461,7 @@ Una conseguenza importante è che, come nel caso della funzione $f(i)$ discretiz
 
   Osserviamo un esempio: notiamo che nonostante il quadratino bianco ***trasli*** sullo sfondo nero, il modulo dell'immagine non cambia, mentre cambia la *fase*.
 
-  <img src="C:\Users\danie\Pictures\Screenshots\Screenshot (160).png" alt="Screenshot (160)" style="zoom: 45%;" />
+  <img src="./img/009.png" alt="Screenshot (160)" style="zoom: 45%;" />
 
   
 
@@ -482,7 +482,7 @@ Una conseguenza importante è che, come nel caso della funzione $f(i)$ discretiz
 
   $F(f(ax)) = \frac{1}{|\alpha|} F(\frac{u}{\alpha})$
 
-  <img src="C:\Users\danie\Pictures\Screenshots\Screenshot (161).png" alt="Screenshot (161)" style="zoom:40%;" />
+  <img src="./img/010.png" alt="Screenshot (161)" style="zoom:40%;" />
 
   
 
@@ -574,7 +574,7 @@ $F(u) = \int\limits_{-\infty}^{+\infty} A\cos(2\pi u_0x)\space e^{-j2\pi ux} \sp
 
 $F(u) = \frac{A}{2} \delta(u-u_0) + \frac{A}{2} \delta(u + u_0)$
 
-![Screenshot (162)](C:\Users\danie\Pictures\Screenshots\Screenshot (162).png)
+![sin](./img/011.png)
 
 Quindi, la trasformata di un coseno corrisponde a due delta in corrispondenza della sua frequenza positiva e negativa. Questo risulta chiaro se applichiamo la proprietà di linearità; il coseno non è altro che una combinazione lineare di onde complesse come possiamo vedere anche sopra, quindi possiamo ottenere il risultato della trasformata anche combinando linearmente i risultati dei singoli esponenziali complessi.
 Notiamo inoltre che la trasformata del coseno ha solo una parte reale.
@@ -587,7 +587,7 @@ $F(u) = \int\limits_{-\infty}^{+\infty} A\sin(2\pi u_0x) e^{-j2\pi ux} \space dx
 
 $F(u) = -j\frac{A}{2} \delta(u - u_0) + j\frac{A}{2} \delta(u + u_0)$
 
-![Screenshot (163)](C:\Users\danie\Pictures\Screenshots\Screenshot (163).png)
+![cosin](./img/012.png)
 
 Notiamo che il cambio di segno ci porta ad una delta negativa. Inoltre, ora la trasformata ha soltato una parte immaginaria.
 
@@ -599,7 +599,7 @@ Possiamo vedere la costante come un coseno a frequenza 0; questo comporta che ne
 E se $f(x)$ fosse una delta centrata in zero?
 Applicando la proprietà della reversibilità, otteniamo che la trasformata di una delta  centrata in 0 corrisponde ad una costante. Questo risulta chiaro anche considerando che un cambio istantaneo di valori *(es. da 0 a 1)* comporta la presenza di **tutte** le possibili frequenze dentro di esso.
 
-<img src="C:\Users\danie\Pictures\Screenshots\Screenshot (164).png" alt="Screenshot (164)" style="zoom:50%;" />
+<img src="./img/013.png" alt="Screenshot (164)" style="zoom:50%;" />
 
 ## SINC
 
@@ -607,7 +607,7 @@ La trasformata di una finestra è una funzione molto importante è si chiama **S
 
 È una funzione che ha valore massimo in 0, mentre lontano dallo 0 oscilla.
 
-![Screenshot (165)](C:\Users\danie\Pictures\Screenshots\Screenshot (165).png)
+![rect](./img/014.png)
 
 
 
@@ -624,7 +624,7 @@ Notiamo che indichiamo il segnale con $_a$ e con $(t)$ quando siamo ancora nel d
 
 
 
-![Screenshot (166)](C:\Users\danie\Pictures\Screenshots\Screenshot (166).png)
+![Sampler](./img/015.png)
 
 
 
@@ -636,19 +636,19 @@ Sappiamo che
 
 
 
-![Screenshot (167)](C:\Users\danie\Pictures\Screenshots\Screenshot (167).png)
+![Aliasing](./img/016.png)
 
 <div style="page-break-after: always;"></div>
 
 Abbiamo visto che, quando campioniamo una funzione con un passo $\Delta x = \frac{1}{N}$, la sua trasformata è uno ***spettro periodico*** che ha periodo = $N$.
 
-<img src="C:\Users\danie\Pictures\Screenshots\Screenshot (168).png" alt="Screenshot (168)" style="zoom:30%;" />
+<img src="./img/017.png" alt="Screenshot (168)" style="zoom:30%;" />
 
 
 
 È chiaro dunque che il passo di campionamento che utilizziamo ha una certa importanza; se il passo di campionamento è ***troppo alto*** *(bassa frequenza di campionamento)*, le repliche dello spettro finiranno per sovrapporsi per via del ***periodo più breve*** *(passo di campionamento e periodo sono inversamente proporzionali)* e non sarà più possibile risalire al segnale di partenza poiché le frequenze più alte si *'mescolano'* con quelle delle altre repliche, andando a finire nella parte delle frequenze più basse *(proprio come abbiamo osservato prima col segnale rosso)*.
 
-<img src="C:\Users\danie\Pictures\Screenshots\Screenshot (169).png" alt="Screenshot (169)" style="zoom:40%;" />
+<img src="./img/018.png" alt="Screenshot (169)" style="zoom:40%;" />
 
 
 
@@ -657,7 +657,7 @@ Abbiamo quindi visto che la frequenza di campionamento *controlla* la possibilit
 
 Il teorema di Shannon dice che, data la frequenza massima del segnale $f_{max}$ *(o frequenza di Nyquist)*, la frequenza di campionamento deve essere $F_s = \frac{1}{\Delta x} > 2 f_{max}$. Questo risulta chiaro perché se non vogliamo sovrapposizioni, dobbiamo coprire tutta l'area del segnale trasformato che va quindi da $-f_{max}$ a $+f_{max}$.
 
-![Screenshot (170)](C:\Users\danie\Pictures\Screenshots\Screenshot (170).png)
+![fmax](./img/019.png)
 
 Quindi, più è grande la frequenza massima, tanto più piccolo è il passo di campionamento.
 Ma se la frequenza massima è troppo alta *(o perché tendente ad infinito o perché troppo alta per le nostre risorse)*?
@@ -670,7 +670,7 @@ Se il campionamento avviene con una frequenza inferiore a quella di Nyquist, c'�
 **SEGNALE SINUSOIDALE A TEMPO DISCRETO**
 Quando campioniamo un segnale, la variabile tempo/spazio non è più esplicita e, senza informazioni su di essa, quindi senza sapere la ***frequenza di campionamento***, il segnale trasformato potrebbe essere stato generato da potenzialmente infiniti segnali originari per via dell'effetto dell'aliasing.
 
-![Screenshot (171)](C:\Users\danie\Pictures\Screenshots\Screenshot (171).png)
+![sinDT](./img/020.png)
 
 Sappiamo che, nel dominio continuo, misuriamo un segnale in Hz, più specificamente in ***cicli/secondo***, tuttavia quando discretizziamo il nostro segnale è sempre misurato in Hz, ma questa volta si tratta di ***cicli/campione***, poiché passiamo dalla variabile continua tempo ai campioni.
 Un'altra frequenza che indichiamo con gli Hz è la frequenza di campionamento, che a sua volta significa ***campioni/secondo***.
@@ -694,7 +694,7 @@ Notiamo che la frequenza minima di una sinusoide a tempo discreto è zero e corr
 
 Quindi, in termini di frequenze normalizzate, un segnale sinusoidale discreto può assumere frequenze che variano da -1/2 a 1/2. Se $f_N$ esce da questo intervallo, abbiamo, nuovamente, un effetto di aliasing.
 
-![Screenshot (172)](C:\Users\danie\Pictures\Screenshots\Screenshot (172).png)
+![DTFTSin](./img/021.png)
 
 
 
@@ -735,7 +735,7 @@ Questo implica che ogni volta che osserviamo un segnale in una certa finestra, l
 
 Ricordiamo la pipeline che segue il segnale per essere convertito da analogico a digitale.
 
-![Screenshot (152)](C:\Users\danie\Pictures\Screenshots\Screenshot (152).png)
+![ADConverter](./img/002.png)
 
 - **CAMPIONAMENTO**: genera, a partire da un segnale analogico $x_a(t)$, un segnale <u>a tempo discreto</u>.
   I segnali a tempo discreto possono essere riconvertiti in segnali analogici attraverso un'operazione detta ***interpolazione***.
@@ -746,7 +746,7 @@ Ricordiamo la pipeline che segue il segnale per essere convertito da analogico a
 La quantizzazione quindi è un'operazione che esprime un campione reale, che quindi avrebbe bisogno di un numero infinito di bit per essere completamente rappresentato, su un **numero finito** di bit detto ***risoluzione***.
 A differenza del campionamento, che abbiamo visto essere un'operazione reversibile a patto di rispettare il teorema di Shanon, la quantizzazione introduce **sempre** un errore non recuperabile, quindi è un processo irreversibile.
 
-<img src="C:\Users\danie\Pictures\Screenshots\Screenshot (176).png" style="zoom:33%;" align="left" />La quantizzazione è un processo di discretizzazione di ampiezza ed il quantizzatore viene rappresentato da  una curva a gradini *(non lineare)* che associa a tutti i valori di input che appartengono ad uno degli intervalli su cui sono definiti i gradini il valore del gradino stesso.
+<img src="./img/022.png" style="zoom:33%;" align="left" />La quantizzazione è un processo di discretizzazione di ampiezza ed il quantizzatore viene rappresentato da  una curva a gradini *(non lineare)* che associa a tutti i valori di input che appartengono ad uno degli intervalli su cui sono definiti i gradini il valore del gradino stesso.
 
 Sull'asse orizzontale abbiamo tutti i possibili valori dell'input *(ad esempio da $-\infty$ a $+\infty$)*, mentre sull'asse verticale l'output della quantizzazione.
 
@@ -782,7 +782,7 @@ Ad esempio se la risoluzione è 16 bit, il range dinamico è $20 \log_{10} 2^{16
 Si definisce errore *(o rumore)* di quantizzazione la differenza fra il valore quantizzato ed il valore reale del campione $\epsilon_q(n) = x_q(n) -x(n)$.
 In generale quanto quantizziamo possiamo usare una strategia di **approssimazione** o una di **troncamento**; tutta via quella di approssimazione introduce meno errore.
 
-![Screenshot (177)](C:\Users\danie\Pictures\Screenshots\Screenshot (177).png)
+![Quantizzatore](./img/023.png)
 
 La **qualità** del segnale quantizzato si esprime come rapporto della potenza media del segnale a tempo discreto $P_S$ e la potenza media dell'errore di quantizzazione $P_N$ tramite quello che viene chiamato il rapporto segnale/rumore $SNR_Q = 10 \log_{10} P_S/P_N$ che ha come unità di misura il dB.
 
@@ -851,7 +851,7 @@ Si può dimostrare che per un insieme più ampio di segnali che si distribuiscon
 Un sistema fisico è un apparato che, ricevendo in ingresso un segnale, dà in uscita un nuovo segnale.
 Quindi un sistema è un *processo* per il quale esiste una relazione *ingresso/uscita* *(I/O)* o *causa-effetto*.
 
-![Screenshot (194)](C:\Users\danie\Pictures\Screenshots\Screenshot (194).png)
+![System](./img/024.png)
 
 $y(t) = S[x(t)]$					$y(t)$ è la risposta del sistema $S$ all'ingresso $x(t)$.
 
@@ -873,14 +873,14 @@ I sistemi *complessi* sono dei sistemi composti da più sistemi *semplici*, che 
 - ***sequenzialmente*** *(o in cascata)*: dati due sistemi $S_1 : F_1 \rightarrow F_2$ e $S_2 : F_2 \rightarrow F_3$, la loro composizione sequenziale è il sistema $S_3 : F_1 \rightarrow F_3$.
   Un esempio è il convertitore da analogico a digitale che compone in cascata i sistemi campionatore e quantizzatore. Notiamo che è necessaria una coerenza tra gli spazi delle variabili: lo spazio di uscita di $S_1$ deve essere lo stesso di entrata di $S_2$.
 
-  <img src="C:\Users\danie\Pictures\Screenshots\Screenshot (195).png" alt="Screenshot (195)" style="zoom:70%;" />
+  <img src="./img/025.png" alt="Screenshot (195)" style="zoom:70%;" />
 
 
 
 - ***parallelamente***: dati due sistemi $S_1 : F_1 \rightarrow F_2$ e $S_2 : F_1 \rightarrow F_2$, la loro composizione parallela è il sistea che ha come risposta la somma delle risposte di $S_1$ ed $S_2$.
   Purché si possa definire la composizione parallela, in particolare per eseguire la somma finale, il dominio dei sistemi deve essere lo stesso.
 
-  <img src="C:\Users\danie\Pictures\Screenshots\Screenshot (196).png" alt="Screenshot (196)" style="width: 70%; display: block;
+  <img src="./img/026.png" alt="Screenshot (196)" style="width: 70%; display: block;
    margin-left: auto;
    margin-right: auto;" />
 
@@ -888,7 +888,7 @@ I sistemi *complessi* sono dei sistemi composti da più sistemi *semplici*, che 
 
 - in ***retroazione***: dati due sistemi $S_1 : F_1 \rightarrow F_2$ e $S_2 : F_2 \rightarrow F_1$, il sistema ottenuto per retroazione è il sistema $S_3$ che ha ingresso $f$ ed uscita $g$ ottenuta ponendo in ingresso ad $S_1$ la differenza tra $f$ e la risposta di $S_2$ a $g$.
   Da notare che lo spazio di uscita di $S_2$ è lo stesso spazio che ha $S_1$ in ingresso, altrimenti non si potrebbe eseguire la somma.
-  <img src="C:\Users\danie\Pictures\Screenshots\Screenshot (197).png" alt="Screenshot (197)" style="width: 70%; display: block;
+  <img src="./img/027.png" alt="Screenshot (197)" style="width: 70%; display: block;
    margin-left: auto;
    margin-right: auto;" />
 
@@ -917,7 +917,7 @@ Dato il segnale in ingresso
 $x(n) = \alpha_1 x_1(n) + \alpha_2 x_2(n)$
 che può quindi essere espresso come combinazione lineare di altri segnali $x_1$, $x_2$, la risposta è una combinazione lineare delle risposte del sistema ai singoli ingressi $L[x(n)] = L[\alpha_1 x_1(n) + \alpha_2 x_2(n)] = \alpha_1 L[x_1(n)] + \alpha_2 L[x_2(n)]$.
 
-<img src="C:\Users\danie\Pictures\Screenshots\Screenshot (199).png" alt="Screenshot (199)" style="zoom: 50%;" align="left" />Il vantaggio dei sistemi lineari è che permette di scomporre un'operazione molto complicata in termini più semplici.
+<img src="./img/028.png" alt="Screenshot (199)" style="zoom: 50%;" align="left" />Il vantaggio dei sistemi lineari è che permette di scomporre un'operazione molto complicata in termini più semplici.
 
 
 
@@ -1062,9 +1062,10 @@ Dunque i filtri ideali, oltre a non essere fisicamente realizzabili, non sono ne
 
 ## FILTRO REALE
 
-Il filtro ideale presenta solo una ***banda passante*** ed una ***banda proibita*** che sono confinanti e sono separate dalla **frequenza di taglio**. In particolare, $|H|$ è costante sia nella banda passante che in quella proibita.
+<img src=".\img\029.png" alt="029" style="zoom:40%;" align="left" />Il filtro ideale presenta solo una ***banda passante*** ed una ***banda proibita*** che sono confinanti e sono separate dalla **frequenza di taglio**. In particolare, $|H|$ è costante sia nella banda passante che in quella proibita.
 
 Un filtro reale presenta ancora una ***banda passante*** ed una ***banda proibita***, ma sono separate da una ***banda di transizione***. Inoltre, nessuna banda ha valori costanti nei filtri reali.
+
 In particolare:
 
 - **BANDA PASSANTE**: $|H(v)|$ non è costante e in particolare presenta delle oscillazioni di ampiezza $\delta_1$.
