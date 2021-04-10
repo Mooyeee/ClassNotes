@@ -1077,3 +1077,113 @@ In particolare:
   Corrisponde quindi ad un'attenuazione di 3 dB.
 
 Quindi, i valori che caratterizzano un filtro reale sono la **frequenza di taglio** $v_c$, la **frequenza di stop** $v_s$ e le dimensioni massimi e permesse alle **oscillazioni** $\delta_1$ e $\delta_2$.
+
+<div style="page-break-after: always;"></div>
+
+## EQUAZIONE ALLE DIFFERENZE IN DETTAGLIO
+
+Abbiamo visto che se abbiamo un sistema possiamo descriverlo in diversi modi.
+In particolare, un generico sistema, indipendentemente dalle sue proprietà può essere descritto dalla **relazione I/O**, se introduciamo la *linearità* e la *tempo invarianza* ***(LTI)*** possiamo usare la **risposta all'impulso**, se introduciamo anche la *causalità*, ovvero se il sistema è fisicamente realizzabile, possiamo utilizzare l'**equazione alle differenze** per descrivere il sistema.
+
+Sappiamo che il comportamento di un sistema **LTI** a tempo **discreto** e **causale** può essere descritto anche da equazioni alle differenze a coefficienti costanti
+
+$y(n) = -a_1y(n-1)- \space ... \space -a_My(n-M) + b_0x(n) + \space ... \space + b_nx(n-N)$ 
+
+Abbiamo quindi che l'uscita $y(n)$ dipende sia dai valori che l'ingresso $x(n)$ assume in un arco temporale fino ad $N$ istanti precedenti all'istante $n$, sia dai valori assunti dal segnale di uscita stesso $y(n)$ sino a $M$ istanti di tempo precedenti a $n$.
+
+Possiamo riscrivere l'equazione, mettendo in evidenza la combinazione lineare *(ricordiamo che è un sistema lineare)*, notando che abbiamo sempre campioni ritardati poiché abbiamo sempre $(n - pos)$, come:
+
+ $y(n) = \sum\limits_{k=0}^{N} b_kx(n-k) - \sum\limits_{j=1}^{M} a_jy(n-j)$ dove:
+
+- I coefficienti $a_1, \space ... \space, a_M$ e $b_0, \space ... \space , b_N$ sono termini costanti indipendenti dal tempo *(altrimenti il sistema sarebbe non stazionario)*.
+- L'equazione è detta **ricorsiva** se almeno un coefficiente $a_j$ è diverso da zero.
+  - Quando il sistema è ricorsivo, dipende, di fatto, da più istanti precedenti all'input e non solo dagli $N$ istanti evidenti nella sommatoria.
+  - Quando il sistema **NON** è ricorsivo, dipende solo da un numero finito $N$ di istanti temporali nel passato, quindi possiamo definire una memoria del sistema.
+    Se tutti i coefficienti $b_k$ sono zero tranne $b_0$, il sistema è **puramente ricorsivo**.
+- $M$ è l'**ordine dell'equazione alle differenze** o **ordine di sistema**.
+
+
+
+**SISTEMI RICORSIVI E NON RICORSIVI**
+La differenza principale tra sistemi ricorsivi e non è che l'output dei sistemi ricorsivi deve essere calcolato in ordine $y(0), \space ... \space , y(n)$, mentre l'output dei sistemi non ricorsivi può essere calcolato valutando i campioni della sequenza di output in qualsiasi ordine.
+
+<div style="page-break-after: always;"></div>
+
+## RISPOSTA ALL'IMPULSO - FIR & IIR
+
+Abbiamo visto in passato come il comportamento di un sistema LTI possa essere descritto dalla rispsota del sistema all'impulso tramite la convoluzione.
+
+In generale, abbiamo che $y(n) = x(n) * h(n) = \sum\limits_{i=-\infty}^{+\infty} h(i)x(n-i)$.
+
+Se consideriamo solo i sistemi causali possiamo scrivere $y(n) = x(n) * h(n) = \sum\limits_{i=0}^{+\infty} h(i)x(n-i)$.
+
+In base alla risposta all'impulso i sistemi LTI possono essere suddivisi in due grossi gruppi:
+
+- **FIR** - Finite Impulse Response
+  La risposta di un FIR è $h(n) = \begin{cases} \neq 0 & 0\leq n\leq M-1 \\ = 0 & n <0 \land n \geq M \end{cases}$
+  La risposta di un sistema FIR ad un generico segnale è quindi **limitata**; ovvero l'output a qualsiasi istante $n$ è semplicemente la somma di una combinazione lineare pesata di $M$ valori più recenti della sequenza di input.
+  Il sistema quindi agisce come una **finestra** che vede solo $M$ valori recenti della sequenza di input, ovvero ha **memoria $M$**.
+
+  Possiamo quindi scrivere $y(n) = x(n) * h(n) = \sum\limits_{i=0}^{M-1} h(i)x(n-i)$.
+
+  Notiamo che i sistemi FIR sono sempre realizzabili con **sistemi non ricorsivi**, infatti sono funzione di soli $M$ campioni della sequenza di ingresso pesati per la risposta all'impulso $h(n)$, che per ogni $h(i)$ è costante e non dipende dal tempo.
+  Si può infatti subito notare come la formula scritta prima altro non è che un'equazione alle differenze in cui i coefficienti $a_j$ sono nulli ed i coefficienti $b_k$ sono sostituiti da $h(n)$.
+
+- **IIR** - Infinite Impulse Response
+  La risposta di un IIR è $h(n) = \begin{cases} \neq 0 & n \geq n_0 \\ =0 & n < n_0 \end{cases}$
+
+  Ovvero la risposta è 0 per tutti i valori della parte anticausale.
+  La risposta di un IIR ad un generico sengale dipende da tutti i valori della sequenza di input ed il sistema ha **memoria infinita**. Di conseguenza un sistema IIR non è realizzabile *(computazionalmente)* attraverso la convoluzione poiché richiederebbe infinita memoria, ma può essere risolto con l'equazione alle differenze in modo computazionalmente effeciente.
+
+  Possiamo quindi scrivere $y(n) = x(n) * h(n) = \sum\limits_{i=0}^{+\infty}h(i)x(n-i)$.
+  Ora non è più così immediato passare dalla rappresentazione attraverso la convoluzione alla rappresentazione attraverso l'equazione alle differenze poiché non c'é più una corrispondenza diretta tra $h(n)$ ed i coefficienti dell'equazione, poiché essendo $h(n)$ infinito introduce una ricorsione.
+
+<div style="page-break-after: always;"></div>
+
+## STRUTTURE LTI
+
+**PRIMA FORMA DIRETTA**
+Consideriamo la seguente equazione lineare alle differenze a coefficienti costanti del primo ordine $y(n) = -a_1y(n-1) + b_0x(n)+b_1x(n-1)$.
+
+Possiamo rappresentare tale sistema come:
+
+<img src=".\img\030.png" alt="DirectForm" style="zoom: 60%;"/>
+
+Notiamo la separazione tra i coefficienti, e quindi tra la parte non ricorsiva e ricorsiva che permette di trattare il sistema come due sistemi in cascata.
+Se avessimo più ritardi, sia nella parte ricorsiva che in quella non, ci basterebbe aggiungere dei blocchi $z^{-1}$ che li gestiscano.
+
+Questa modalità di rappresentazione si chiama una **Struttura in Prima Forma Diretta** *(Direct Form I)* che presenta di fatto due sottosistemi:
+
+1. Il primo sistema è non ricorsivo $v(n) = +b_0x(n) + b_1x(n-1)$
+2. Il secondo sistema è ricorsivo $y(n) = -a_1y(n-1)+v(n)$
+
+
+
+**SECONDA FORMA DIRETTA**
+Ovviamente, trattandosi di sistemi **lineari**, invertendoli il risultato non cambia.
+
+<img src=".\img\031.png" alt="InverseDirect" style="zoom:60%;" />
+
+Notiamo però che, a differenza di prima, la sequenza $\omega(n)$ che entra nel modulo di ritardo della parte ricorsiva è **la stessa** che entra anche nel modulo di ritardo della parte non ricorsiva; questo significa che, invece che avre due moduli di ritardo, possiamo utilizzarne uno solo in condivisione, rendendo il sistema più efficiente in termini di memoria.
+
+<img src=".\img\032.png" alt="SecondForm" style="zoom:60%;" />
+
+Questa viene chiamata **Struttura in Seconda Forma Diretta**.
+
+
+
+**COMPARAZIONI**
+Estendiamo ora il raggionamento fatto al caso di una generica equazione alle differenze di ordine $N$ $y(n) = \sum\limits_{k=0}^{M}b_kx(n-k) - \sum\limits_{j=1}^{N}a_jy(n-j)$.
+
+Per rappresentare tale sistema nella prima forma diretta avremmo bisogno di $N+M$ unità di ritardo e di $N+M+1$ moltiplicazioni, mentre nella seconda forma avremmo un numero di ritardi pari a $\max(N, M)$ ed un numero di moltiplicazioni che è ancora $N+M+1$.!
+
+![Confronto](C:\Users\danie\Desktop\TCDMGit\img\033.png)
+
+## TRASFORMATA ZETA
+
+La trasformata Zeta rappresenta il caso discreto della **trasformata di Laplace** e permette di studiare i sistemi *LTI*.
+
+In particolare, permette di studiare sistemi lineari per i quali la trasformata di Fourier non è definita; la DTFT difatti, quando esiste, permette per descrivere solo i comportamenti dei sistemi *scarichi*.
+
+La trasformata Zeta permette quindi di analizzare una classe più ampia della DTFT e permette di analizzare sistemi LTI anche in presenza di *condizioni iniziali* non nulle.
+Permette inoltre di mettere immediatamente in luce alcune caratteristiche dei sistemi LTI come la ***causalità*** e la ***stabilità***.
