@@ -1177,7 +1177,7 @@ Estendiamo ora il raggionamento fatto al caso di una generica equazione alle dif
 
 Per rappresentare tale sistema nella prima forma diretta avremmo bisogno di $N+M$ unità di ritardo e di $N+M+1$ moltiplicazioni, mentre nella seconda forma avremmo un numero di ritardi pari a $\max(N, M)$ ed un numero di moltiplicazioni che è ancora $N+M+1$.!
 
-![Confronto](C:\Users\danie\Desktop\TCDMGit\img\033.png)
+![Confronto](.\img\033.png)
 
 ## TRASFORMATA ZETA
 
