@@ -18,7 +18,7 @@ Altre ancora in **mermaid**, un linguaggio di scripting simil-markdown utilizzat
 Trovate in ogni cartella sia il *sorgente* degli appunti in formato markdown che il file già esportato in pdf.
 Per chi volesse buildare da solo il pdf:
 - Scaricare il sorgente *(insieme alle eventuali immagini)*
-- Aprire **Typora** ed andare in `File` > `Impostazioni` > `Markdown` *(oppure premere `Ctrl + ,` per apprire le impostazioni)*
+- Aprire **Typora** ed andare in `File` > `Impostazioni` > `Markdown` *(oppure premere `Ctrl + ,` per aprire le impostazioni)*
 - Abilitare la voce `Math inline ( i.e: $\LaTeX$ )` sotto la voce **Supporto sintassi**
 - Riavviare **Typora**
 - Aprire il sorgente `*.md` in **Typora**
