@@ -32,7 +32,7 @@ I segnali possono essere classificati in base al loro **dominio** e **codominio*
 
 **DOMINIO**: Insieme dei valori assunti dalla variabile indipendente. Valori sui quali è definita la funzione.
 
-- D = $\mathbb{R}$: segnale a spazio continuo. Significa che i vari valori hanno una distanza fra loro che è infinitessima.
+- D = $\mathbb{R}$: segnale a spazio continuo. Significa che i vari valori hanno una distanza fra loro che è infinitesima.
 - D = $\mathbb{K}$: segnale a spazio discreto. Con $\mathbb{K}$ numerabile *(tipicamente infinito numerabile, ovvero con cardinalità $\mathbb{N}$)*. Significa praticamente che i vari valori non sono separati da una distanza infinitesima, ma da una distanza finita, ovvero da un ***passo***.
 
 
@@ -73,7 +73,7 @@ Notiamo in particolare le **variabili**:
   Un'alta frequenza di campionamento significa una buona riproduzione del segnale ma dei volumi di dati più elevati, viceversa una frequenza più bassa richiede meno spazio ma produce dei fenomeni di **aliasing** del segnale, ovvero questo viene modificato e il risultato è ad esempio un segnale con una frequenza diversa o addirittura un segnale con frequenza zero *(ovvero costante)*.
   C'è quindi un ***punto di limite*** oltre il quale se prendo meno campioni non sono più in grado di ricostruire il mio segnale originale; questo punto limite dipende dalla frequenza del segnale originale.
   Inoltre, scegliendo bene la frequenza di campionamento in base alla frequenza massima del segnale, siamo in grado di ricostruire il segnale senza errori.
-- Dopo che abbiamo campionato il segnale, lo quantizziamo ed il segnale di output del quantizzatore è ancora diverso da quelli di prima, quindi per rappresentarlo e quindi per distinguerlo dal segnale la cui ampiezza è ancora definita su infiniti valori, utilizziamo una nuova notazione $x_q (n)$ dove il pedice $_q$ sta per *quantizzato*.
+- Dopo che abbiamo campionato il segnale, lo quantizziamo ed il segnale di output del quantizzatore è ancora diverso da quelli di prima, quindi per rappresentarlo e per distinguerlo dal segnale la cui ampiezza è ancora definita su infiniti valori, utilizziamo una nuova notazione $x_q (n)$ dove il pedice $_q$ sta per *quantizzato*.
   Questo segnale avrà quindi i valori del codominio discretizzati, ovvero avrà un numero finito di ***livelli***.
   La distanza tra un livello e un altro la chiamiamo $\Delta$ ed è detta ***passo di quantizzazione***, mentre l'insieme dei valori che possiamo descrivere con questo processo di quantizzazione è detto ***range del quantizzatore***.
   A differenza del campionamento, la quantizzazione introduce **sempre** un **errore** non recuperabile nel segnale, quindi la quantizzazione è un processo irreversibile.
@@ -1177,7 +1177,7 @@ Estendiamo ora il raggionamento fatto al caso di una generica equazione alle dif
 
 Per rappresentare tale sistema nella prima forma diretta avremmo bisogno di $N+M$ unità di ritardo e di $N+M+1$ moltiplicazioni, mentre nella seconda forma avremmo un numero di ritardi pari a $\max(N, M)$ ed un numero di moltiplicazioni che è ancora $N+M+1$.!
 
-<img src=".\img\033.png" />
+![Confronto](.\img\033.png)
 
 ## TRASFORMATA ZETA
 
