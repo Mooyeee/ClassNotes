@@ -1168,16 +1168,80 @@ Notiamo però che, a differenza di prima, la sequenza $\omega(n)$ che entra nel 
 
 <img src=".\img\032.png" alt="SecondForm" style="zoom:60%;" />
 
-Questa viene chiamata **Struttura in Seconda Forma Diretta**.
+Questa viene chiamata **Struttura in Seconda Forma Diretta**
+con $\omega(n) = -a_1\omega(n-1)+x(n)$			e			$y(n) = b_0\omega(n) + b_1\omega(n-1)$.
 
 
 
 **COMPARAZIONI**
-Estendiamo ora il raggionamento fatto al caso di una generica equazione alle differenze di ordine $N$ $y(n) = \sum\limits_{k=0}^{M}b_kx(n-k) - \sum\limits_{j=1}^{N}a_jy(n-j)$.
+Estendiamo ora il ragionamento fatto al caso di una generica equazione alle differenze di ordine $N$ $y(n) = \sum\limits_{k=0}^{M}b_kx(n-k) - \sum\limits_{j=1}^{N}a_jy(n-j)$.
 
-Per rappresentare tale sistema nella prima forma diretta avremmo bisogno di $N+M$ unità di ritardo e di $N+M+1$ moltiplicazioni, mentre nella seconda forma avremmo un numero di ritardi pari a $\max(N, M)$ ed un numero di moltiplicazioni che è ancora $N+M+1$.!
+Per rappresentare tale sistema nella prima forma diretta avremmo bisogno di $N+M$ unità di ritardo e di $N+M+1$ moltiplicazioni, mentre nella seconda forma avremmo un numero di ritardi pari a $\max(N, M)$ ed un numero di moltiplicazioni che è ancora $N+M+1$.
 
 ![Confronto](.\img\033.png)
+
+
+
+**ESEMPI**
+**1**: Scriviamo ora l'equazione alle differenze di un sistema non ricorsivo *(ordine 0)* con memoria 2:
+$y(n) = +b_0x(n) + b_1x(n-1) + b_2x(n-2)$			*notiamo che tutti i coefficienti $a_j$ sono zero*
+
+Notiamo che non è altro che un sistema **FIR** che media su tre valori di input; in particolare se volessimo scrivere tale sistema come risposta all'impulso, scriveremmo $y(n) = h(n)*x(n) = h_0x(n) + h_1x(n-1) + h_2x(n-2)$.
+
+Dunque, la **risposta all'impulso** di tale sistema è $h(n) = \{\underline{b_0}, b_1, b_2\}$.
+Possiamo rappresentare la risposta all'impulso anche come $b_0 \delta(n) + b_1 \delta(n-1) + b_2 \delta(n-2)$.
+
+Graficamente il sistema può essere rappresentato come
+
+<img src="./img/034.png" style="zoom:60%;" />
+
+Notiamo che, non essendoci la parte ricorsiva, non possiamo applicare la linearità per invertire le due parti, di conseguenza per questo sistema le rappresentazioni in **prima forma diretta** ed in **seconda forma diretta** ***coincidono***.
+
+
+
+**2**: Scriviamo l'equazione alle differenze di un sistema del 2° ordine puramente ricorsivo:
+$y(n) = b_0x(n) -a_1y(n-1) - a_2 y(n-2)$
+*ricordiamo che $b_0$ è sempre $\neq$ 0 per avere un sistema che risponda ad uno stimolo*.
+
+Essendo il sistema ricorsivo, quindi come memoria infinita, è un sistema **IIR**.
+Avendo una risposta infinita dunque non possiamo rappresentare il sistema attraverso la descrizione della risposta all'impulso $h(n)$ come prima *(o per lo meno non in maniera semplice come accade con i sistemi FIR)*.
+
+Graficamente possiamo rappresentare tale sistema come
+
+<img src="./img/035.png" style="zoom:60%;" />
+
+Notiamo che anche in questo caso, non essendoci la parte non ricorsiva, le rappresentazioni in **prima** e **seconda** forma ***coincidono*** nuovamente.
+
+
+
+
+
+
+
+**3**: Vediamo ora il ragionamento inverso; passiamo da questa forma grafica all'equazione alle differenze:<img src="./img/036.png" style="zoom:35%;" align="right" />
+
+Notiamo subito che il sistema è puramente ricorsivo, non avendo ritardi sulla sequenza di input ed è di ordine 3, avendo 3 ritardi sulla sequenza di output.
+Essendo ricorsivo, ovviamente la memoria del sistema è infinita.
+
+A questo punto, estrapolando dal grafico i vari coefficienti possiamo scrivere:
+$s(n) = -2v(n) +4s(n-1) -3s(n-2) +5s(n-3)$
+
+
+
+
+
+
+
+**4**: Proviamo ora invece a passare dalla seconda forma alla prima:
+
+<img src="./img/037.png" style="zoom:50%;" align="right" />Prima di tutto scriviamo l'equazione alle differenze di tale sistema:
+$y(n) = 0.5x(n) - 1.5x(n-1) - 0.4y(n-1)$
+
+Notiamo quindi che il sistema è ricorsivo di ordine 1.
+
+A questo punto risulta semplice disegnare la rappresentazione in prima forma diretta.
+
+<img src="./img/038.png" style="zoom:50%;" />
 
 ## TRASFORMATA ZETA
 
