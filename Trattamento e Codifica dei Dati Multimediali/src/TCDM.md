@@ -1251,3 +1251,210 @@ In particolare, permette di studiare sistemi lineari per i quali la trasformata 
 
 La trasformata Zeta permette quindi di analizzare una classe più ampia della DTFT e permette di analizzare sistemi LTI anche in presenza di *condizioni iniziali* non nulle.
 Permette inoltre di mettere immediatamente in luce alcune caratteristiche dei sistemi LTI come la ***causalità*** e la ***stabilità***.
+
+
+
+**DEFINIZIONE**
+Data una sequenza **bilatera** $x(n)$ con $-\infty < n < + \infty$, si dice trasformata zeta:
+$X(z) = Z[x(n)] = \sum\limits_{n=-\infty}^{+\infty} x(n)z^{-n}$
+
+<img src="C:\Users\danie\Desktop\TCDMGit\img\039.png" style="zoom:50%;" align="right"/>La trasformata zeta definisce una relazione biunivoca tra la sequenza $x(n)$ ed una funzione della **variabile complessa** $z$, dove $z$ generalizza il concetto di frequenza al piano complesso e viene indicata con ***pulsazione complessa***; dunque il suo dominio è tutto il piano complesso.
+
+Scritta in termini di modulo e fase $z = \rho e^{j2\pi f} = \rho e^{j\omega}$.
+
+Quindi, la trasformata zeta non è altro che una serie infinita di potenze.
+In particolare, $X(z)$ può **convergere** *(avere valore finito)* per *alcuni* valori di $z$, mentre può **divergere** per altri valori.
+I valori per i quali la trasformata converge, vengono detti **regione di convergenza** (**ROC**).
+
+Nella ROC, $X(z)$ è una funzione analitica, cioè continua e indefinitamente derivabile con derivate continue in $z$.
+**ATTENZIONE**: Ogni volta che parliamo di trasforamta zeta, dobbiamo definire la sua **ROC**.
+
+
+
+**CONDIZIONE DI ESISTENZA**
+Si può notare che la trasformata zeta contiene anche la trasformata di Fourier esplicitando $z = \rho e^{j2\pi f} = \rho e^{j\omega}$: $\sum\limits_{n=-\infty}^{+\infty}x(n)z^{-n} = \sum\limits_{n=-\infty}^{+\infty}(x(n)\rho ^{-n})e^{-j\omega n} = DTFT(x(n)\rho ^{-n})$
+
+Notiamo che che quando $\rho = 1$, quella sopra non è altro che la DTFT di $x(n)$.
+
+Rircordiamo che la **DTFT** esiste *(ovvero la sommatoria converge)* per le sequenze che godono di una proprietà che stabilisce che esse siano **sommabili in modulo**
+$\sum\limits_{n=-\infty}^{+\infty}|x(n)\rho^{-n}| < \infty \implies \sum\limits_{n=-\infty}^{+\infty}|x(n)|\rho^{-n} < \infty$
+
+Notiamo che l'esistenza o meno della trasformata zeta **non** dipende dalla pulsazione $\omega$, ma soltanto dal modulo $\rho$ delle pulsazioni complesse $z$, che rappresenta la **distanza di $z$ dall'origine**; questo siginifica che le regioni di convergenza ROC dipendono da quanto siamo distanti dall'origine del piano, e sono quindi definite come **circonferenze**, luoghi dei punti $z$ a modulo costante.
+
+Possiamo quindi dire che la trasformata di Fourier di una sequenza coincide con la trasformata zeta sulla circonferenza di raggio unitario $\rho = 1$.
+
+<img src="C:\Users\danie\Desktop\TCDMGit\img\040.png" style="zoom:60%;" />
+
+Notiamo che per $z=1$ avremmo $e^{j0}$, quindi quando calcoliamo la trasformata zeta per $z=1$, calcoliamo difatti la trasformata di Fourier per la componente continua del segnale *($f = 0$ ovvero $\omega = 0$)*.
+
+
+
+**ALCUNE APPLICAZIONI**
+**1**: Proviamo ora ad applicare la trasformata zeta all'impulso $x(n) = \delta(n)$.
+Ricordando la definizione scriviamo $X(z) = \sum\limits_{n=-\infty}^{+\infty} \delta(n)z^{-n}$
+Per le proprietà di $\delta$, la sommatoria sarà diversa da 0 solo quando il suo argomento è nullo, quindi $X(z) = \delta(0)z^{-0} = 1$.
+Notiamo che in questo caso, la trasformata converge per ogni valore $z$ del piano.
+
+
+
+**2**: Proviamo ora con la sequenza bilatera $x(n) = 2\delta(n+1) + \delta(n) + 4\delta(n-2)$.
+La trasformata zeta di tale sequenza sarà
+$X(z) = \sum\limits_{n=-\infty}^{+\infty}[2\delta(n+1) + \delta(n) + 4\delta(n-2)]z^{-n} =$ 
+
+$2\sum\limits_{n=-\infty}^{+\infty}\delta(n+1)z^{-n} + \sum\limits_{n=-\infty}^{+\infty}\delta(n)z^{-n} + 4\sum\limits_{n=-\infty}^{+\infty} \delta(n-2)z^{-n} =$
+
+$2z^{1}+1z^{0}+4z^{-2}$
+
+Notiamo che $z^{-n}$ corrisponde ai moduli di ritardo introdotti nelle notazioni grafiche.
+Notiamo che la trasformata diverge, nel caso di $z^1$, quando $z = \infty$, mentre per $z^{-2}$, per $z = 0$. Per cui la ROC è definita come $0 < |z| < \infty$.
+
+
+
+**3**: Consideriamo ora $x(n) = u(n)$ *(gradino, sequenza causale)*:
+**ANALISI: Serie Geometrica**
+Ricordiamo che una serie del tipo $\sum\limits_{n=0}^{+\infty}q^n$ viene detta ***serie geometrica***.
+In particolare, ricordiamo che tale serie vale $\sum\limits_{n=0}^{+\infty}q^n = \begin{cases} \frac{1-q^{n+1}}{1-q} & se \space -1<q<1 \\ +\infty & se \space q\geq 1 \\ \nexists & se \space q\leq -1  \end{cases}$
+
+Ricordando che quando la serie è infinita $q^{n+1} \to 0$.
+
+La trasformata sarà $X(z) = \sum\limits_{n=-\infty}^{+\infty}u(n)z^{-n} = \sum\limits_{n=0}^{+\infty}z^{-n} = \sum\limits_{n=0}^{+\infty} (z^{-1})^n = \frac{1}{1-z^{-1}}$
+
+Notiamo che passiamo da $-\infty$ a $0$ come limite inferiore della sommatoria, considerando che il gradino unitario ha valore da 0 in poi.
+Successivamente mettiamo in evidenza la **ragione $q = z^{-1}$** della **serie geometrica**, in modo da poter scrivere il valore a cui converge tale serie $\frac{1}{1-z^{-1}}$.
+
+Sapendo che la serie geometrica converge solo per $|q| < 1$, possiamo dire che la ROC è definita da $|z^{-1}| <1 \implies |z| > 1$, che corrisponde all'esterno del cerchio unitario.
+
+
+
+**4**: Consideriamo $x(n) = -u(-n-1)$, sequenza anticausale e traslata:
+La trasformata sarà $X(z) = - \sum\limits_{-\infty}^{+\infty}u(-n-1)z^{-n} = -\sum\limits_{n=-\infty}^{-1}z^{-n} = -\sum\limits_{m=1}^{+\infty}z^m = - (\sum\limits_{m=0}^{+\infty}z^m-1)$
+
+Notiamo che tiriamo fuori dalla sommatoria il $-$ iniziale, per la linearità dell'operatore, e poi trasformiamo il gradino $u(-n-1)$ in una sommatoria da $-\infty$ a $-1$ poiché è invertito e traslato di $-1$; eseguiamo poi un cambio di variabile dalla variabile negativa $-n$ alla variabile positiva $m$ che andrà da 1 a $+\infty$.
+A questo punto non ci resta che esplicitare la serie geometrica con la sommatoria da 0 a $+\infty$, sottraendo $z^0 = 1$ ad essa.
+
+La serie a questo punto converge a $1 - \frac{1}{1-z} = -\frac{z}{1-z} = \frac{1}{1-z^{-1}}$, poiché ora la nostra ragione geometrica $q$ è $z$ *(mentre prima era $z^{-1}$)*.
+
+A questo punto possiamo dire che la ROC è definita da $|z| <1$, per via della ragione che è $z$.
+
+Notiamo che la ROC è diversa da quella di prima è questo perché la trasformata zeta definisce una relazione **biunivoca** tra la sequenza $x(n)$ ed una funzione della variabile complessa $z$ che però è **garantita** solo se si specifica la **ROC** di $X(z)$ oltre che l'espressione analitica della trasformata $X(z)$.
+
+Praticamente la biunivocità è definita tra la **sequenza** che abbiamo nel dominio di partenza e i **valori a cui converge** la trasformata zeta oltre che alla **regione di convergenza**.
+Negli esempi di prima possiamo notare che se non avessimo fornito anche la ROC, non ci sarebbe più stata la biunivocità poiché il valore di convergenza era lo stesso per le due serie diverse.
+
+<div style="page-break-after: always;"></div>
+
+### SEQUENZE FINITE
+
+Le sequenze $x(n)$ con supporto finito sono i segnali a tempo discreto che possiedono un numero finito di coefficienti non nulli.
+Questo tipo di sequenze ammette sempre una trasformata $X(z)$ esprimibile in forma chiusa come un **polinomio composto da un numero finito** di variabili del tipo $z^k;z^{-k}$ con $k$ intero.
+
+Un esempio di sequenza finita è $X(z) = \sum\limits_{n=-M}^{L} x(n)z^{-n}$
+
+Ricordiamo che la trasformata $X(z)$ converge per qualunque $z$ nel piano complesso, eccetto i punti $z=0$ se esistono termini del tipo $z^{-k}$ con $k>0$ e $z = \infty$ se esistono termini del tipo $z^{+k}$ con $k>0$.
+
+**ESEMPI**
+Abbiamo visto prima che la trasformata zeta di $x(n) = \delta(n)$ converge a 1 e la sua ROC è definita $\forall z$.
+
+Se consideriamo invece $x(n) = \delta(n-k)$ con $k>0$ *(causale)*, la trasformata è $z^{-k}$ e la ROC è definita $\forall z$ tranne $z=0$.
+
+Se consideriamo invece $x(n) = \delta(n+k)$ con $k > 0$ *(anticausale)*, la trasformata è $z^k$ e la ROC è definita $\forall z$ tranne $|z| = \infty$.
+
+
+
+**CONCLUSIONI**
+<img src="C:\Users\danie\Desktop\TCDMGit\img\041.png" style="zoom:70%;" align="right"/>
+
+
+
+Possiamo quindi dire che, per i segnali di **durata finita bilateri**, la ROC è l'intero piano complesso zeta tranne i punti 0 e $\infty$.
+
+
+
+
+
+
+
+Per i segnali di **durata finita causali**, la ROC è l'intero piano complesso zeta tranne il punto 0.
+
+
+
+
+
+
+
+
+
+Per i segnali di **durata finita anticausali**, la ROC è l'intero piano complesso zeta tranne il punto $\infty$.
+
+<div style="page-break-after: always;"></div>
+
+## POLI E ZERI
+
+Calcoliamo la trasformata zeta della sequenza finita $x(n) = \alpha^n [u(n) - u(n-N)]$ con $N$ costante intera finita e $\alpha$ costante reale.
+
+$X(z) = \sum\limits_{n=-\infty}^{+\infty} x(n)z^{-n} = \sum\limits_{n=0}^{N-1}\alpha^nz^{-n} = \sum\limits_{n=0}^{N-1}(\alpha z^{-1})^n = \frac{1-\alpha^Nz^{-N}}{1-\alpha z^{-1}}$
+
+Sappiamo per quanto detto prima che $X(z)$ converge in ogni punto del piano complesso eccetto $z=0$.
+
+Definiamo a questo punto:
+
+- **POLI**: Valori che annullano il denominatore.
+- **ZERI**: Valori che annullano il numeratore.
+
+Per trovare zeri e poli, dobbiamo inanzittutto raccogliere la **potenza negativa** di $z$ sia dal denominatore che dal numeratore per poi analizzare i polinomi del numeratore e del denominatore.
+
+$X(z) = \frac{1-\alpha^Nz^{-N}}{1-\alpha z^{-1}} = z^{-N} \frac{1}{Z^{-1}} \frac{1z^N - \alpha^N}{z-\alpha} = z^{-N+1}\frac{z^N - \alpha^N}{z-\alpha}$
+
+A questo punto, per trovare i poli consideriamo $z-\alpha$ e notiamo subito che si annulla per $z= \alpha$.
+
+Per trovare gli zeri consideriamo $z^N - \alpha^N$ e notiamo che questo polinomio ha $N$ zeri, ma come possiamo calcolarli?
+
+Proviamo a ragionare graficamente:
+<img src="C:\Users\danie\Desktop\TCDMGit\img\042.png" style="zoom:80%;" align="left"/>Siamo nel piano complesso; notiamo che la soluzione reale è $|z| = \alpha$, che definisce il raggio di una circonferenza sulla quale sono distribuite in modo uniforme le altre soluzioni, che sono in totale $N$.
+
+Notiamo che alcune soluzioni sono reali, altre sono complesse e conniugali *(stessa parte reale ma parte immaginaria di segno opposto)*.
+
+Le soluzioni generalmente sono $z = \alpha e^{j\frac{2\pi}{N}k}$.
+
+In questo caso notiamo che il polo $z = \alpha$ si sovrappone con uno degli zeri, quindi è come se non ci fosse difatto alcun polo e solo $N-1$ zeri.
+
+Notiamo però che il termine raccolto $z^{-N+1} = \frac{1}{z^N-1}$ rappresenta altri $N-1$ poli *(o un polo di ordine N-1)* nella posizione 0.
+
+
+
+### SEQUENZE INFINITE
+
+Le sequenze $x(n)$ illimitate sono i segnali a tempo discreto che possiedono un supporto temporale illimitato.
+
+Per le sequenze **causali**, la ROC è del tipo $|z| > d_M$, dove $d_M$ è il modulo del polo più **distante** dall'origine $z= 0$.
+L'abbiamo visto per $x(n) = u(n)$.
+
+Per le sequenze **anticausali**, la ROC è del tipo $|z| < d_m$, dove $d_m$ è il modulo del polo più **vicino** all'origine $z=0$.
+L'abbiamo visto per $x(n) = -u(-n-1)$.
+
+## TRASFORMATA ZETA RAZIONALE
+
+Nei casi pratici di interesse, $X(z)$ è una funzione razionale di due polinomi: $X(z) = N(z)/D(z)$ dove $N(z)$ e $D(z)$ sono due polinomi nella variabile $z^{-1}$ di grado rispettivamente $p_n$ e $p_d$.
+
+In forma estesa $X(z) = \frac{b_0 + b_1 z^{-1} + \space ... \space + b_{p_n} z^{-p_n}}{a_0 + a_1z^{-1} + \space ... \space +a_{p_d}z^{-p_d}}$
+*(Notare la similitudine dei coefficienti con quelli dell'eq. alle differenze)*
+
+Ragioniamo su cosa succede a $H(z)$:
+
+- Se il numeratore si azzera, $H(z) = 0$ negli zeri e negli intorni avrà un valore piccolo essendo una funzione regolare.
+- Se il denominatore si azzera, $H(z) = \infty$ e negli intorni dei poli $H(z)$ assumera dei valori molto grandi.
+
+Riscrivendo i polinomi come prodotti di monomi otteniamo: $X(z) = \frac{b_0}{a_0}(z^{p_d-p_n}) \frac{\prod\limits_{i=1}^{p_n} (z - c_i)}{\prod\limits_{i=1}^{p_d} (z-d_i)}$
+
+Dove:
+
+- I coefficienti $c_i$ con $i = 1, \space ..., \space p_n$ sono gli **zeri** non nulli di $X(z)$
+- I coefficienti $d_i$ con $i  = 1, \space ..., \space p_d$ sono i **poli** non nulli di $X(z)$
+
+In particolare, ci saranno $p_n - p_d$ **poli** in $z = 0$ se $p_n > p_d$ oppure
+$p_d - p_n$ **zeri** in $z = 0$ se $p_d > p_n$.
+
+
+
+
+
