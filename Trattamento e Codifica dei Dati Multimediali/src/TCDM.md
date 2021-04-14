@@ -1456,5 +1456,58 @@ $p_d - p_n$ **zeri** in $z = 0$ se $p_d > p_n$.
 
 
 
+### ANALISI SISTEMI LTI TRAMITE TRASFORMATA Z
+
+Abbiamo visto che un sistema LTI a tempo discreto può essere descritto da un'equazione lineare alle differenze a coefficienti costanti $y(n) = -a_1y(n-1) - \space ... \space - a_M y(n-M) + b_0x(n) + b_1 x(n-1) \space ... \space + b_N x(n-N)$ 
+
+Se applichiamo la DTFT ad ogni termine *(che equivale ad applicarla a tutti per la linearità)* otteniamo: $Y(e^{j \omega}) = -a_1 Y(e^{j \omega})e^{-j\omega} - \space ... \space  -a_M Y(e^{j \omega})e^{-j\omega M} + b_0X(e^{j \omega}) + b_1X(e^{j\omega})e^{-j\omega} + \space ... \space +b_N X(e^{j\omega})e^{-j\omega N}$
+
+Ricordando che $F(f(x-x_0)) = e^{-j \omega x_0} F(u)$
+
+Se a questo punto, tenendo a mente il teorema della convoluzione, raccogliamo i termini in $Y(e^{j\omega})$ e in $X(e^{j\omega})$ otteniamo:
+$Y(e^{j\omega})(1+a_1e^{-j\omega} + \space ... \space + a_M e^{-j\omega M}) = X(e^{j\omega})(b_0 + b_1e^{-j\omega} + \space ... \space + b_Ne^{-j\omega N})$
+
+Sappiamo inoltre che la risposta in frequenza $H(e^{j\omega})$ di un sistema LTI può essere calcolata come:
+$H(e^{j\omega}) = \frac{Y(e^{j\omega})}{X(e^{j\omega})} = \frac{(b_0 + b_1e^{-j\omega} + \space ... \space + b_Ne^{-j\omega N})}{(1+a_1e^{-j\omega} + \space ... \space + a_M e^{-j\omega M})}$ 			*notiamo la somiglianza con la trasformata Z*
+
+Ricordando ora la relazione tra la DTFT e la trasformata Z *(in particolare la DTFT è una trasformata Z con $\rho = 1$)* e applicando il teorema della convoluzione otteniamo: $Y(z) = Z[x(n)*h(n)] = X(z)H(z)$
+
+Ricordando che $z = \rho e^{j\omega}$ possiamo scrivere $H(z) = \frac{b_0 + b_1 z^{-1} + \space ... \space + b_{N} z^{-N}}{1 + a_1z^{-1} + \space ... \space +a_{M}z^{-M}}$, che ci fa capire che il nostro sistema è intuibile dalla posizione dei poli e degli zeri.
+
+**FIR**
+Ad esempio, un sistema FIR, quindi a risposta finita, non ricorsivo, ricordiamo avere coefficienti $a_j$ nulli dall'equazione alle differenze; la sua risposta in frequenza sarà quindi $H(z) = b_0 + b_1 z^{-1} + \space ... \space + b_{N} z^{-N}$, in linea con quanto visto anche graficamente prima.
 
 
+
+**IIR**
+Allo stesso modo, un sistema IIR, puramente ricorsivo, sappiamo che ha tutti i coefficienti $b_k$ tranne $b_0$ nulli; la sua risposta in frequenza è quindi $H(z) = \frac{1}{1 + a_1z^{-1} + \space ... \space +a_{M}z^{-M}}$, in linea con quanto visto graficamente.
+
+
+
+**CASO GENERALE**
+Nel caso generale la risposta in frequenza di un sistema LTI è $H(z) = \frac{b_0 + b_1 z^{-1} + \space ... \space + b_{N} z^{-N}}{1 + a_1z^{-1} + \space ... \space +a_{M}z^{-M}}$
+
+
+
+**STABILITÀ BIBO E TRASFORMATA Z**
+Per sistemi **causali**, condizione necessaria e sufficiente a garantire la stabilità BIBO è che $H(z)$ abbia tutti i poli contenuti nel cerchio di raggio unitario escluso.
+Per sistemi **anticausali** la condizione è che $H(z)$ abbia i poli all'esterno del cerchio unitario escluso.
+
+In sintesi, per avere la stabilità BIBO è necessario che la circonferenza di raggio unitario sia contenuta nella ROC del sistema.
+
+
+
+**REALIZZABILITÀ FISICA DI UN SISTEMA LTI**
+Un sistema LTI è fisicamente realizzabile se la sua risposta all'impulso $h(n)$ è:
+
+- **CAUSALE**: la ROC di $H(z)$ corrisponde all'esterno di un cerchio di raggio > del polo di $H(z)$ di valore massimo.
+- **CON COEFFICIENTI REALI**: quindi, per ogni polo e per ogni zero complesso, deve essere presente anche il rispettivo complesso coniugato.
+  I poli e gli zeri sull'asse reale possono essere anche singoli.
+
+
+
+**PROGETTAZIONE FILTRI CON POLI E ZERI**
+
+- **POLI**: devono essere posizionati in prossimità del cerchio di raggio unitario *(ma non su di esso, altrimenti il sistema non sarebbe più stabile, in particolare tutti i poli devono cadere all'interno del cerchio di raggio unitario per far si che la risposta sia causale)* nelle pulsazioni complesse $z$ corrispondenti alle componenti armoniche nel segnale d'ingresso $x(n)$ da **enfatizzare**.
+- **ZERI**: devono essere posizionati in prossimità delle pulsazioni complesse $z$ corrispondenti alle componenti armoniche nel segnale d'ingresso $x(n)$ da **attenuare**.
+  Gli zeri possono essere posizionati in qualunque punto del piano complesso.
