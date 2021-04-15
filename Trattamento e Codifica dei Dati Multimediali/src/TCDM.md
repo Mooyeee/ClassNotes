@@ -1235,7 +1235,7 @@ $s(n) = -2v(n) +4s(n-1) -3s(n-2) +5s(n-3)$
 **4**: Proviamo ora invece a passare dalla seconda forma alla prima:
 
 <img src="./img/037.png" style="zoom:50%;" align="right" />Prima di tutto scriviamo l'equazione alle differenze di tale sistema:
-$y(n) = 0.5x(n) - 1.5x(n-1) - 0.4y(n-1)$
+$y(n) = 0.5x(n) - 0.4x(n-1) - 1.5y(n-1)$
 
 Notiamo quindi che il sistema è ricorsivo di ordine 1.
 
