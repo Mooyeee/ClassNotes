@@ -1,10 +1,317 @@
+# PROBLEMA DI TRASPORTO
+
+In generale, un problema di trasporto è un problema in cui occorre distribuire/assegnare dei prodotti da un gruppo di ***sorgenti*** ad un gruppo di ***destinazioni*** in modo che il costo di assegnamento *(trasporto)* sia **minimo**.
+
+Un problema di trasporto è rappresentabile tramite un grafo dove ***s*** sono le sorgenti e ***d*** le destinazioni.
+
+```mermaid
+graph TB
+s1((s1)) -- c11 --> d1
+s1 -- c12 --> d2
+s1 -- c13 --> d3
+s2((s2)) -- c21 --> d1
+s2 -- c22 --> d2
+s2 -- c23 --> d3 
+```
+
+I problemi di trasporto sono caratterizzati da una struttura particolare dettata dai valori degli elementi della matrice dei vincoli A *(molti de quali posti a 0)*
+
+$$
+A = \begin{bmatrix} a_{11} & ... & a_{1n} \\ ... & ... & ... \\ a_{m1} & ... & a_{mn}\end{bmatrix}
+$$
+Assumendo che
+
+- Offerta = Domanda $\sum\limits_{i=1}^{m} s_{i} = \sum\limits_{j=1}^{n}d_{j}$
+- Il costo di spedizione sia proporzionale rispetto alla quantità *(ipotesi di linearità della funzione obiettivo)*
+
+La formulazione generale di un problema di trasporto è la seguente:
+
+$min \sum\limits_{ij}^{mn}c_{ij}x_{ij}$ Minimizzazione costi
+s.a.
+$\sum\limits_{j = 1}^{n} x_{ij} = s_{i}$ Vincoli di capacità/offerta di una sorgente *(un vincolo per sorgente **s**)*
+
+$\sum\limits_{i = 1}^{m}x_{ij} = d_{j}$ Vincoli di domanda di una destinazione *(un per destinazione **d**)*
+
+$x_{ij} \geq 0$ Vincoli di non negatività
+
+con ***c<sub>ij</sub>*** = costo trasporto da *i* a *j* e ***x<sub>ij</sub>*** = quantità di prodotto trasportato da *i* a *j*
+
+
+
+#### PROPRIETÀ DI INTEREZZA
+
+Il problema di trasporto i cui parametri ***s<sub>i</sub>*** e ***d<sub>j</sub>*** siano interi gode della proprietà di interezza il che significa che tutte le variabili di base appartenenti a qualsiasi soluzione di base ammissibile avranno valore intero.
+
+Cosa significa questo? Che posso applicare l'algoritmo del simplesso senza preoccuparmi dei vincoli di interezza!
+
+
+
+## QUANDO L'OFFERTA NON È UGUALE ALLA DOMANDA
+
+Vediamo cosa succede quando $\sum\limits_{i=1}^{m} s_{i} \neq \sum\limits_{j=1}^{n}d_{j}$
+
+Generalmente si creano delle sorgenti *(o destinazioni)* con offerte *(o domande)* ***fittizie***.
+
+
+#### ESEMPIO DESTINAZIONE FITTIZIA
+
+Una compagnia costruisce aeroplani commerciali per varie compagnie aeree in tutto il mondo. L'ultima fase del processo di produzione è produrre i motori a reazione e poi installarli sul telaio dell'aereo completato. L'azienda ha firmato alcuni contratti per fornire un considerevole numero di aeroplani entro i prossimi 4 mesi e ora deve programmare la produzione dei motori a reazione. Per rispettare le date di consegna, l'azienda deve fornire i motori per l'istallazione nelle quantità indicate nella seconda colonna della tabella sottostante. A causa delle variazioni dei costi di produzione, potrebbe valere la pena produrre alcuni dei motori un mese o più prima che siano programmati per l'istallazione. Lo svantaggio è che tali motori devono essere mantenuti in magazzino fino al momento dell'istallazione programmata a un costo di stoccaggio.
+
+| MESE | RICHIESTA | CAPACITÀ | COSTO PRODUZIONE | COSTO STOCCAGGIO |
+| :--: | :-------: | :------: | :--------------: | :--------------: |
+|  1   |    10     |    25    |       1.08       |      0.015       |
+|  2   |    15     |    35    |       1.11       |      0.015       |
+|  3   |    25     |    30    |       1.10       |      0.015       |
+|  4   |    20     |    10    |       1.13       |                  |
+
+Per formulare un modello potrei introdurre la variabile x<sub>j </sub>con j $\in$ {1, 2, 3, 4} rappresentante i motori prodotti nel mese *j*. Posso così formulare un problema di PL ma non come un problema di trasporto, molto più veloce da risolvere.
+A tal fine devo descrivere il problema in termini di sorgenti e destinazioni e identificare quindi *x<sub>ij</sub>*, *c<sub>ij</sub>*, *s<sub>j</sub>* e d<sub>j</sub>.
+
+I motori vengono prodotti nel mese *i* e installati nel mese *j*, quindi posso definire
+x<sub>ij</sub> numero motori prodotti nel mese *i* e installati nel mese *j*
+c<sub>ij</sub> costo associato ad ogni x<sub>ij</sub>. Come lo calcolo? Facile per i $\leq$ j, ma se i $\gt$ j?
+d<sub>j</sub> numero di motori da consegnare al mese *j*
+s<sub>i</sub> Da calcolare
+
+Concentriamoci su c<sub>ij</sub> quando i $\gt$ j:
+Essendo impossibile produrre un motore dopo averlo installato, il suo costo dovrebbe essere 0, tuttavia così facendo verrebbe inserito in base visto che abbiamo un problema di minimo, assegnamo quindi a questa variabile un costo molto alto **M**.
+
+Calcoliamo ora s<sub>i</sub>:
+Usiamo la capacità massima 25 + 35 + 30 + 10 = 100, ma notiamo che la domanda 10 + 15 + 25 + 20 è maggiore e occorre dunque inserire una destinazione ***fittizia*** che assorba tale differenza con costo nullo.
+
+| **SORGENTI \ DESTINAZIONI** |   1   |   2   |   3   |   4   | Fittizia | s<sub>i</sub> |
+| :-------------------------: | :---: | :---: | :---: | :---: | :------: | :-----------: |
+|            **1**            | 1.080 | 1.095 | 1.110 | 1.125 |    0     |      25       |
+|            **2**            |   M   | 1.110 | 1.125 | 1.140 |    0     |      35       |
+|            **3**            |   M   |   M   | 1.100 | 1.115 |    0     |      30       |
+|            **4**            |   M   |   M   |   M   | 1.130 |    0     |      10       |
+|           Domanda           |  10   |  15   |  25   |  20   |    30    |               |
+
+
+
+
+
+# PROBLEMA DI TRANSHIPMENT
+
+Un problema di transhipment è un problema di trasporto che presenta alcuni nodi che fanno sia da sorgente che da destinazione *(nodi di transhipment)* che se hanno solo una funzione di passaggio *(non producono e non consumano)*, la loro capacità è uguale alla loro domanda.
+Se i nodi intermedi fungono anche da *rivenditori* avranno una domanda maggiore alla capacità, mentre se fungono anche da *distributori* avranno una capacità maggiore della domanda.
+Un problema di questo tipo può riguardare il flusso su reti.
+
+```mermaid
+graph LR
+s1((s1)) --> T1(T1) --> d1 & d2
+s2((s2)) --> T1
+s1 --> T2(T2) --> d1 & d2
+s2 --> T2
+
+style T1 fill:#78ffc0
+style T2 fill:#78ffc0
+```
+
+<div style="page-break-after: always;"></div>
+
+# PROBLEMA DELL'ASSEGNAMENTO
+
+Un problema di assegnamento si occupa di assegnare risorse *(persone, macchine, ore di lavoro ecc)* ad attività.
+Può essere visto come un caso particolare di un problema di trasporto con la seguente struttura:
+
+- Il numero di risorse da assegnare deve essere uguale al numero di attività
+- Ogni attività deve essere eseguita da esattamente una risorsa
+- $\exist$ un costo ***c<sub>ij</sub>*** associato alla risorsa *i* che esegue l'attività *j* *(i, j $\in \mathbb{N}$)*
+- Obiettivo: assegnare le risorse in modo da minimizzare il costo totale
+
+#### FORMULAZIONE GENERALE
+
+x<sub>ij</sub> = $\begin{cases} 1 & \text{i è assegnato a j} \\ 0 & altrimenti \end{cases}$
+
+min Z = $\sum\limits_{i=1}^{n}$ $\sum\limits_{j=1}^{n} c_{ij}x_{ij} $
+s.a.
+$\sum \limits_{j=1}^{n} x_{ij} = 1$		*i* = 1, ..., n	 *(ad ogni risorsa va assegnata una sola attività)*
+
+$\sum \limits_{i=1}^{n} x_{ij} = 1$		*j* = 1, ..., n	*(ad ogni attività deve essere assegnata una sola risorsa)*
+
+x<sub>ij</sub> $\geq$ 0
+
+Notiamo che è una formulazione particolare del problema di trasporto con ***s<sub>i</sub> = d<sub>j</sub> = 1*** e vale dunque la proprietà di interezza e anche questo tipo di problemi può essere rappresentato mediante grafi.
+
+Problemi piccoli possono anche essere risolti col simplesso, notiamo tuttavia che molte variabili saranno nulle e dunque le soluzioni conterranno molte variabili degeneri, il che può essere dannoso per problemi di grosse dimensioni dove il simplesso genererebbe molti cambi di base senza che la soluzione cambi.
+
+
+
+# PROBLEMI SU RETE
+
+I problemi su reti hanno molteplici applicazioni come i trasporti, la produzione, distribuzione, localizzazione delle strutture.
+Questo perché le reti sono una rappresentazione visiva e concettuale utili a rappresentare le relazioni tra varie componenti di sistemi anche molto complessi e trovano quindi utilizzo in qualsiasi campo di attività scientifiche, sociali ed economiche.
+
+Vedremo che molti problemi di ottimizzazione su rete sono in realtà dei problemi di programmazione lineare 'speciali'.
+
+
+
+## CAMMINO MINIMO
+
+Uno dei problemi classici su rete è il problema del cammino minimo definito come tale:
+Sia dato un grafo orientato e pesato G  = <V, E> con costo c<sub>i, j</sub> $\forall$ (i, j) $\in$ E e con un nodo di origine **s** $\in$ V ed uno di destinazione **d** $\in$ V.
+Vogliamo trovare il cammino ***P*** da **s** a **d** il cui costo totale *(espresso come somma dei vari c<sub>i, j</sub> con (i, j) $\in$ **P**)* sia minimo.
+
+```mermaid
+graph LR
+s((s)) --2--> a((a)) & b((b))
+s --1--> c((c)) --4--> a
+a --5--> b((b)) --3--> d((d))
+a --2--> d
+
+style s fill:#78ffc0
+style d fill:#78ffc0
+```
+
+Introduciamo quindi le seguenti variabili binarie per ogni arco del grafo:
+
+x<sub>i, j</sub> = $\begin{cases}1 & se\space l'arco\space(i, j) \in P \\ 0 & altrimenti \end{cases}$
+
+Questo problema equivale al problema di trovare il modo migliore per spedire 1 prodotto da un nodo di origine **s** ad uno di destinazione **d** *(come nei problemi di trasporto)*.
+
+Avremo quindi i seguenti vincoli:
+
+- si può selezionare un solo arco uscente dall'origine
+- si può selezionare un solo arco entrante nella destinazione
+- per gli altri nodi, il numero di archi entranti selezionati deve essere uguale al numero di archi uscenti
+
+Formalmente:
+
+min $\sum\limits_{(i, j) \in E} c_{i, j}x_{i, j}$
+
+*Vincoli di bilanciamento dei nodi:*
+
+$\sum\limits_{(i, v) \in E} x_{i, v} - \sum\limits_{(v, j) \in E} x_{vj} = \begin{cases} -1 & se \space v = s\\ 1 & se \space v = d \\ 0 & se \space v \in V - \{s, \space d\}\end{cases}$
+
+Tradotto in linguaggio naturale quel vincolo stabilisce che la differenza fra ***archi entranti***  *(in v)* e ***archi uscenti*** *(da v)* deve essere uguale a ***-1*** se stiamo considerando il vertice sorgente *(v = s)*, ***1*** se stiamo considerando il vertice destinazione *(v = d)* e ***0*** in tutti gli altri casi *(v $\neq$ s $\land$ v $\neq$ d)*.
+
+Come per i problemi di trasporto e assegnamento, anche per il problema del cammino minimo è garantita una soluzione intera applicando il simplesso ed esistono particolari algoritmi specializzati molto efficienti che ne sfruttano le caratteristiche come ad esempio l'algoritmo di ***Dijkstra***.
+
+
+
+## MASSIMO FLUSSO
+
+Il problema consiste nel determinare il massimo flusso che, entrando da un nodo di origine ***s*** può raggiungere un nodo di destinazione ***d***. Dobbiamo cioè determinare per ogni arco (i, j) la quantità di flusso **x<sub>i, j</sub>** che lo deve attraversare affinché venga massimizzato il flusso totale *f* senza superare la capacità **u<sub>i, j</sub>** degli archi.
+
+Formalmente:
+max *f*
+
+*Vincoli di bilanciamento dei nodi:*
+
+$\sum\limits_{(i, v) \in E} x_{i, v} - \sum\limits_{(v, j) \in E} x_{vj} = \begin{cases} -f & se \space v = s\\ f & se \space v = d \\ 0 & se \space v \in V - \{s, \space d\}\end{cases}$
+
+*Vincoli di capacità:*
+
+x<sub>i, j</sub> $\leq$ u<sub>i, j</sub>	$\forall$ (i, j) $\in$ E	*(il flusso su ogni arco non deve superare la capacità dell'arco stesso)*
+
+**N.B.** *f* è una variabile di decisione.
+
+Se i coefficienti u<sub>i, j</sub> sono interi possiamo ignorare i vincoli di interezza.
+Anche per questo tipo di problemi esistono algoritmi specializzati molto efficienti come l'algoritmo di ***Ford-Fulkerson***.
+
+Nei problemi reali di flusso generalmente il flusso può essere generato da più sorgenti e ricevuto da più destinazioni, ma possiamo ricondurci facilmente al problema di una sola destinazione ed una sola sorgente introducendo una sorgente ed una destinazione fittizie collegate a quelle reali con archi fittizi a capacità infinita.
+
+```mermaid
+graph LR
+s'((s')) --inf--> s1((s1)) & s2((s2))
+s1 --2--> a((a)) & b((b))
+s2 --4--> b
+s2 --3--> c((c))
+a --2--> b
+b & c --3--> d1((d1)) & d2((d2)) --inf--> d'((d'))
+
+style s' fill:#78ffc0
+style d' fill:#78ffc0
+style s1 fill:#c79cff
+style s2 fill:#c79cff
+style d1 fill:#c79cff
+style d2 fill:#c79cff
+```
+
+## FLUSSO A COSTO MINIMO
+
+Consideriamo un problema di distribuzione di energia; abbiamo una società che produce energia elettrica e dispone di diverse di diverse centrali di produzione e distribuzione collegate tra loro.
+
+Ogni centrale *i* può
+
+- Produrre ***p<sub>i</sub>*** kW di energia
+- Distribuire energia su una sottorete di utenti la cui domanda complessiva è ***d<sub>i</sub>***
+- Smistare l'energia da e verso altre centrali
+
+I cavi che collegano una centrale *i* ad un'altra *j* hanno una capacità massima ***u<sub>i, j</sub>*** kW e costano ***c<sub>i, j</sub>*** euro per kW. Vogliamo determinare il piano di distribuzione dell'energia a costo minimo producendo tanta energia quanto è la domanda totale delle sottoreti di utenti.
+
+Possiamo rappresentare il problema su un grafo dove i nodi rappresentino le centrali e gli archi i cavi.
+Per ogni nodo *v* avremo un parametro ***b<sub>v</sub>*** = *d<sub>v</sub> - p<sub>v</sub>* che rappresenta la differenza fra la domanda che la centrale deve soddisfare e l'offerta che è in grado di generare.
+
+Avremo quindi:
+
+- Nodi di domanda *(b<sub>v</sub> $\gt$ 0)* se la centrale deve soddisfare una domanda superiore alla sua capacità produttiva e dovrà quindi far arrivare energia da altre centrali.
+- Nodi di offerta *(b<sub>v</sub> $\lt$ 0)* se la centrale ha un eccesso di offerta e quindi dovrà mandare l'eccesso verso altre centrali.
+- Nodi di transito *(b<sub>v</sub> = 0)* se domanda  e offerta si equivalgono o se la centrale svolge solo lo smistamento dell'energia.
+
+Formalmente:
+
+min $\sum\limits_{(i, j) \in E} c_{i, j}x_{i, j}$
+
+*Vincoli di bilanciamento dei nodi:*
+
+$\sum\limits_{(i, v) \in E} x_{i, v} - \sum\limits_{(v, j) \in E} x_{vj} = \begin{cases} -b_{v} & se \space v = nodo\space di\space offerta\\ b_{v} & se \space v = nodo\space di\space domanda \\ 0 & se \space v = nodo\space di\space transito\end{cases}$
+
+Questo set di vincoli ci assicura che la differenza tra i flussi entrante ed uscente di ogni nodo sia esattamente pari alla sua richiesta.
+
+*Vincoli di capacità:*
+
+x<sub>i, j</sub> $\leq$ u<sub>i, j</sub>	$\forall$ (i, j) $\in$ E	*(il flusso su ogni arco non deve superare la capacità dell'arco stesso)*
+
+Notiamo che il problema del cammino minimo è un caso particolare di problema di flusso a costo minimo nel quale **b<sub>v</sub> = 1**.
+
+Se i coefficienti b<sub>v</sub> sono interi possiamo ignorare i vincoli di interezza.
+Anche in questo caso esistono algoritmi specializzati molto efficienti.
+
+In particolare, la caratteristica di questo problema che lo rende più facile da risolvere e ci assicura la sua interezza è la sua matrice dei vincoli che è una matrice ***totalmente uni-modulare (TUM)***.
+
+Consideriamo il seguente grafo
+
+```mermaid
+graph LR
+1((1)) --> 2((2)) --> 3((3)) & 4((4))
+1 --> 3 --> 4 --> 3
+```
+
+con le seguenti richieste:
+b<sub>1</sub> = -3			b<sub>2</sub> = 2			b<sub>3</sub> = 0			b<sub>4</sub> = 1
+
+Se trascuriamo i vincoli di capacità, avremo i seguenti vincoli:
+-x<sub>1, 2</sub> - x<sub>1, 3</sub> = -3
++x<sub>1, 2</sub> - x<sub>2, 3</sub> - x<sub>2, 4</sub> = 2
++x<sub>1, 3</sub> + x<sub>2, 3</sub> - x<sub>3, 4</sub> + x<sub>4, 3</sub> = 0
++x<sub>2, 4</sub> + x<sub>3, 4</sub> - x<sub>4, 3</sub> = 1
+
+Che avranno la seguente matrice corrispondente:
+
+$\begin{bmatrix}-1 & -1 & 0 & 0 & 0 & 0 \\ +1 & 0 & -1 & -1 & 0 & 0 \\ 0 & +1 & +1 & 0 & -1 & +1 \\ 0 & 0 & 0 & +1 & +1 & -1 \end{bmatrix}$
+
+Notiamo che:
+
+- Abbiamo una colonna per ogni variabile, e quindi per ogni arco (i, j) $\in$ E
+- Abbiamo una riga per ogni nodo v $\in$ V
+- Per ogni colonna ci sono esattamente due numeri diversi da 0 e in particolare un -1 e un +1
+
+Le matrici con queste proprietà si chiamano matrici totalmente uni-modulari e ci assicurano l'integrità di qualsiasi problema abbia come matrice dei vincoli una TUM.
+
+Formalmente:
+Dato un problema lineare in forma min{c<sup>T</sup>x: Ax = b, x $\geq$ 0}, se A è una TUM e b $\in$ $\mathbb{Z}_{+}^{m}$, allora tutte le sue soluzioni di base hanno coordinate intere.
+
+
+
 ## PROGRAMMAZIONE LINEARE INTERA
 
 Il simplesso si basa sulla divisibilità delle variabili, che richiede che le variabili siano del dominio reale. Tuttavia, in molti problemi pratici le variabili hanno senso solo se sono intere *(es. trasporto, problemi di flusso, assegnamento)*.
 
 Quando si richiede che la variabili siano intere si parla di ***programmazione lineare intera***, che può essere anche *binaria* o *mista* a seconda del dominio delle variabili.
 
-
+<div style="page-break-after: always;"></div>
 
 #### COME USARE LE VARIABILI BINARIE
 
