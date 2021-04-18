@@ -1,4 +1,4 @@
-# PROBLEMA DI TRASPORTO
+## PROBLEMA DI TRASPORTO
 
 In generale, un problema di trasporto è un problema in cui occorre distribuire/assegnare dei prodotti da un gruppo di ***sorgenti*** ad un gruppo di ***destinazioni*** in modo che il costo di assegnamento *(trasporto)* sia **minimo**.
 
@@ -91,7 +91,9 @@ Usiamo la capacità massima 25 + 35 + 30 + 10 = 100, ma notiamo che la domanda 1
 
 
 
-# PROBLEMA DI TRANSHIPMENT
+
+
+## PROBLEMA DI TRANSHIPMENT
 
 Un problema di transhipment è un problema di trasporto che presenta alcuni nodi che fanno sia da sorgente che da destinazione *(nodi di transhipment)* che se hanno solo una funzione di passaggio *(non producono e non consumano)*, la loro capacità è uguale alla loro domanda.
 Se i nodi intermedi fungono anche da *rivenditori* avranno una domanda maggiore alla capacità, mentre se fungono anche da *distributori* avranno una capacità maggiore della domanda.
@@ -110,7 +112,7 @@ style T2 fill:#78ffc0
 
 <div style="page-break-after: always;"></div>
 
-# PROBLEMA DELL'ASSEGNAMENTO
+## PROBLEMA DELL'ASSEGNAMENTO
 
 Un problema di assegnamento si occupa di assegnare risorse *(persone, macchine, ore di lavoro ecc)* ad attività.
 Può essere visto come un caso particolare di un problema di trasporto con la seguente struttura:
@@ -138,14 +140,14 @@ Problemi piccoli possono anche essere risolti col simplesso, notiamo tuttavia ch
 
 
 
-# PROBLEMI SU RETE
+## PROBLEMI SU RETE
 
 I problemi su reti hanno molteplici applicazioni come i trasporti, la produzione, distribuzione, localizzazione delle strutture.
 Questo perché le reti sono una rappresentazione visiva e concettuale utili a rappresentare le relazioni tra varie componenti di sistemi anche molto complessi e trovano quindi utilizzo in qualsiasi campo di attività scientifiche, sociali ed economiche.
 
 Vedremo che molti problemi di ottimizzazione su rete sono in realtà dei problemi di programmazione lineare 'speciali'.
 
-
+<div style="page-break-after: always;"></div>
 
 ## CAMMINO MINIMO
 
@@ -178,7 +180,7 @@ Avremo quindi i seguenti vincoli:
 
 Formalmente:
 
-min $\sum\limits_{(i, j) \in E} c_{i, j}x_{i, j}$
+$\min \sum\limits_{(i, j) \in E} c_{i, j}x_{i, j}$
 
 *Vincoli di bilanciamento dei nodi:*
 
@@ -188,14 +190,14 @@ Tradotto in linguaggio naturale quel vincolo stabilisce che la differenza fra **
 
 Come per i problemi di trasporto e assegnamento, anche per il problema del cammino minimo è garantita una soluzione intera applicando il simplesso ed esistono particolari algoritmi specializzati molto efficienti che ne sfruttano le caratteristiche come ad esempio l'algoritmo di ***Dijkstra***.
 
-
+<div style="page-break-after: always;"></div>
 
 ## MASSIMO FLUSSO
 
 Il problema consiste nel determinare il massimo flusso che, entrando da un nodo di origine ***s*** può raggiungere un nodo di destinazione ***d***. Dobbiamo cioè determinare per ogni arco (i, j) la quantità di flusso **x<sub>i, j</sub>** che lo deve attraversare affinché venga massimizzato il flusso totale *f* senza superare la capacità **u<sub>i, j</sub>** degli archi.
 
 Formalmente:
-max *f*
+$\max f$
 
 *Vincoli di bilanciamento dei nodi:*
 
@@ -228,6 +230,8 @@ style s2 fill:#c79cff
 style d1 fill:#c79cff
 style d2 fill:#c79cff
 ```
+
+<div style="page-break-after: always;"></div>
 
 ## FLUSSO A COSTO MINIMO
 
@@ -271,6 +275,8 @@ Anche in questo caso esistono algoritmi specializzati molto efficienti.
 
 In particolare, la caratteristica di questo problema che lo rende più facile da risolvere e ci assicura la sua interezza è la sua matrice dei vincoli che è una matrice ***totalmente uni-modulare (TUM)***.
 
+<div style="page-break-after: always;"></div>
+
 Consideriamo il seguente grafo
 
 ```mermaid
@@ -303,7 +309,7 @@ Le matrici con queste proprietà si chiamano matrici totalmente uni-modulari e c
 Formalmente:
 Dato un problema lineare in forma min{c<sup>T</sup>x: Ax = b, x $\geq$ 0}, se A è una TUM e b $\in$ $\mathbb{Z}_{+}^{m}$, allora tutte le sue soluzioni di base hanno coordinate intere.
 
-
+<div style="page-break-after: always;"></div>
 
 ## PROGRAMMAZIONE LINEARE INTERA
 
@@ -311,7 +317,7 @@ Il simplesso si basa sulla divisibilità delle variabili, che richiede che le va
 
 Quando si richiede che la variabili siano intere si parla di ***programmazione lineare intera***, che può essere anche *binaria* o *mista* a seconda del dominio delle variabili.
 
-<div style="page-break-after: always;"></div>
+
 
 #### COME USARE LE VARIABILI BINARIE
 
@@ -320,6 +326,8 @@ Le variabili binarie hanno un vasto impiego in RO per modellare decisioni boolea
 Investire nell'azienda $i$? $\rightarrow x_i$
 Un camion fa una certa tratta da $i$ a $j$? $\rightarrow x_{i, j}$
 Mutua esclusione $\rightarrow x_i + x_j \leq 1$
+
+
 
 **VINCOLI EITHER-OR**
 Immaginiamo di avere due vincoli e almeno uno di essi deve essere soddisfatto.
@@ -344,17 +352,15 @@ $\begin{cases} h_1(x_1, \space ..., \space x_n) \leq d_1 + My_1 \\ ... \\ h_N(x_
 
 
 **FUNZIONE CON SOLI N POSSIBILI VALORI**
-
 Consideriamo $f(x) = d_1 \lor \space ... \space \lor d_N$.
 Introducendo $N$ variabili binarie $y_i \in \{0,1\}$ possiamo modellare tale funzione come
 
 $\begin{cases} f(x) = \sum\limits_{i=1}^{N}d_iy_i \\
 \sum\limits_{i=1}^{N} y_i = 1 \end{cases}$
 
-
+<div style="page-break-after: always;"></div>
 
 **COSTO FISSO**
-
 Supponiamo di voler intraprendere un'attività $j$ il cui costo sia descritto come segue
 
 $f(x) = \begin{cases} k + cx & se \space x>0 \\ 0 & se \space x = 0 \end{cases}$
@@ -372,7 +378,6 @@ In questo modo se $y = 0 \rightarrow x \leq 0$, ovvero $x = 0$ e $z = 0$, mentre
 
 
 **RAPPRESENTAZIONE BINARIA DI VARIABILI INTERE**
-
 Immaginiamo di avere un problema misto dove tutte le variabili sono binarie ad eccezione di una $x \in [0, u]$.
 Chiamiamo quindi $N$ quel intero tale che $2^N \leq u \leq 2^{N+1}$.
 
@@ -390,7 +395,7 @@ Di conseguenza la rimozione di alcune soluzioni ammissibili *(quelle non intere)
 
 Un qualsiasi problema PLI tuttavia può essere ***rilassato***, ovvero privato dei suoi vincoli di interezza per poter essere valutato col simplesso *(che, a meno che non restituisca una soluzione intera, **NON** darà la soluzione al PLI iniziale, ma ne fornirà un Upper Bound per problemi di massimo o un Lower Bound per problemi di minimo)*.
 
-
+<div style="page-break-after: always;"></div>
 
 ### BRANCH AND BOUND
 
@@ -444,7 +449,7 @@ Generalmente, con una strategia ***best bound first***, nel caso di più sotto p
 
 Una strategia alternativa è il ***depth first***, in cui si svolge il problema in profondità scegliendo di fare branching sul sotto problema creato più recentemente, arrivando presto a soluzioni incombenti. Risulta quindi più efficiente ripartire con l'ottimizzazione *(basta aggiungere un vincolo)* mantenendo meno problemi aperti *(richiedendo così anche meno memoria)*. Rischia però di esplorare completamente sotto alberi con soluzioni scadenti.
 
-<div style="page-break-after: always;"></div>
+
 
 #### B&B PER PIM (VARIABILI INTERE + CONTINUE)
 
@@ -464,7 +469,7 @@ La procedura del B&B per questo tipo di problemi è molto simile a quella vista 
 
 4. Il quarto cambiamento riguarda il fathoming; nei PB ci si fermava solo se la soluzione del problema era intera, nei PIM basta che la soluzione soddisfi le condizioni di interezza per le variabili che non possono essere continue.
 
-
+<div style="page-break-after: always;"></div>
 
 #### CONSIDERAZIONI SUL B&B
 
@@ -640,17 +645,13 @@ Ci si arresta quando $|x_{k+1} - x_k| \le \epsilon$.
 
 **BISEZIONE**
 
-- Vantaggi:
-  Richiede solo il calcolo della derivata prima *(più semplice in termini di computazione)* e **converge sempre**.
-- Svantaggi:
-  È lento.
+- Vantaggi: Richiede solo il calcolo della derivata prima *(più semplice in termini di computazione)* e **converge sempre**.
+- Svantaggi: È lento.
 
 **NEWTON**
 
-- Vantaggi:
-  Ha una velocità di convergenza quadratica.
-- Svantaggi:
-  Richiede anche il calcolo della derivata seconda ma **potrebbe divergere** se il punto iniziale è lontano dall'ottimo.
+- Vantaggi: Ha una velocità di convergenza quadratica.
+- Svantaggi: Richiede anche il calcolo della derivata seconda ma **potrebbe divergere** se il punto iniziale è lontano dall'ottimo.
 
 ### OTTIMIZZAZIONE NON VINCOLATA IN PIÙ VARIABILI
 
@@ -673,11 +674,13 @@ Il generico algoritmo per un metodo line-search consiste nel:
 
 Notiamo che dobbiamo dire esplicitamente all'algoritmo se vogliamo minimizzare o massimizzare *(notare il $\pm$, + per problemi di massimo, - per problemi di minimo)*.
 
+
+
 **STEP SIZE**
 Se vogliamo minimizzare/massimizzare una funzione, dobbiamo prendere il *miglior* step size ad ogni iterazione, quindi poniamo $\frac{\delta f(x_k + \alpha_kd_k)}{\delta \alpha_k} = 0$ ed usare un metodo di ottimizzazione 1D per trovare $\alpha_k$ ottimale.
 Generalmente lo step size diminuisce con l'aumentare delle iterazioni *($\alpha$ inversamente proporzionale a $k$)*.
 
-
+<div style="page-break-after: always;"></div>
 
 ### METODO DEL GRADIENTE
 
@@ -700,7 +703,6 @@ Notiamo che, come nel caso 1D, non dobbiamo specificare all'algoritmo se vogliam
 Ancora, come nel caso 1D, usa più risorse *(più la funzione è complessa, più è complessa da calcolare l'Hessiana)* e se converge, converge molto rapidamente *(nel caso di funzioni quadratiche converge in una sola iterazione)*.
 
 **CRITERIO D'ARRESTO**
-
 Se $|f(x_{k+1})-f(x_k)| < \epsilon_1$	oppure	$||\nabla f(x_{k+1})|| < \epsilon_2$ ci fermiamo.
 
 <div style="page-break-after: always;"></div>
@@ -742,8 +744,9 @@ Le condizioni $\frac{\delta L(x^*, \lambda ^*)}{\delta \lambda_i} = 0$ sono i vi
 Le condizioni $\frac{\delta L(x^*, \lambda^*)}{\delta x_i} = 0$ possono essere riscritte come $\frac{\delta f(x^*)}{\delta x_i} + \sum \lambda_i \frac{\delta g_i(x^*)}{\delta x_i} = 0$	$\rightarrow$	$\frac{\delta f(x^*)}{\delta x_i} =- \sum \lambda_i \frac{\delta g_i(x^*)}{\delta x_i}$, ovvero $\nabla L(x^*, \lambda^*) = \nabla f(x^*) + \sum \lambda_i \nabla g_i(x^*) = 0$	$\rightarrow$	$\nabla f(x^*) = - \sum \lambda_i \nabla g_i(x^*)$.
 Stiamo praticamente dicendo che, nel punto di ottimo $x^*$, il gradiente della funzione è combinazione lineare dei gradienti dei vincoli. Questo perché $\nabla f(x^*)$ è ortogonale al piano tangente al vincolo nel punto ottimo $x^*$. Generalmente $\nabla h(x)$ è sempre ortogonale a tale piano, quindi nel punto ottimo $\nabla f(x^*)$ e $\nabla h(x^*)$ sono collineari.
 
-**LE CONDIZIONI DI SECONDO ORDINE**
+<div style="page-break-after: always;"></div>
 
+**LE CONDIZIONI DI SECONDO ORDINE**
 Come nel caso dell'ottimizzazione non vincolata, anche qui abbiamo delle condizioni sufficienti per garantire che i punti stazionari della Lagrangiana siano dei punti di massimo/minimo.
 
 Consideriamo la matrice dei vincoli Jacobiana $J$ e l'insieme de vettori $y$ tali che $J(x^*) \space y = 0$, che ci porta al sistema
@@ -775,6 +778,8 @@ $\begin{cases}
 g_i(x_1, x_2) = 0 & Vincoli \space di \space uguaglianza / ammissibilita' \space primale\\
 h_i(x_1, x_2) \leq 0 & Vincoli \space di \space disuguaglianza / ammissibilita' \space primale \\ \\
 \mu_i \geq 0 & Condizione \space di \space non \space negativita' / ammissibilita' \space duale\end{cases}$
+
+<div style="page-break-after: always;"></div>
 
 ## METAEURISTICHE
 
@@ -809,7 +814,7 @@ Possiamo usare una procedura euristica locale che generi una sequenza di soluzio
 Ovviamente la soluzione ottenuta non è detto che sia ottima!
 Può succedere che l'algoritmo rimanga intrappolato in un ottimo locale, per questo abbiamo bisogno di una metaeuristica.
 
-
+<div style="page-break-after: always;"></div>
 
 ### COSA SONO LE METAEURISTICHE
 
@@ -830,7 +835,7 @@ Le metaeuristiche che vedremo sono tre:
 - **Algoritmi Genetici**.
   Ispirati alla genetica e all'evoluzione.
 
-<div style="page-break-after: always;"></div>
+
 
 ### TABU SEARCH
 
@@ -920,6 +925,8 @@ Le performance degli AG dipendono dallo ***spazio di ricerca***; uno spazio molt
 
 **POPOLAZIONE**
 Una popolazione è un multiset di soluzioni, ovvero un insieme in cui è accettabile la presenza di più copie di un elemento. La sua dimensione rimane quasi sempre costante nelle diverse generazioni. Il numero di individui diversi al suo interno rappresenta la sua ***diversità***.
+
+<div style="page-break-after: always;"></div>
 
 **OPERATORI**
 
