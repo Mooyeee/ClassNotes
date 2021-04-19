@@ -603,7 +603,7 @@ Applicando la proprietà della reversibilità, otteniamo che la trasformata di u
 
 ## SINC
 
-La trasformata di una finestra è una funzione molto importante è si chiama **Sinc** ed è definita come $H(f) = AT \frac{\sin(\pi Tf)}{\pi Tf}$.
+La trasformata di una finestra è una funzione molto importante: si chiama **Sinc** ed è definita come $H(f) = AT \frac{\sin(\pi Tf)}{\pi Tf}$.
 
 È una funzione che ha valore massimo in 0, mentre lontano dallo 0 oscilla.
 
