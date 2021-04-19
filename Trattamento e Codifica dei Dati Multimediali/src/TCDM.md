@@ -1203,7 +1203,7 @@ Notiamo che, non essendoci la parte ricorsiva, non possiamo applicare la lineari
 $y(n) = b_0x(n) -a_1y(n-1) - a_2 y(n-2)$
 *ricordiamo che $b_0$ è sempre $\neq$ 0 per avere un sistema che risponda ad uno stimolo*.
 
-Essendo il sistema ricorsivo, quindi come memoria infinita, è un sistema **IIR**.
+Essendo il sistema ricorsivo, quindi con memoria infinita, è un sistema **IIR**.
 Avendo una risposta infinita dunque non possiamo rappresentare il sistema attraverso la descrizione della risposta all'impulso $h(n)$ come prima *(o per lo meno non in maniera semplice come accade con i sistemi FIR)*.
 
 Graficamente possiamo rappresentare tale sistema come
