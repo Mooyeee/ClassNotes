@@ -1164,7 +1164,7 @@ Ovviamente, trattandosi di sistemi **lineari**, invertendoli il risultato non ca
 
 <img src=".\img\031.png" alt="InverseDirect" style="zoom:60%;" />
 
-Notiamo però che, a differenza di prima, la sequenza $\omega(n)$ che entra nel modulo di ritardo della parte ricorsiva è **la stessa** che entra anche nel modulo di ritardo della parte non ricorsiva; questo significa che, invece che avre due moduli di ritardo, possiamo utilizzarne uno solo in condivisione, rendendo il sistema più efficiente in termini di memoria.
+Notiamo però che, a differenza di prima, la sequenza $\omega(n)$ che entra nel modulo di ritardo della parte ricorsiva è **la stessa** che entra anche nel modulo di ritardo della parte non ricorsiva; questo significa che, invece che avere due moduli di ritardo, possiamo utilizzarne uno solo in condivisione, rendendo il sistema più efficiente in termini di memoria.
 
 <img src=".\img\032.png" alt="SecondForm" style="zoom:60%;" />
 
