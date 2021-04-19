@@ -1111,7 +1111,7 @@ La differenza principale tra sistemi ricorsivi e non è che l'output dei sistemi
 
 ## RISPOSTA ALL'IMPULSO - FIR & IIR
 
-Abbiamo visto in passato come il comportamento di un sistema LTI possa essere descritto dalla rispsota del sistema all'impulso tramite la convoluzione.
+Abbiamo visto in passato come il comportamento di un sistema LTI possa essere descritto dalla risposta del sistema all'impulso tramite la convoluzione.
 
 In generale, abbiamo che $y(n) = x(n) * h(n) = \sum\limits_{i=-\infty}^{+\infty} h(i)x(n-i)$.
 
