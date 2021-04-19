@@ -43,7 +43,7 @@ I segnali possono essere classificati in base al loro **dominio** e **codominio*
 - C = $\mathbb{K}$: segnale discreto nelle ampiezze.
   
 
-Possiamo classificare i segnai anche in:
+Possiamo classificare i segnali anche in:
 
 - **REALI**: Segnali che assumono solo valori reali.
 - **COMPLESSI**: Segnali che assumono valori complessi *(parte reale + parte immaginaria oppure modulo + fase)*.
