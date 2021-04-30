@@ -41,9 +41,8 @@ I segnali possono essere classificati in base al loro **dominio** e **codominio*
 
 - C = $\mathbb{R}$: segnale continuo nelle ampiezze.
 - C = $\mathbb{K}$: segnale discreto nelle ampiezze.
-  
 
-Possiamo classificare i segnali anche in:
+Possiamo classificare i segnai anche in:
 
 - **REALI**: Segnali che assumono solo valori reali.
 - **COMPLESSI**: Segnali che assumono valori complessi *(parte reale + parte immaginaria oppure modulo + fase)*.
@@ -98,7 +97,6 @@ In generale, il valore assunto da un segnale si chiama **AMPIEZZA** *(variabile 
 
 - Segnale continuo $\mu = \lim\limits_{T \to \infty} \frac{1}{T} \int\limits_{-\frac{T}{2}}^{\frac{T}{2}} x(t)	\space dt$ 	da $- \infty$ a $+\infty$						$\mu = \frac{1}{T_1-T_0} \int\limits_{T_0}^{T_1} x(t)	\space dt$ 	da $T_0$ a $T_1$
 - Segnale discreto e finito $\mu = \frac{1}{N} \sum\limits_{i=0}^{N-1} x_i$
-  
 
 **DEVIAZIONE STANDARD E VARIANZA**
 Deviazione standard $\sigma$ o varianza $\sigma^2$ forniscono informazioni aggiuntive per caratterizzare il segnale: la deviazione standard rappresenta quanto lontano dal valor medio il segnale può fluttuare, mentre la varianza rappresenta la **potenza** di questa fluttuazione.
@@ -603,7 +601,7 @@ Applicando la proprietà della reversibilità, otteniamo che la trasformata di u
 
 ## SINC
 
-La trasformata di una finestra è una funzione molto importante: si chiama **Sinc** ed è definita come $H(f) = AT \frac{\sin(\pi Tf)}{\pi Tf}$.
+La trasformata di una finestra è una funzione molto importante è si chiama **Sinc** ed è definita come $H(f) = AT \frac{\sin(\pi Tf)}{\pi Tf}$.
 
 È una funzione che ha valore massimo in 0, mentre lontano dallo 0 oscilla.
 
@@ -1111,7 +1109,7 @@ La differenza principale tra sistemi ricorsivi e non è che l'output dei sistemi
 
 ## RISPOSTA ALL'IMPULSO - FIR & IIR
 
-Abbiamo visto in passato come il comportamento di un sistema LTI possa essere descritto dalla risposta del sistema all'impulso tramite la convoluzione.
+Abbiamo visto in passato come il comportamento di un sistema LTI possa essere descritto dalla rispsota del sistema all'impulso tramite la convoluzione.
 
 In generale, abbiamo che $y(n) = x(n) * h(n) = \sum\limits_{i=-\infty}^{+\infty} h(i)x(n-i)$.
 
@@ -1164,7 +1162,7 @@ Ovviamente, trattandosi di sistemi **lineari**, invertendoli il risultato non ca
 
 <img src=".\img\031.png" alt="InverseDirect" style="zoom:60%;" />
 
-Notiamo però che, a differenza di prima, la sequenza $\omega(n)$ che entra nel modulo di ritardo della parte ricorsiva è **la stessa** che entra anche nel modulo di ritardo della parte non ricorsiva; questo significa che, invece che avere due moduli di ritardo, possiamo utilizzarne uno solo in condivisione, rendendo il sistema più efficiente in termini di memoria.
+Notiamo però che, a differenza di prima, la sequenza $\omega(n)$ che entra nel modulo di ritardo della parte ricorsiva è **la stessa** che entra anche nel modulo di ritardo della parte non ricorsiva; questo significa che, invece che avre due moduli di ritardo, possiamo utilizzarne uno solo in condivisione, rendendo il sistema più efficiente in termini di memoria.
 
 <img src=".\img\032.png" alt="SecondForm" style="zoom:60%;" />
 
@@ -1203,7 +1201,7 @@ Notiamo che, non essendoci la parte ricorsiva, non possiamo applicare la lineari
 $y(n) = b_0x(n) -a_1y(n-1) - a_2 y(n-2)$
 *ricordiamo che $b_0$ è sempre $\neq$ 0 per avere un sistema che risponda ad uno stimolo*.
 
-Essendo il sistema ricorsivo, quindi con memoria infinita, è un sistema **IIR**.
+Essendo il sistema ricorsivo, quindi come memoria infinita, è un sistema **IIR**.
 Avendo una risposta infinita dunque non possiamo rappresentare il sistema attraverso la descrizione della risposta all'impulso $h(n)$ come prima *(o per lo meno non in maniera semplice come accade con i sistemi FIR)*.
 
 Graficamente possiamo rappresentare tale sistema come
@@ -1247,7 +1245,7 @@ A questo punto risulta semplice disegnare la rappresentazione in prima forma dir
 
 La trasformata Zeta rappresenta il caso discreto della **trasformata di Laplace** e permette di studiare i sistemi *LTI*.
 
-In particolare, permette di studiare sistemi lineari per i quali la trasformata di Fourier non è definita; la DTFT difatti, quando esiste, permette di descrivere solo i comportamenti dei sistemi *scarichi*.
+In particolare, permette di studiare sistemi lineari per i quali la trasformata di Fourier non è definita; la DTFT difatti, quando esiste, permette per descrivere solo i comportamenti dei sistemi *scarichi*.
 
 La trasformata Zeta permette quindi di analizzare una classe più ampia della DTFT e permette di analizzare sistemi LTI anche in presenza di *condizioni iniziali* non nulle.
 Permette inoltre di mettere immediatamente in luce alcune caratteristiche dei sistemi LTI come la ***causalità*** e la ***stabilità***.
@@ -1511,3 +1509,153 @@ Un sistema LTI è fisicamente realizzabile se la sua risposta all'impulso $h(n)$
 - **POLI**: devono essere posizionati in prossimità del cerchio di raggio unitario *(ma non su di esso, altrimenti il sistema non sarebbe più stabile, in particolare tutti i poli devono cadere all'interno del cerchio di raggio unitario per far si che la risposta sia causale)* nelle pulsazioni complesse $z$ corrispondenti alle componenti armoniche nel segnale d'ingresso $x(n)$ da **enfatizzare**.
 - **ZERI**: devono essere posizionati in prossimità delle pulsazioni complesse $z$ corrispondenti alle componenti armoniche nel segnale d'ingresso $x(n)$ da **attenuare**.
   Gli zeri possono essere posizionati in qualunque punto del piano complesso.
+
+<div style="page-break-after: always;"></div>
+
+## SEGNALI IMMAGINE
+
+Cerchiamo, prima di capire come sono fatti i segnali immagine, come li percepiamo fisicamente e in particolare come percepiamo il **colore**.
+**COLORE**: un effetto dell'interazione di un'onda elettromagnetica con il nostro sistema visivo.
+
+Le **onde elettromagnetiche** sono caratterizzate da una ***lunghezza d'onda $\lambda$*** *(che è equivalente a quello che abbiamo chiamato fino ad ora **periodo**)* e da una ***frequenza $\nu$*** che sono inversamente proporzionali $\lambda \propto 1/\nu$.
+Inoltre, le onde elettromagnetiche sono anche caratterizzate da un'***intensità***.
+
+
+
+**SPETTRO ELETTROMAGNETICO**
+La maggior parte dello spettro elettromagnetico è invisibile ai nostri occhi; quello che noi riusciamo a percepire è difatti solo una piccola parte dell'intero spettro. In particolare lo spettro visibile va da **380nm** a **760nm** *(in termini di lunghezza d'onda)*.
+Le frequenze più alte appartengono alla **luce ultravioletta**, ai **raggi x** e **gamma**, mentre le frequenze più basse appartengono alle **radiazioni infrarosse**.
+
+![043](img/043.png)
+
+
+
+**L'OCCHIO E I SUOI SENSORI**
+<img src="img/044.png" alt="044" style="zoom:70%;" align="left" />
+
+Cerchiamo adesso di capire com'è fatto l'organo sensibile a queste onde elettromagnetiche; c'è una prima parte che si occupa della *focalizzazione* dell'immagine, il **cristallino** che, appunto, focalizza l'immagine sulla **retina** come una lente.
+Sulla **retina** sono poi presenti due tipi di strutture che si occupano di percepire effettivamente il segnale:
+
+- **CONI**: Si occupano di produrre un segnale per i livelli di luminosità più alti. Esistono tre tipi di coni, che sia attivano in funzione della lunghezza d'onda del segnale:
+  	**L - Long Waves**: Sono i coni più sensibili al rosso.
+  	**M - Middle Waves**: Sono i coni più sensibili al verde.
+  	**S - Short Waves**: Sono i coni più sensibili al blu.
+  I coni si attivano in quella che si chiama **visione fotopica**. Sono più legati quindi al colore.
+- **BASTONCELLI**: Si occupano di produrre un segnale quando c'è poca luce. Seppur rispondano a tutte le lunghezze d'onda, rappresentano dei toni di grigio, poiché sono più legati all'intensità dell'immagine *(**visione scotopica**)*.
+
+
+
+**FOTORECETTORI**
+Abbiamo quindi che **coni** e **bastoncelli** convertono la luce *(onde elettromagnetiche)* in uno stimolo elettrico.
+In particolare, nell'occhio sono presenti circa *130 milioni* di bastoncelli e circa *6.5 milioni* di coni; difatti il sistema visivo umano è molto più sensibile alle variazioni di **luminanza** *(intensità)* piuttosto che alle variazioni di **crominanza** *(definita da tinta e saturazione)*.
+
+
+
+**RISPOSTA DEI CONI A DIVERSE LUNGHEZZE D'ONDA**
+
+<img src="img/045.png" alt="045" style="zoom:50%;" align="left" />Possiamo osservare nel grafico la risposta ai vari colori dei coni.
+Notiamo che l'occhio è molto più sensibile alla luce nel centro dello spettro visibile.
+
+Solitamente la luce che vediamo non corrisponde ad un'unica lunghezza d'onda, ma ad una combinazione di diverse lunghezze d'onda.
+Ad esempio, in presenza di una radiazione luminosa a 470nm saranno attivati maggiormente i coni del blu, mentre quelli del rosso e del verde saranno poco attivi, facendoci percepire una luce celeste.
+
+
+
+**SEGNALI REALI**
+<img src="img/046.png" alt="046" style="zoom:50%;" align="right" />Per la creazione di un segnale immagine abbiamo innanzitutto bisogno di una sorgente luminosa, caratterizzata da una sua **emissione in funzione della lunghezza d'onda $E(\lambda)$**, che rappresenta l'ampiezza emessa dalla sorgente in funzione di una certa lunghezza d'onda $\lambda$. 
+Successivamente le onde elettromagnetiche emesse dalla sorgente interagiscono con la scena; gli oggetti facenti parte della scena sono anch'essi caratterizzati da una funzione di $\lambda$, ovvero **$R(\lambda)$** *(riflettanza)*, poiché essi assorbono e riflettono le onde elettromagnetiche; a seconda di come assorbono e riflettono il colore percepito sarà differente.
+Infine, i nostri recettori assorbono anch'essi una funzione $S(\lambda)$.
+
+La maggior parte delle sorgenti luminose tuttavia produce dei contributi di luce su più lunghezze d'onda, dunque avremmo una risposta nel nostro sistema percettivo per ogni tipo di cono:
+$L = \int E(\lambda)R(\lambda)l(\lambda) d\lambda$			$M = \int E(\lambda)R(\lambda)m(\lambda) d\lambda$			$S = \int E(\lambda)R(\lambda)s(\lambda) d\lambda$
+
+Notiamo che essendo tutte e tre le funzioni in $\lambda$, integrando ci rimangono solo degli scalari che rappresentano l'area del prodotto di tali funzioni. Notiamo inoltre che si può evincere dalla formula che a parità di oggetto *(e quindi di $R(\lambda)$)* e a parità di occhio *(e quindi dei coni)*, se cambiamo la sorgente luminosa $E(\lambda)$, otterremmo triplette diverse, ovvero potremmo percepire colori diversi.
+Allo stesso modo potremmo avere una coppia $E(\lambda)$ $R(\lambda)$ tale per cui oggetti di colore diverso si percepiscano come dello stesso colore. Questo perché l'integrale è un'area: allo stesso modo nel mondo geometrico potremmo avere un cerchio e un rettangolo con la stessa area.
+
+Avendo quindi solo tre scalari, significa che i coni proiettano la risposta allo stimolo di un oggetto illuminato in uno **spazio a tre dimensioni**, quindi **ogni colore** *(percepito)* può essere descritto da **tre valori**.
+
+**IMPORTANTE**: La proprietà intrinseca di un oggetto è racchiusa in $R(\lambda)$ che ci dice come risponde l'oggetto ad ogni $\lambda$, ammesso che la fonte luminosa riesca a fornire le lunghezze d'onda necessarie all'oggetto per rispondere.
+
+<div style="page-break-after: always;"></div>
+
+## DALL'OCCHIO ALLA CAMERA DIGITALE
+
+Per poter acquisire delle immagini dunque si deve *emulare* la risposta agli stimoli del nostro sistema percettivo; questo viene fatto utilizzando dei **filtri** che abbiano una risposta al rosso, verde e blu simile a quella dell'occhio umano. Tuttavia, i filtri non riescono a ricreare esattamente la risposta umana e in quel caso si utilizzano delle tecniche di post processing per far apparire l'immagine il più reale possibile.
+
+Inoltre, l'occhio umano compensa automaticamente il colore della luce *(**adattamento cromatico**)*, ovvero riesce a bilanciare i contributi della scena *eliminando* il colore dell'illuminante; questa è una cosa che una camera non può fare in automatico e quindi quando acquisisce la scena si porta dietro l'effetto dominante del colore della luce. Questo effetto viene mitigato con un effetto in post processing chiamato ***white balancing***.
+
+
+
+**FILTRI COLORE**
+Un'altra cosa che è progettata in base ai nostri sistemi percettivi è la disposizione dei filtri colore; in particolare la quantità di filtri rossi e blu è la metà di quella dei filtri verdi. Questo perché la risposta dei coni sensibili al verde è molto simile alla risposta dei bastoncelli, che abbiamo detto essere molti di più dei coni.
+
+<img src="img/047.png" alt="047" style="zoom:50%;" />
+
+Visto che abbiamo, per ogni posizione, solo un tipo di filtro, per arrivare poi all'immagine finale dobbiamo fare anche un'operazione di **interpolazione**, ovvero dobbiamo *stimare* il valore dei pixel mancanti di un dato canale analizzando quelli vicini ad esso *(per esempio facendone una media)*.
+
+<img src="img/048.png" alt="048" style="zoom:45%;" align="right" />Questa operazione a volte porta a degli artefatti *(di tipo cromatico)*, in particolare sui bordi, ovvero in quelle zone dove viene a mancare la ***correlazione*** tra i punti vicini.
+
+
+
+
+
+**SINTESI**
+<img src="img/049.png" alt="049" style="zoom:50%;" align="left" />Quello che l'occhio *(e le camere)* fanno è chiamata **sintesi additiva**, ovvero sommano i contributi dei tre canali. Esiste anche la **sintesi sottrattiva**, che lavora coi colori complementari rispetto a quelli della sintesi additiva.
+Un esempio di sintesi sottrattiva sono le stampanti *(anche se usano anche il nero per una questione di economicità)*.
+
+
+
+<img src="img/050.png" alt="050" style="zoom:75%;" align="right" />
+Una superficie illuminata da una **luce bianca** *($E(\lambda)$ costante, l'esempio più vicino è il sole, anche se la sua luce presenta una piccola parte azzurra)* appare gialla, poiché assorbe le radiazioni blu e lascia solo quelle verdi e rosse, apparendo quindi gialla secondo la sintesi additiva.
+Considerando il fenomeno dalla parte della radiazione assorbita, notiamo che le superfici colorate **sottraggono** alla nostra visione una parte dello spettro visibile.
+
+
+
+**ALCUNI MODELLI COLORE**
+
+- **RGB** - Quello che noi percepiamo, utilizzato anche da camere digitali.
+- **HSB** *(Hue Saturation Brightness)* - Corrisponde alla percezione umana del colore.
+  Separa l'intensità dalla tinta e dalla saturazione, in quanto abbiamo detto che il nostro occhio è molto più sensibile a variazioni di intensità piuttosto che di crominanza.
+  Simili all'HSB sono anche l'**HSV** *(Value)* e l'**HLS** *(Lightness)*.
+- **CMYK** - Sistema utilizzato per la sintesi sottrattiva.
+- **YIQ / YUV** - formati utilizzati nei segnali TV.
+- **YCbCr** - usato per i video digitali.
+
+L'obiettivo principale di uno spazio colore è quello di scorrelare il più possibile le informazioni, in modo da eliminare le ridondanze *(e ridurre quindi l'ammontare dei dati necessari)* e da mettere in evidenza i singoli contenuti informativi.
+
+Questo è utile anche perché l'intensità contiene anche le informazioni ad alta frequenza di un'immagine, quindi contiene tutti i dettagli di essa; se andassimo a sotto-campionare quella componente perderemmo dei dati importanti, mentre se andiamo a sotto-campionare le componenti relative al colore la perdita è sicuramente minore.
+
+
+
+**FORMATI GRAFICI**
+Il formato grafico rappresenta la **tecnologia** utilizzata per **memorizzare l'immagine**.
+Esistono due tipologie di immagini:
+
+- **RASTER**: immagini definite su una griglia di elementi *(pixel = picture element)* e con un certo numero di bit per pixel *(bpp)*.
+- **VETTORIALI**: immagini definite da formule matematiche, enti geometrici. Possono essere compresse molto senza perdita di informazioni e scalate all'infinito senza perdite, ma immagini di questo tipo molto complesse richiedono operazioni complesse per essere visualizzate.
+
+Esistono anche delle immagini che hanno sia una componente scalare che una vettoriale e vengono dette immagini in **meta formato** *(ad esempio aggiungendo delle date e/o testi all'immagine)*.
+
+<div style="page-break-after: always;"></div>
+
+## IMMAGINI RASTER
+
+Nelle immagini raster, la rappresentazione accurata di un'immagine dipende
+
+- Dal numero di pixel *(**CAMPIONAMENTO**)*
+  **ATTENZIONE**: questo parametro *NON* è la risoluzione dell'immagine.
+- Dalla codifica del pixel *(profondità del colore/livelli di grigio)* *(**QUANTIZZAZIONE**)*
+
+Al crescere del numero di pixel e della profondità del colore, aumentano anche le dimensioni dell'immagine e diventa necessaria la *compressione*.
+
+
+
+**RISOLUZIONE**
+Le immagini non hanno una dimensione *fisica*; le dimensioni sono in pixel.
+Le dimensioni fisiche di un'immagine dipendono dal dispositivo di riproduzione/acquisizione. Le informazioni su questa dimensione sono espresse dalla **risoluzione** in **ppi** *(pixel per inch)*, che rappresenta la quantità di pixel contenuti in un pollice.
+In caso di stampa si parla di **dpi** *(dot per inches)*.
+Più la risoluzione è alta, più il singolo pixel è piccolo.
+La risoluzione **NON** incide sul peso dell'immagine, essa è definita esclusivamente dal numero di pixel e dal numero di bit per pixel.
+
+Avendo un'immagine già acquisita, per sapere la sua dimensione fisica, devo dividere i pixel per la sua risoluzione in ppi *(o per la risoluzione scelta per avere una certa dimensione fisica stampata)*.
+
