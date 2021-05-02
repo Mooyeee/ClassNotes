@@ -1657,5 +1657,83 @@ In caso di stampa si parla di **dpi** *(dot per inches)*.
 Più la risoluzione è alta, più il singolo pixel è piccolo.
 La risoluzione **NON** incide sul peso dell'immagine, essa è definita esclusivamente dal numero di pixel e dal numero di bit per pixel.
 
-Avendo un'immagine già acquisita, per sapere la sua dimensione fisica, devo dividere i pixel per la sua risoluzione in ppi *(o per la risoluzione scelta per avere una certa dimensione fisica stampata)*.
+<img src="img/051.png" alt="051" style="zoom:50%;" align="left" />Avendo un'immagine già acquisita, per sapere la sua dimensione fisica, devo dividere i pixel per la sua risoluzione in ppi *(o per la risoluzione scelta per avere una certa dimensione fisica stampata)*.
+Se volessimo diminuire la dimensione fisica di un'immagine potremmo ridurre il numero di pixel e quindi *sotto-campionare*, ma questo porterebbe ad una peggiore qualità dell'immagine, oppure potremmo modificare la risoluzione dell'immagine, modificando così la dimensione fisica del pixel, senza toccare il numero di pixel e/o il numero di bit per pixel *(l'immagine quindi avrà lo stesso peso e qualità di prima, non la modifichiamo)*
 
+
+
+**STAMPANTI**
+Le stampanti in commercio dichiarano di lavorare a 1440, 2880 o più **dpi** *(dots per inch)*; questo risulta strano se consideriamo che una stampa è ottimale a 300 **ppi**; il motivo è che i dpi dichiarati dalle stampanti sono il numero di *gocce di inchiostro* che la stampante riesce a inserire in un pollice, ma per "costruire" un pixel ci possono volere più gocce.
+
+
+
+**ACQUISIZIONE**
+A che risoluzione devo acquisire quindi un'immagine? Dipende da *cosa sto acquisendo* e da *cosa devo farci*.
+**Esempio**: se devo acquisire una foto da una diapositiva di 24x36 mm, da stampare a 10x15 cm a 300 ppi devo:
+
+- Calcolare il fattore moltiplicativo *(fattore di ingrandimento)*, ovvero il rapporto tra il lato dell'immagine di destinazione *(15 cm)* e il corrispondente lato dell'immagine fisica *(36 mm)*
+- Moltiplicare tale fattore per la risoluzione desiderata *(300 ppi)*
+
+Quindi nel nostro caso 150 mm / 36 mm * 300 ppi = **1250 ppi**.
+
+**E se l'immagine è acquisita con una camera?**
+Se sappiamo già la destinazione di utilizzo dell'immagine, possiamo stabilire la qualità di acquisizione in fase di scatto; ad esempio se vogliamo visualizzare l'immagine a 10x15cm su schermo *(quindi con 72 dpi)* avremmo 10 cm / 2.54 cm/inch * 72 pixel/inch = **284 pixel**.
+**NOTA**: generalmente sono considerate ottime le risoluzioni di 300 dpi per la stampa e 72 dpi per la visualizzazione su schermo. Inoltre, un pollice corrisponde a circa 2.54 cm.
+
+## QUANTIZZAZIONE CROMATICA
+
+Abbiamo già visto come il colore sia esprimibile come combinazione di colori primari *(RGB, CMYK)* e come un altro parametro importante delle immagini digitali è la profondità del colore, ovvero il nr di bit per pixel.
+Alcune profondità sono ad esempio *1 bit (immagine bianco e nero)*, *8 bit (livelli di grigio)*, *24 bit (8 bit per canale, 3x8=24, immagine true color)*.
+
+
+
+**PALETTE**
+<img src="img/052.png" alt="052" style="zoom:50%;" align="right" />Detto questo, si potrebbe pensare che per ottenere delle immagini a colori servano quindi per forza 3 canali; in realtà è possibile creare delle immagini a colori anche con solo 8 bit definendo una *palette* *(detta anche Look-Up Table o LUT)* di 2<sup>b</sup> possibili colori.
+I colori possono essere predefiniti ma possono anche essere scelti dall'utente.
+
+Questo genere di quantizzazione cromatica è molto utile ad esempio nell'utilizzo delle GIF che permettono di creare delle animazioni, poiché gestire un colore molto minore rispetto al true color pesa molto di meno computazionalmente.
+Un altro caso d'uso è la creazione di un logo, che generalmente contiene solo pochi colori che evochino certi sentimenti nel pubblico; ha senso usare solo il numero di bit necessari per salvare quei colori.
+
+
+
+**OCCUPAZIONE DI MEMORIA**
+Ovviamente, maggiore è la profondità colore, maggiore sarà il numero di bit necessari a memorizzare una data immagine. In particolare abbiamo detto che sul peso in memoria di un'immagine influiscono sia il numero di pixel, sia il numero di bit per pixel, come possiamo osservare anche nella tabella sottostante dove sotto le voci relative al colore è riportato il peso in Byte dell'immagine.
+
+| RISOLUZIONE |   PIXEL   |   TRUE COLOR    |   GRAY SCALE    |   LINE ART    |
+| :---------: | :-------: | :-------------: | :-------------: | :-----------: |
+|   75 ppi    |  450x300  |  405.000 Bytes  |  135.000 Bytes  | 16.875 Bytes  |
+|   150 ppi   |  900x600  | 1.620.000 Bytes |  540.000 Bytes  | 67.500 Bytes  |
+|   300 ppi   | 1800x1200 | 6.480.000 Bytes | 2.160.000 Bytes | 270.000 Bytes |
+
+
+
+**DYNAMIC RANGE & CONTRASTO**
+Il *dynamic range* di un'immagine rappresenta l'intervallo fra l'ampiezza massima e minima di un segnale ed è quindi legato al numero di bit impiegato; un'immagine ben contrastata utilizza tutti i livelli disponibili.
+I due picchi in 0 e 250 dell'immagine ben contrastata indicano anche la presenza di una saturazione.
+
+<img src="img/053.png" alt="053" style="zoom:100%;" />
+
+L'occhio umano può distinguere valori di luminosità massima/minima con un rapporto di circa 10.000:1, tuttavia, le immagini riprodotte su schermo o carta hanno un range dinamico di solo 256:1 *(perché ho solo 8 bit)*; questo comporta la perdita di dettagli nelle zone d'ombra o nelle zone luminose.
+
+<img src="img/054.png" alt="054" style="zoom:50%;" align="right" />Un esempio sono le immagini mediche, che spesso utilizzano 16 bit per la profondità e che, se visualizzate su uno schermo *'comune'* da 8 bit, risultano nere, senza informazioni poiché i 65.535 possibili livelli vengono redistribuiti sui 256 del monitor.
+Notiamo però che l'immagine in questione non utilizza benissimo il quantizzatore a disposizione, quindi potremmo prendere solo i 4096 valori effettivamente utilizzati *(che sono comunque più di 256)* e ridistribuire quelli sugli 8 bit del monitor.
+Notiamo anche che l'immagine è ancora poco contrastata per via della striscia nera all'inizio: avrebbe senso tagliare fuori quella parte del segnale e distribuire nuovamente l'immagine per avere un risultato ancora migliore.
+
+
+
+**TONE MAPPING**
+Abbiamo detto che per visualizzare un'immagine ad altro range dinamico su uno schermo a range inferiore, bisogna convertire tale range in quello inferiore. Il processo di ridistribuzione del range più ampio in uno inferiore è detto *tone mapping*.
+Una possibile soluzione consiste nel produrre multiple immagini della stessa scena a basso range dinamico ma utilizzando diverse esposizioni, in modo da ottenere informazioni più accurate per ogni livello di intensità per poi fonderle in un'unica immagine ad alto range dinamico. Queste tecniche sono utilizzate nelle tecnologie HDR di alcune camere.
+
+
+
+**DITHERING**
+<img src="img/055.png" alt="055" style="zoom:50%;" align="left" />Esistono degli *stratagemmi* percettivi per simulare di avere un maggior range dinamico rispetto a quello realmente disponibile; uno di questi è il *dithering*, che viene utilizzato ad esempio per stampare un'immagine in toni di grigio *(8 bit)* con un solo colore nero *(1 bit)* dividendo i pixel in blocchi, ognuno dei quali viene riempito con dei pattern per simulare i livelli di grigio.
+L'idea di base è quella di suddividere ogni pixel in un pattern più grande in modo che l'intensità sia data dal numero di punti stampati in quel pattern. Ovviamente le dimensioni dell'immagini aumenteranno in questo modo.
+Questa tecnica viene utilizzata anche nelle immagini a colori simulando dei colori non presenti nella LUT mettendo vicino dei colori diversi.
+Il dithering può inoltre essere utilizzato anche per eliminare degli artefatti di quantizzazione regolari e quindi fastidiosi, aumentando il rumore effettivo del segnale ma rimuovendone la regolarità e rendendolo quindi dal punto di vista percettivo meno sgradevole.
+
+
+
+**HALF TONE PRINTING**
+<img src="img/056.png" alt="056" style="zoom:40%;" align="left" />Un altro processo simile è l'*half tone printing* che consiste nel stampare dei cerchietti di inchiostro nero di dimensioni variabili per simulare una sfumatura.
