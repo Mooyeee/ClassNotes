@@ -1737,3 +1737,157 @@ Il dithering può inoltre essere utilizzato anche per eliminare degli artefatti 
 
 **HALF TONE PRINTING**
 <img src="img/056.png" alt="056" style="zoom:40%;" align="left" />Un altro processo simile è l'*half tone printing* che consiste nel stampare dei cerchietti di inchiostro nero di dimensioni variabili per simulare una sfumatura.
+
+
+
+<div style="page-break-after: always;"></div>
+
+## SEGNALI AUDIO
+
+Il segnale audio, così come la luce, è un fenomeno ondulatorio ma macroscopico rispetto a quest'ultima.
+Dunque è un **onda** *(che descrive la variazione di pressione in un certo punto)* ed è detta ***longitudinale*** poiché la sorgente sonora vibra nella stessa direzione di propagazione del suono.
+
+Quando consideriamo un segnale *sinusoidale* con un'unica frequenza, periodico ed infinito, stiamo parlando di un **suono puro** o *elementare* o *tono*.
+La maggior parte dei suoni in natura sono tuttavia caratterizzati da forme d'onda diverse da quelle sinusoidali che però generalmente possono essere descritte come combinazione di suoni elementari.
+Dunque, un segnale sonoro è composto da diverse componenti elementari descritte da:
+
+- Ampiezza $A$: si misura rispetto al valore medio della pressione dell'aria ed è espressa in dB.
+- Periodo $T$: durata di ogni ciclo in secondi.
+- Frequenza $f$: inverso del periodo, velocità con cui i valori di pressione fluttuano ciclicamente.
+
+Ovviamente, per analizzare meglio questi parametri è utile osservare il segnale nel dominio delle frequenze. Inoltre, a questi parametri possono essere assegnati delle **grandezze percettive** che descrivono il suono:
+
+|                            Fisico                            | Percettivo |       Rappresentazione        |
+| :----------------------------------------------------------: | :--------: | :---------------------------: |
+|                          Frequenza                           |  Altezza   | Tonalità *(bassi, medi alti)* |
+|                           Ampiezza                           | Intensità  |            Volume             |
+| Spettro<br />*(insieme di tutte le frequenze<br />che caratterizzano il suono)* |   Timbro   |      Tipologia strumento      |
+
+
+
+**FREQUENZA**
+La frequenza fondamentale è la responsabile dell'**altezza del suono**, cioè della sensazione di **acutezza/gravità** *(maggiore è la frequenza, più acuto è il suono)*. Affinché in un suono sia possibile individuare un'altezza, esso deve essere periodico.
+
+
+
+**AMPIEZZA**
+Variazioni di piccola ampiezza producono suoni di bassa intensità. L'intensità cresce col crescere dell'ampiezza.
+
+**ATTENZIONE**: Il legame che c'è tra grandezze fisiche e percettive non è però lineare. Generalmente le grandezze percepite aumentano più lentamente di quelle fisiche man mano che queste crescono.
+
+
+
+**ENERGIE IN GIOCO**
+Le energie in gioco nei fenomeni acustici sono irrilevanti rispetto a quelle nel fenomeno luminoso. In particolare i suoni vanno da:
+
+- 20 Hz a 20 kHz per quanto riguarda l'**udito**
+- 50 Hz a 10 kHz per quanto riguarda il **parlato**
+
+|     Frequenza      | Tipologia |
+| :----------------: | :-------: |
+|   20 Hz - 50 Hz    |   Bassi   |
+|  500 Hz - 8000 Hz  |   Medi    |
+| 8000 Hz - 20000 Hz |   Acuti   |
+
+Oltre quei valori si hanno gli **infrasuoni** e gli **ultrasuoni**.
+Ovviamente, visto che il nostro sistema percettivo non è comunque in grado di percepire segnali oltre quei limiti, quando li andiamo a campionare, ha senso eliminare tali frequenze e mantenere solo quelle udibili, anche per evitare aliasing nel caso di un cattivo campionamento. Una buona frequenza di campionamento per i suoni è dunque $f >$ 20 kHz​.
+**ATTENZIONE**: devo eliminare le frequenze oltre i limiti per evitare l'aliasing; anche se non le sentiamo esse possono interagire col segnale e creare distorsioni.
+
+
+
+**CAMPO DI UDIBILITÀ**
+<img src="img/057.png" alt="057" style="zoom:100%;" align="right" />Il campo di udibilità è determinato da valori limite di intensità e di frequenza.
+Il limite inferiore per l'intensità è costituito dalla **curva di soglia di udibilità**, mentre quello superiore dalla **curva di soglia del dolore**.
+Il limite delle frequenze invece è dato da un valore inferiore tra i 15 e 20 Hz e da uno superiore che si aggira sui 20000 Hz.
+Il valore di intensità di riferimento è quello al quale diventa udibile un segnale a 2 Hz *(ricordiamo che intensità è calcolata in dB)*. Notiamo come non sia lineare l'andamento della curva, a significare che le grandezze
+fisiche e percettive non sono dipendenti linearmente.
+
+<img src="img/058.png" alt="058" style="zoom:100%;" align="right" />La stessa cosa vale anche per frequenza e altezza percepita del suono, cosa che viene mostrata nella scala di Mel.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+**dB E LIVELLI DEI SUONI**
+Alcuni livelli di intensità del suono sono:
+
+- 0 dB: suono alla soglia dell'udibilità
+- 130 dB: suono alla soglia del dolore.
+- 160 dB: rottura del timpano.
+- 200 dB: suono in grado di uccidere un umano.
+- 210 dB: massimo rumore prodotto in laboratorio.
+
+Gli incrementi di 1 dB corrispondo ad un valore di **JND** *(Just Noticeable Difference)* di volume, ovvero all'incremento minimo che siamo in grado di percepire.
+
+## PESO DI UN FILE AUDIO
+
+Quando siamo in presenza di un segnale digitale, abbiamo a che fare con
+
+- $fc$ frequenza di campionamento
+- $D$ durata
+- $b$ bit per campione
+- $Nc$ numero canali audio.
+
+Il peso di un file audio è dunque $Weight = (fc*D*b*Nc)$, dove $fc*D$ è il numero di campioni totali.
+In KB *(kilobyte)* sarà $Weight = (fc*D*b*Nc)/(8*1024)$. *(8 perché 1 B = 8 bit e 1024 perché 1 KB = 1024 B)*
+
+
+
+**FILTRO ANTI-ALIASING**
+Abbiamo detto che prima del campionamento il segnale audio viene filtrato passabasso per limitare le frequenze e quindi l'aliasing, mantenendo solo le frequenze udibili.
+Dopo la conversione DA, nell'output possono essere di nuovo presenti alte frequenze a causa del campionamento e della quantizzazione, dato che il segnale digitale è a gradini e che quindi contengono alte frequenze. Dunque anche dopo la conversione DA viene applicato un filtro passabasso.
+
+
+
+**SEGNALE VOCALE: CAMPIONAMENTO**
+Abbiamo detto che il parlato arriva fino a 10 kHz, tuttavia la **maggior parte dell'informazione** è concentrata nei primi 4 kHz *(difatti le linee telefoniche usano un campionamento a 8 kHz)*.
+Ovviamente, oltre alla frequenza di campionamento, sulla qualità influisce anche il numero di bit per campione.
+
+
+
+**SNR**
+Sappiamo già cos'è l'SNR, ma è importante notare che nel caso ad esempio dei suoni può essere complicato definirlo, poiché il rumore considerato è *tutto* il rumore che interferisce *(anche ad esempio il rumore del mezzo di trasmissione in un determinato momento)* e solitamente non è definibile come nel caso della quantizzazione.
+
+
+
+## CODIFICA
+
+Per la codifica dei segnali audio esistono due principali tecniche:
+
+- **Pulse Code Modulation (PCM)**: che converte forme d'onda analogiche in segnali digitali campionandoli, quantizzandoli e codificandoli *(generalmente in binario)*.
+  Il risultato è un segnale digitale il cui valore numerico rappresenta il valore di ampiezza del segnale sorgente. La PCM può essere lineare e non lineare *(in termini di combinazione tra il valore digitale e il valore di corrente in output)*.
+- **Pulse Amplitude Modulation (PAM)**: che codifica il valore dei campioni in funzione dell'ampiezza di una forma d'onda *(detta pulse)*.
+  Il risultato è quindi una sequenza di onde uguali fra loro *(come forma)* ma con diversa ampiezza.
+  Usando dei segnali sfasati è possibile mandare segnali diversi attraverso questa codifica.
+
+<div style="page-break-after: always;"></div>
+
+**QUALITÀ AUDIO**
+Nel processo di digitalizzazione la qualità del segnale è data dalla fedeltà di riproduzione del suono e quindi dal numero di campioni e dal numero di bit, ma c'è anche un altro fattore che influenza la qualità audio percepita: la **direzionalità** *(ricordiamo che abbiamo due orecchie e che il suono si riflette nello spazio)*.
+
+Dunque, un fattore che modifica la qualità percepita è anche il numero di canali presenti nel segnale, che simulino la riflessione del suono.
+
+Le configurazioni più tipiche sono:
+
+- **Stereo**: 2 canali, destro e sinistro, posti frontalmente. Usato nei CD.
+- **Sorround 5+1**: 5 canali direzionali che portano medie e alte frequenze e un subwoofer centrale per le basse frequenze *(che non vengono percepite in modo direzionale)*. Usato nei home theater.
+
+
+
+**INTERLEAVING E MULTIPLEXING**
+In fase di scrittura su disco, i campioni provenienti da canali diversi vengono scritti in successione; questa tecnica è detta **interleaving** in caso di scrittura su disco o **multiplexing** in caso di trasmissione.
+Per eseguire i campioni in modo sincronizzato saranno necessari dei buffer in riproduzione.
