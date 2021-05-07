@@ -120,7 +120,6 @@ Iniziamo con l'introdurre due tipi di test: i test **Random** *(uniformi)* e i t
 - Testa i possibili input uniformemente.
 - Evita i pregiudizi del designer. Il test designer può tuttavia fare gli stessi errori logici e cattive assunzioni del designer del programma *(specialmente se sono la stessa persona)*.
 - Associa a tutti gli input lo stesso valore.
-  
 
 **SISTEMATICO**
 
@@ -313,3 +312,68 @@ Il testing strutturale complementa quello funzionale; esso rappresenta un altro 
 Tuttavia, eseguire tutti gli elementi del control flow **NON GARANTISCE** l'assenza di fault nel codice, il testing strutturale rimuove le inadeguatezze ovvie, ma non da alcuna garanzia di trovare tutti i fault.
 
 A volte, nessuna test suite può soddisfare un criterio per un programma dato; in questo caso si possono escludere gli statement non raggiungibili *(tuttavia non possiamo sempre sapere per certo quali statement non verranno mai eseguiti)* oppure misurare quanto copre del programma la test suite.
+
+
+
+## SECURITY IS NOT SAFETY
+
+Definiamo:
+
+- **SAFETY ENGINEERING**: prevenzione di danni *'catastrofici'* causati dal cattivo funzionamento di un sistema informatico.
+- **SECURITY ENGINEERING**: prevenzione, difesa e recupero danni contro la possibilità di attacchi che possono mettere a repentaglio i valori rappresentati da un sistema informatico.
+
+Tutte le misure di **safety** sono anche misure di **security**, mentre non è vero il viceversa.
+
+Un problema di sicurezza, o *vulnerabilità*, può essere viso come una ***via alternativa***, un modo di usare il sistema non pensato dal progettista. Ovviamente più è complesso il sistema, più possono essere le vie alternative.
+*Esempio*: un progettista di software di un auto potrebbe pensare che sia utile che le portiere si sblocchino quando la macchina si capovolge. Tuttavia, una via alternativa potrebbe essere far pressione sul tetto per aprire la macchina quando dovrebbe rimanere chiusa.
+
+
+
+**CIA TRIAD**
+
+- **Confidenzialità**: fa riferimento al fatto che una risorsa *(o un servizio)* deve essere accessibile solo a chi è autorizzato ad usufruirne.
+
+  Può essere descritto anche come capacità di controllare/assicurare la **privatezza**/**riservatezza** delle informazioni rispetto a soggetti non autorizzati.
+  Questo concetto non si applica solo, per esempio, al contenuto di un file, ma anche alla conoscenza dell'esistenza di tale file o meno o anche all'utilizzo di un certo mezzo *(ad esempio la rete)*.
+
+- **Integrità**: fa riferimento al concetto di assicurazione che un'informazione non sia stata modificata e che quindi la risorsa sia fruibile nel modo esatto nel quale è stata resa disponibile.
+
+  Può essere descritto anche come capacità di controllare/assicurare la **non modificabilità**/**attendibilità** da parte di soggetti non autorizzati delle informazioni.
+  Il concetto di modificabilità si estende anche alla creazione/rimozione di oggetti *(anche se nel caso di rimozione si parla anche di interruzione di disponibilità)*, oltre che alla manomissione di informazioni.
+
+  Due particolari sotto-casi del principio di integrità sono:
+
+  1. **Autenticazione di mittente**: definisce la capacità di garantire l'identità del mittente.
+  2. **Non-ripudio**: definisce la capacità di assicurare che il mittente non possa negare la paternità delle informazioni trasmesse.
+
+- **Disponibilità** *(Availability)*: fa riferimento al fatto che se una risorsa deve essere accessibile a degli utenti, un attacco non deve inibire questo accesso *(esempio un attacco DDoS)*.
+
+  Può essere descritto anche come capacità di controllare/assicurare la **possibilità di usare** risorse e servizi da parte degli utenti autorizzati.
+  Alcuni esempi di attacchi alla disponibilità sono il crash di un sistema, la manomissione di algoritmi di scheduling per non far mai eseguire un certo processo o anche la distruzione fisica di un computer.
+
+Gli attacchi alla triade CIA sono solitamente identificati come *DAD*:
+
+- **Disclosure** > Confidentiality
+- **Alteration** > Integrity
+- **Destruction** > Availability
+
+**USABILITY VS SECURITY**
+L'obiettivo di fondo dell'informatica è favorire l'accesso alle risorse, mentre la sicurezza obbliga a limitarne l'accesso. Dunque spesso l'obiettivo della sicurezza è trovare il giusto compromesso tra usabilità e sicurezza del sistema.
+
+Inoltre, spesso la sicurezza viene presa in considerazione solo dopo i primi incidenti; in realtà il compromesso citato sopra andrebbe preso in considerazione fin da subito, trovando un compromesso anche tra benefici e costi, che quindi richiede un'*analisi dei rischi*.
+
+
+
+**ANALISI DEI RISCHI**
+Rischio: **possibilità **di **perdita** o danno.
+Nell'ambito della sicurezza il rischio è calcolabile come **Rischio = Vulnerabilità x Minacce x Valori** dove:
+
+- **VALORI**: solo le parti del sistema informativo importanti, sensibili, critiche, da proteggere.
+- **VULNERABILITÀ**: debolezze del sistema, attacchi che possono essere sfruttati per comprometterlo.
+- **MINACCE**: circostanze o agenti che possono/vogliono arrecare danni.
+
+Notiamo il fattore moltiplicativo; se le vulnerabilità sono poche, il rischio è basso, viceversa se le minacce sono basse si corrono pochi rischi. Se i valori non sono importanti, anche se ci fosse un attacco la perdita è minima.
+
+
+
+![003](./img/003.png)
