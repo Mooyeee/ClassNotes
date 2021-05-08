@@ -377,3 +377,85 @@ Notiamo il fattore moltiplicativo; se le vulnerabilità sono poche, il rischio �
 
 
 ![003](./img/003.png)
+
+<div style="page-break-after: always;"></div>
+
+## CRITTOGRAFIA
+
+La crittografia *(dal greco **kryptos**, nascosto)* è una disciplina che studia tecniche per *codificare*/*decodificare* messaggi in modo da garantire la privacy della comunicazione fra due soggetti.
+Essa **NON** è la soluzione per tutti i problemi di sicurezza, ma può essere uno strumento importante se implementata in modo corretto.
+
+Generalmente un sistema crittografico fa uso di un algoritmo di crittografia governato da una **chiave** che permetta di garantire la confidenzialità ed integrità del messaggio e che permetta al destinatario di poterlo leggere.
+
+Un sistema crittografico è formato da 5 parti
+
+![004](./img/004.png)
+
+Un primo esempio di sistema crittografico è il **cifrario di Cesare** che consiste nello spostamento delle lettere utilizzando l'aritmetica in modulo n. Avremmo quindi:
+
+- **P**: lettere alfabeto
+- **C**: lettere alfabeto
+- **K**: numeri da 1 a 25
+- **encrypt(k, p)**: carattere a distanza k nell'alfabeto
+- **decrypt(k, c)**: carattere a distanza -k nell'alfabeto
+
+Il principale problema di questo sistema è il basso numero di chiavi disponibili, che lo rende molto vulnerabile ad un attacco di forza bruta.
+
+
+
+**CRITTOGRAFIA E CRITTOANALISI**
+
+- **Crittografia**: schemi/metodi/algoritmi per la codifica sicura dei messaggi.
+- **Crittoanalisi**: rappresenta il tentativo di *violare* la crittografia attraverso lo studio di insiemi di messaggi crittati. È utile per scoprire le debolezze di un algoritmo crittografico o del suo ambiente di funzionamento.
+  Si pone come obiettivo non solo quello di scoprire un messaggio, ma anche di scoprire le chiavi usate per la cifratura o addirittura dedurre significati segreti senza necessariamente decifrare i messaggi *(ad esempio guardando la frequenza di invio dei messaggi o la loro lunghezza)*.
+
+Un algoritmo crittografico è violabile se può essere violato da un crittoanalista **a patto di disporre di risorse e tempo sufficienti** *(se non consideriamo il tempo e le risorse, teoricamente, ogni algoritmo è violabile con forza bruta)*.
+
+Gli algoritmi ***degni di fiducia*** solitamente sono basati sulla matematica, analizzati da esperti e in uso da diverso tempo senza essere violati.
+Ma devono anche essere **usabili**, ovvero il tempo necessario per crittare/decrittare i messaggi deve essere commisurato alla sicurezza necessaria, le chiavi non devono essere soggetti a requisiti complessi e il processo crittografico non deve essere troppo complesso per l'utente.
+
+Ovviamente la prima cosa che pensiamo alla crittografia è la **confidenzialità** dei messaggi, ma gli algoritmi crittografici vengono usati anche per garantire **integrità** e **non ripudio**, similmente a quanto accade con i documenti fisici.
+
+Gli algoritmi crittografici si dividono in 3 classi:
+
+- **Algoritmi simmetrici a chiave segreta**: viene usata un'unica chiave sia per crittare che decrittare.
+- **Algoritmi asimmetrici a chiave pubblica**: vengono usate chiavi diverse per crittare e decrittare.
+- **Algoritmi di hashing**: il messaggio stesso è la chiave e servono a garantirne l'integrità.
+
+
+
+## SISTEMI SIMMETRICI
+
+Abbiamo detto che gli algoritmi simmetrici usano una stessa chiave per decrittare e crittare, dunque decrypt(k, encrypt(k, p)) = p.
+Dunque, per istanziare una comunicazione confidenziale, due soggetti devono conoscere una chiave *k* non nota a nessun altro.
+
+![005](./img/005.png)
+
+
+
+Assumendo che mittente e ricevente siano gli unici a conoscenza della chiave:
+
+| REQUISITO                    | SI/NO | MOTIVO                                                       |
+| ---------------------------- | :---: | ------------------------------------------------------------ |
+| Confidenzialità              |  Si   | Solo chi conosce la chiave segreta può decodificare il messaggio. |
+| Integrità                    |  Si   | Una volta crittato, il messaggio non è modificabile prima della decrittazione. Se venisse modificato il messaggio crittato, questo verrebbe corrotto. |
+| Autenticazione e non ripudio |  Si   | Solo chi conosce la chiave segreta può crittare e quindi essere mittente del messaggio *(assumendo che il sistema funzioni e che quindi la chiave non venga condivisa)*. |
+
+In questo caso **non è possibile** garantire uno solo di questi requisiti indipendentemente dagli altri.<img src="./img/006.png" alt="006" style="zoom:80%;" align="right" />
+
+Un primo aspetto *controverso* di questi algoritmi riguarda lo scambio della chiave che deve avvenire ovviamente in modo sicuro, ma ne parleremo successivamente.
+Un altro aspetto di questo tipo di algoritmi è il numero di chiavi necessarie; per $N$ individui che comunicano in maniera sicura a coppie abbiamo bisogno di $n(n-1)/2$ chiavi *(una per coppia, un numero quadratico)*!
+
+
+
+**DES**
+Un tipico algoritmo simmetrico è **DES: Data Encryption Standard** che codifica i messaggi in blocchi da 64 bit e che consiste nell'applicare iterativamente per 16 volte una funzione combinatoria ad ogni blocco usando una chiave di 56 bit come uno dei parametri della funzione stessa.
+
+<img src="./img/007.png" alt="007" style="zoom:50%;" align="left" />Ovviamente, essendo un algoritmo simmetrico, lo stesso algoritmo che viene usato per crittare i messaggi viene usato anche per decrittarli. Inoltre, la particolarità di DES è che opera sui **bit**: combina i bit, permuta i bit, somma i bit. Questo rende l'algoritmo particolarmente adatto all'**implementazione su hardware** e quindi è **molto veloce** come algoritmo.
+
+Alla sua uscita, nel 77, DES risultava non violabile con forza bruta *(ci sarebbero voluti 700 anni con la potenza computazionale di allora)*, tuttavia nel 97 venne risolto in circa 4 mesi usando la computazione parallela. Con la potenza computazionale di oggi probabilmente ci vuole poco a violare tale algoritmo.
+
+Come risposta a ciò è stato creato triple DES che cifra 3 volte con 3 chiavi diverse, aumentando notevolmente il tempo stimabile per un attacco di forza bruta.
+
+Un'evoluzione di DES è **AES (Advanced Encryption Standard)** che si basa sulle stesse operazioni di DES ma è estendibile, ovvero permette di usare chiavi di lunghezza variabile *(solitamente vengono usate chiavi da 128, 192 o 256 bit ma si può andare oltre)* e permette di eseguire più cicli di codifica, rendendolo di fatto molto più sicuro.
+
