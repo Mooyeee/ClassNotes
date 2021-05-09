@@ -459,3 +459,132 @@ Come risposta a ciò è stato creato triple DES che cifra 3 volte con 3 chiavi d
 
 Un'evoluzione di DES è **AES (Advanced Encryption Standard)** che si basa sulle stesse operazioni di DES ma è estendibile, ovvero permette di usare chiavi di lunghezza variabile *(solitamente vengono usate chiavi da 128, 192 o 256 bit ma si può andare oltre)* e permette di eseguire più cicli di codifica, rendendolo di fatto molto più sicuro.
 
+<div style="page-break-after: always;"></div>
+
+## SITEMI ASIMMETRICI
+
+I sistemi asimmetrici funzionano utilizzando due chiavi diverse per la decrittazione e per la crittazione; in particolare, ogni soggetto è in possesso di:
+
+- **k_pub *(chiave pubblica)***: chiave conosciuta da tutti *(ad esempio pubblicata sul sito web del soggetto)*.
+- **k_priv *(chiave privata)***: chiave a conoscenza solo del soggetto.
+
+Nei sistemi asimmetrici si ha che un messaggio codificato con una chiave può essere decodificato solo dall'altra, dunque **decrypt(k_priv, encrypt(k_pub, p)) = p** & **decrypt(k_pub, encrypt(k_priv, p)) = p**.
+
+Chiave pubblica e privata sono ugualmente strutturate, viene scelto *a caso* quale sia pubblica e quale privata.
+
+![008](./img/008.png)
+
+
+
+<img src="./img/009.png" alt="009" style="zoom:50%;" align="left" />
+Un primo aspetto positivo di questo tipo di sistemi è che le chiavi necessarie per far comunicare N soggetti sono N coppie, si passa quindi da un valore n<sup>2</sup> ad uno 2n.
+
+
+
+
+
+
+
+| REQUISITO                    | SI/NO | MOTIVO                                                       |
+| ---------------------------- | :---: | ------------------------------------------------------------ |
+| Confidenzialità              |  Si   | Solo chi conosce la chiave segreta può decodificare il messaggio crittato con la corrispondente chiave pubblica. |
+| Integrità                    |  Si   | Una volta crittato, il messaggio non è modificabile prima della decrittazione. |
+| Autenticazione e non ripudio |  Si   | Solo chi conosce la chiave segreta può essere mittente del messaggio crittato con chiave privata. |
+
+Un altro aspetto interessante è che, in questo caso, posso gestire confidenzialità ed autenticazione in modo separato; se critto con la chiave pubblica, ho la certezza che il messaggio sia **confidenziale** e solo chi possiede la chiave privata possa leggerlo, se critto con la chiave privata , nessun atro può modificare il messaggio e crittarlo nuovamente con la mia chiave privata, quindi ho **integrità** e **autenticazione**.
+Se critto il messaggio con la mia chiave privata e successivamente con la chiave pubblica del destinatario, ottengo sia **confidenzialità** *(il destinatario deve usare la sua chiave privata per decrittare il primo livello)* sia **integrità/autenticazione** *(userà la mia chiave pubblica per il secondo livello)*.
+
+**RSA**
+Un algoritmo a chiave pubblica è **RSA (Rivest, Shamir, Adleman)** che calcola chiave pubblica e privata come funzioni di due numeri primi molto grandi.
+I numeri primi sono scelti casualmente e vengono scartati dopo il calcolo delle chiavi e la sicurezza dell’algoritmo si basa sulla difficoltà di risolvere il problema di fattorizzare numeri molto grandi.
+
+Si basa sul teorema di Eulero che dice che, dati due numeri primi **p** e **q**, con **x** che non ha divisori comuni con *p* e *q*, vale **x<sup>(p-1)(q-1)</sup> = 1 (mod p\*q)**.
+
+<img src="./img/010.png" alt="010" style="zoom:40%;" align="right" />RSA
+
+- sceglie **p** e **q** molto grandi
+- calcola **n = p \* q** ed **f = (p - 1)\*(q - 1)**
+- sceglie **e**, **d** tali che **e \* d = 1 (mod f)**
+- scarta **p**, **q** ed **f**
+- usa **k_pub = (e, n)** e **k_priv = (d, n)**
+
+
+
+
+
+Questo algoritmo è molto difficile da violare con la forza bruta, tuttavia può essere violato in altri modi, ad esempio se il sistema di generazioni usa dei numeri pseudo-casuali facili da determinare.
+Un'altra **importante differenza** tra questo tipo di algoritmi e quelli simmetrici e che quelli asimmetrici sono molto più difficili da implementare e richiedono quindi più tempo per messaggi molto grandi.
+
+
+
+## MESSAGE DIGEST
+
+Un **message digest** è un '*riassunto*' di un messaggio, un checksum crittografico che caratterizza il messaggio. Idealmente, ogni digest corrisponde ad un solo messaggio, nella pratica non è possibile.
+Gli algoritmi di message digest inoltre sono **non invertibili**, ovvero non è possibile risalire al messaggio originale partendo dal digest o comunque deve essere molto difficile trovare un altro messaggio che abbia lo stesso digest.
+
+Il digest è utile per garantire l'integrità di un messaggio; supponiamo di avere un digest **MD** di un messaggio **MSG**, per calcolare l'integrità di **MSG** mi basta calcolare il suo digest e assicurarmi che corrisponda ad **MD**.
+
+Un tipico algoritmo di questo tipo è **MD5** che applica una trasformazione combinatoria a blocchi di 512 bit del messaggio e genera un output a 128 bit.
+
+| REQUISITO                    | SI/NO | MOTIVO                                                       |
+| ---------------------------- | :---: | ------------------------------------------------------------ |
+| Confidenzialità              |  No   | Il digest non implica alcun tipo di confidenzialità del messaggio, anche perché non è possibile risalire ad esso dal digest stesso. |
+| Integrità                    |  Si   | La coppia <MSG, MD> permette di stabilire se il messaggio è integro o meno. |
+| Autenticazione e non ripudio |  No   | Chiunque può generare il digest di un messaggio.             |
+
+## PRESTAZIONI ALGORITMI
+
+Abbiamo detto che RSA, rispetto a DES e MD5 è di parecchi ordini più lento, dunque solitamente RSA viene usato per crittare piccole quantità di dati.
+
+
+
+**CHIAVI DI SESSIONE**
+Solitamente, RSA e DES vengono usati insieme, in particolare
+
+- Si cifra con RSA una chiave segreta casuale *(chiave di sessione)*
+- Si usa la chiave di sessione come chiave segreta DES
+
+In questo modo si sfrutta l'efficienza di DES e la maggiore flessibilità di RSA per la gestone delle chiavi.
+
+
+
+**FIRME DIGITALI**
+Abbiamo detto che RSA permette di implementare il non ripudio, cifrando con la chiave privata, tuttavia cifrare grossi messaggi può richiedere molto tempo. Dunque, spesso viene *firmato* solo il **digest** del messaggio, che è molto più piccolo.
+In questo modo il destinatario riceve il messaggio in chiaro e il digest crittato con la chiave privata del mittente, in modo da poterlo verificare decrittando il digest con la sua chiave pubblica e confrontandolo con un digest generato da esso, in modo da assicurarsi che il messaggio sia integro.
+
+
+
+## DISTRIBUZIONE CHIAVI
+
+In un sistema crittografico a chiave pubblica, si usa la chiave pubblica di un utente per mandare messaggi confidenziali ad esso e per autenticare provenienza e integrità dei messaggi inviati dall'utente, ma bisogna essere certi che la chiave pubblica corrisponda effettivamente all'utente.
+
+Un modo per garantire questo tipo di informazioni è usare un **certificato**, che generalmente è emesso da da un'**autorità di certificazione** *fidata e autorizzata*. Questi certificati sono rilasciati in formato **X.509** e contengono il nome dell'entità, la sua chiave pubblica, il nome dell'autorità di certificazione e la firma digitale dell'autorità, in modo che con la chiave pubblica dell'autorità si possa garantire l'integrità del certificato.
+
+Un'autorità può inoltre certificare delle altre autorità creando quella che si chiama **catena di certificati**, in modo che poi gli enti certificati da quest'ultima possano essere verificati anche dall'autorità top level.
+<img src="./img/011.png" alt="011" style="zoom:55%;" align="right" />Questo ci permette poi di creare un'infrastruttura di cui tutti si fidano che si occupa di certificare altre autorità di certificazione, in modo da poter rilasciare certificati più facilmente agli utenti.
+
+
+
+
+
+## PGP
+
+Un tool che utilizza le tecniche appena descritte è **Pretty Good Privacy** che utilizza RSA ed implementa crittografia e firme digitali.
+
+
+
+**FIRME DIGITALI**
+
+<img src="./img/012.png" alt="008" style="zoom:40%;" />
+
+
+
+**CIFRATURA**
+
+<img src="./img/013.png" alt="013" style="zoom:40%;" />
+
+
+
+**RIASSUMENDO**
+
+<img src="./img/014.png" alt="014" style="zoom:50%;" />
