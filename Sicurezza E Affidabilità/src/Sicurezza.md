@@ -588,3 +588,140 @@ Un tool che utilizza le tecniche appena descritte è **Pretty Good Privacy** che
 **RIASSUMENDO**
 
 <img src="./img/014.png" alt="014" style="zoom:50%;" />
+
+
+
+## SICUREZZA NEI SISTEMI OPERATIVI
+
+Un **sistema operativo** è un *layer* intermedio tra le risorse fisiche di una macchina e le sue applicazioni, e che quindi virtualizza tali risorse per renderle disponibili alle applicazioni che verranno poi utilizzate dagli utenti.
+Dunque, il sistema operativo si deve occupare di mantenere lo stato della memoria della macchina valido utilizzando tecniche di segmentazione e paginazione, di assicurarsi che tutte le applicazioni abbiano accesso alla CPU, di virtualizzare le connessioni I/O, di organizzare le informazioni sulla memoria di massa, di interpretare i comandi dell'utente.
+
+
+
+**AREE DI INTERESSE PER LA SICUREZZA NEI SO**
+Quello che può suscitare interesse nei sistemi operativi per quanto concerne la sicurezza è l'**autenticazione degli utenti**, la **protezione della memoria**, il **controllo degli accessi** da parte degli utenti ai file piuttosto che alle periferiche I/O e la relativa condivisione di risorse fra utenti.
+
+
+
+## AUTENTICAZIONE
+
+L'obiettivo dell'autenticazione è quello di evitare che soggetti non autorizzati riescano ad accedere alle risorse del sistema. Esistono diversi metodi per implementare l'autenticazione, alcuni sono:
+
+- **DIMOSTRAZIONE DI CONOSCENZA**: richiede all'utente di fornire un PIN, una password o una **challenge/response** che consiste nel chiedere all'utente un problema che può essere risolto solo da chi è autorizzato ad accedere al sistema, quindi la risposta vera è propria può cambiare ogni volta, al contrario delle password.
+  In generale, il sistema si assicura che l'utente sia autenticato se possiede la conoscenza richiesta.
+- **DIMOSTRAZIONE DI POSSESSO**: richiede all'utente di dimostrare il possesso di chiavi fisiche *(ad esempio su chiavetta usb o anche una OTK inviata al mio smartphone)* come potrebbero essere delle *smartcard*.
+- **CARATTERISTICHE PERSONALI (BIOMETRIA)**: si basa sulla biometria dell'utente e quindi usa dati come le impronte digitali, il riconoscimento del viso, della voce.
+
+
+
+**USO DI PASSWORD**
+L'autenticazione tramite password richiede all'utente di introdurre una password che, in teoria, solo lui conosce e se questa corrisponde a quella che il sistema ha memorizzato, l'utente viene autenticato.
+È buona norma che il sistema operativo memorizzi le password in formato *hash* *(e quindi un digest della password, ricordiamo che i digest sono non-invertibili)*. Questo evita che, nel caso qualcuno abbia accesso al file delle password del sistema operativo, non siano rivelate le password in chiaro. Inoltre, questo permette al SO di autenticare semplicemente calcolando il digest della password in input e confrontarlo con quello salvato.
+
+
+
+**SICUREZZA PASSWORD**
+Non sono nuovi gli attacchi di tipo brute force ai sistemi protetti da password, quindi è buona norma implementare alcune norme che ne aumentino la sicurezza e l'improbabilità di essere indovinata.
+
+
+
+In ordine di complessità avremmo
+
+- Password assenti
+- Password uguali/derivate da user ID *(è importante tener conto che nel password file del sistema operativo ci sono i nomi utente)*
+- Nomi comuni
+- Vocabolari con sostituzioni banali *(a = @, a = 4, i = 1)*
+- Dizionari completi per una o più lingue
+- Password con numeri e lettere minuscole e maiuscole
+- Password con set completo di caratteri.
+
+È anche possibile sfruttare informazioni su sistemi di generazione di password per sferrare questo tipo di attacchi, anche se le password generate sono complesse dal punto di vista dei caratteri usati.
+
+È buona norma quindi evitare di usare password troppo semplici che sarebbero facilmente identificabili con dei dizionari di password *(che contengono i più comuni nomi di persone, animali domestici, date e parole di uso frequente)* e di usare un set di caratteri ampio. Inoltre, scrivere o ripetere la password ne mette a repentaglio la sicurezza.
+
+
+
+**PASSWORD FILE CRIPTATI**
+Abbiamo detto che le password non sono salvate in chiaro, ma viene salvato il loro hash.
+Ma se due utenti scelgono la stessa password?
+In questi casi viene utilizzato un *salt*, ovvero un numero di 12 bit random che viene aggiunto alla password prima di eseguirne l'hash e viene poi salvato nel file delle password, in modo da concatenarlo alla password in chiaro e poter risalire all'esatto hash in fase di autenticazione.
+
+**Multiple Point of Failure**: il sistema, oltre a mantenere le password crittate, protegge anche il file delle password.
+
+
+
+**ONE TIME PASSWORD (CHALLENGE/RESPONSE)**
+In questi casi, la password è in realtà una funzione matematica $F(x)$ che l'utente sa calcolare; dunque il sistema propone all'utente un valore a caso $x$ e l'utente calcola $F(x)$.
+Un esempio di questo tipo di password potrebbe essere una funzione segreta di numeri o stringhe, oppure un generatore di numeri disponibile all'utente e al sistema *(le OTK delle banche)* o anche una funzione crittografica.
+
+
+
+**PROCESSO DI AUTENTICAZIONE**
+Un sistema di autenticazione ben progettato
+
+- Non fornisce dettagli su nomi utente e sistema prima che l'autenticazione avvenga *(non dice ad esempio se il nome utente è giusto ma la password no, in caso di password errata rifiuta l'autenticazione e basta, senza dare informazioni sull'user ID)*.
+- Può essere *lento* intenzionalmente per scoraggiare attacchi di forza bruta.
+- Può disabilitare gli utenti dopo un numero di tentativi errati.
+- Può utilizzare un'autenticazione a più fattori.
+- È resistente ad attacchi basati *sul tempo di risposta*; ovvero la risposta non deve dipendere da quanto della password è stato indovinato o meno *(immaginano un algoritmo che controlla la password carattere per carattere)*.
+
+
+
+## ACCESSI DALLA RETE
+
+<img src="./img/015.png" alt="015" style="zoom:40%;" align="right"/>Attraverso la rete abbiano un problema in più da considerare; le informazioni trasmesse dall'utente e dal sistema possono essere intercettate *(man in the middle attack)* e quindi, inviando per esempio le password in chiaro, rende il nostro sistema vulnerabile.
+
+
+
+Un protocollo di autenticazione su rete ben progettato, solitamente fa uso di **crittografia in abbinamento a meccanismi di challenge/response**, in cui il sistema richiede all'utente di crittare un messaggio con la sua chiave segreta *(dunque la funzione challenge in questo caso è una funzione crittografica)*.
+Ma questo non basta, poiché il messaggio crittato può essere intercettato, quindi la challenge deve cambiare ogni volta per evitare che un messaggio crittato possa essere riutilizzato *(questo tipo di challenge si chiamano **nonce**)*.
+
+<img src="./img/016.png" alt="016" style="zoom:60%;" />
+
+
+
+Spesso l'autenticazione è bidirezionale, ovvero non solo il server richiede all'utente di crittare un nonce, ma anche l'utente richiede al server di codificare un suo nonce.
+
+<img src="./img/017.png" alt="017" style="zoom:60%;" />
+
+
+
+<img src="./img/018.png" alt="018" style="zoom:50%;" align="right"/>Questo sistema però crea una falla che permette di sferrare i cosiddetti **reflection attacks**.
+
+Supponiamo che l'attaccante, che sa che l'autenticazione è bidirezionale, abbia intercettato una sessione di comunicazione tra l'utente e il server, in particolare ha intercettato la parte di autenticazione del server.
+Supponiamo che l'attaccante blocchi il nonce dell'utente che serve per autenticare il server ed inizi subito una nuova richiesta di autenticazione; a questo punto il server si aspetta sia il nonce dell'utente iniziale, sia il resolve della nuova fase di comunicazione.
+A questo punto l'attaccante può usare la sessione dell'utente iniziale per inviare al server il nonce che ha ricevuto nella sua sessione, e farlo quindi crittare al server stesso per poi utilizzare il messaggio crittato per autenticarsi sulla propria sessione.
+
+In rosso è rappresentata la sessione dell'utente, mentre in nero quella dell'attaccante.
+
+<img src="./img/019.png" alt="019" style="zoom:60%;" />
+
+
+
+Un altro requisito per un buon algoritmo di autenticazione in rete è dunque che i **messaggi debbano riportare degli indentificativi degli utenti nei messaggi crittati**, proprio per evitare questo tipo di attacchi.
+In questo modo il messaggio che l'attaccante poteva riflettere pima non ha più potere poiché l'attaccante si identificherebbe al server come il server, e quindi non avrebbe senso.
+
+Ricapitolando, i tre requisiti per un sistema di autenticazione in rete sono
+
+1. Crittografia in abbinamento a challenge/response
+2. Cambiare il challenge ogni volta *(nonce)*
+3. Inserire identificativi nei messaggi crittati.
+
+
+
+**AUTENTICAZIONE BIDIREZIONALE ASIMMETRICA**
+Un protocollo simile è che soddisfa i tre requisiti descritti sopra ma che usa le chiavi pubbliche è il protocollo Needham-Shcroeder.
+Nel primo passaggio l'utente critta la propria identità e un nonce per il server con la sua **chiave pubblica**, in modo che solo il server possa leggerlo. Il server risponde con la conferma e il nonce per l'utente, crittandolo con la chiave pubblica dell'utente. Infine l'utente manda la response al nonce del server.
+
+<img src="./img/020.png" alt="020" style="zoom:60%;" />
+
+Tuttavia, questo protocollo è vulnerabile, poiché il secondo e il terzo messaggio non includono identificativi del mittente.
+In particolare, questo protocollo è vulnerabile al reflection attack; un attaccante può far credere all'utente di essere il server e ottenere le utente dell'utente per poi identificarsi al server vero.
+
+<img src="./img/021.png" alt="021" style="zoom:60%;" />
+
+Introducendo degli identificativi anche nel secondo e nel terzo messaggio questo bug può essere risolto.
+
+<img src="./img/022.png" alt="022" style="zoom:60%;" />
+
+<img src="./img/023.png" alt="023" style="zoom:60%;" />
