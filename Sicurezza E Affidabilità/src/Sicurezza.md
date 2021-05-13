@@ -725,3 +725,136 @@ Introducendo degli identificativi anche nel secondo e nel terzo messaggio questo
 <img src="./img/022.png" alt="022" style="zoom:60%;" />
 
 <img src="./img/023.png" alt="023" style="zoom:60%;" />
+
+<div style="page-break-after: always;"></div>
+
+## CONTROLLO DEGLI ACCESSI AGLI OGGETTI PROTETTI
+
+Una prima definizione di controllo degli accessi è la capacità del sistema operativo di attribuire ad ogni risorsa *(file, dischi, stampanti)*, per ogni utente, gli accessi consentiti.
+
+<img src="./img/024.png" alt="024" style="zoom:50%;" />
+
+Una tabella del genere tuttavia non viene utilizzata dal sistema operativo poiché è molto sparsa e richiederebbe molta memoria per mantenerla.
+
+Come viene gestito allora l'accesso alle risorse?
+Ci possono essere diversi approcci, uno molto *primitivo* potrebbe essere quello di avere una **password di accesso alle risorse**, che quindi richieda, per ogni risorsa, una password d'accesso.
+Questo meccanismo è però **poco raffinato** e **poco usabile** poiché
+
+- Distingue solo tra *possibilità* e *divieto* di accesso
+- Difficile ricordare una password per ogni risorsa
+- Difficile tenere traccia di chi ha accesso o meno
+- Difficile gestire programmi che accedono a molte risorse
+- Difficile revocare i diritti di accesso *(dovrei cambiare la password e distribuire la nuova password a tutti gli altri utenti)*
+
+
+
+**ACCESS CONTROL LIST**
+<img src="./img/025.png" alt="025" style="zoom:50%;" align="right" />Un meccanismo più raffinato è quello di usare una *access control list*, che è un'informazione associata ad ogni risorsa che definisce i permessi di accesso per quella risorsa e per i vari utenti e/o gruppi di utenti. Questo permette un grosso risparmio di spazio rispetto alla tabella completa e facilita sia la verifica di chi abbia o meno accesso alle risorse che la revocazione dei diritti di accesso.
+
+
+
+**BIT DI PROTEZIONE (UNIX)**
+<img src="./img/026.png" alt="026" style="zoom:50%;" align="right" />Una possibile implementazione delle ACL più semplificata può utilizzare un numero fisso di bit per ogni file che ne specifichi i diritti di accesso. In particolare, vengono usare delle ACL di 9 bit che rappresentino i diritti di *lettura*, *scrittura* ed *esecuzione* rispettivamente per il proprietario del file, per un certo gruppo di utenti *(che potrebbe essere per esempio il gruppo del proprietario)* e per il resto degli utenti.
+Questa semplificazione, seppur meno granulare *(posso distinguere un solo gruppo a differenza di prima)* delle ACL *complete* richiede molta meno memoria ed è ancora più semplice da gestire.
+
+<div style="page-break-after: always;"></div>
+
+**OBIETTIVI GENERALI DEL CONTROLLO DEGLI ACCESSI**
+Un buon design di controllo degli accessi deve implementare:
+
+- **MEDIAZIONE COMPLETA**: deve, idealmente, controllare ogni accesso alle risorse; il controllo deve avvenire ad *ogni* accesso alle risorse. È un principio *ideale*, normalmente il SO può memorizzare degli accessi in cache per essere più efficiente.
+- **PRIVILEGI MINIMI**: l'idea è di poter fornire, per ogni risorsa, dei privilegi minimi per ogni utente del sistema operativo; un utente deve poter avere solo il diritto di lettura piuttosto che solo quello di esecuzione ecc.
+  Una ACL ideale permette questo, l'ACL implementata con i bit di protezione fa già dei compromessi: posso avere dei diritti per l'owner, dei diritti per un certo gruppo e dei diritti per il resto delle persone, ma non posso definire dei diritti per un secondo gruppo diverso dagli altri.
+- **CONTROLLO DELL'USO APPROPRIATO DEGLI OGGETTI PROTETTI**: ogni soggetto può eseguire solo parte delle operazioni che partecipano in una transazione *(separation of duty)*.
+
+
+
+**COVERT CHANNELS**
+L'idea è che se il SO abbia definito dei diritti per una certa risorsa e faccia una mediazione completa, possono esistere dei *canali alternativi* non ovvi sui quali vengono trasmessi i dati sensibili, contravvenendo alle limitazioni imposte dal SO.
+Un esempio può essere quello di un utente che può leggere un certo file, ma non può eseguirlo; a questo punto l'utente può leggere il file e trascriverlo in un altro file con diversi diritti ed eseguirlo.
+Meccanismi più *nascosti* potrebbero codificare i dati nei nomi dei file, con una codifica segreta in file legati o sfruttando la presenza/assenza di oggetti in memoria.
+
+
+
+**DISCRETIONARY/MANDATORY ACCESS CONTROL**
+Il controllo all'accesso può essere
+
+- **DISCREZIONALE** *(es ACL)*: il proprietario di una risorsa può concedere l'accesso ad altri a sua discrezione.
+- **MANDATORIALE**: il sistema impone un modello che limita e controlla la discrezionalità degli utenti nell'assegnare i diritti di accesso alle risorse.
+  Definiscono in maniera precisa la relazione di accessibilità tra soggetti e oggetti del sistema in base a obiettivi e requisiti di sicurezza specifici, fortemente dipendenti dal dominio applicativo.
+
+<div style="page-break-after: always;"></div>
+
+## MANDATORY ACCESS CONTROL
+
+**SICUREZZA MULTI LIVELLO**
+Un primo esempio di MAC è la sicurezza multi-livello, che nasce in ambito militare per garantire la confidenzialità dei dati.
+<img src="./img/027.png" alt="027" style="zoom:35%;" align="right" />In questo tipo di modelli vengono classificati i livelli di sicurezza per i soggetti e per gli oggetti e l'accesso ad una risorsa viene consentito solo se **livello soggetto $\geq$ livello oggetto**.
+
+
+
+**MODELLO BELL LA-PADULA [CONFIDENZIALITÀ]**
+<img src="./img/028.png" alt="028" style="zoom:45%;" align="left"/>Dobbiamo però assicurarci che se un soggetto rilascia un oggetto sensibile, bisogna gestire opportunamente i casi in cui la risorsa viene acquisita da un altro soggetto.
+Un modello che si occupa di questo principio è il **Modello di Bell-LaPadula** implementando due proprietà:
+
+1. **Simple security property** *(no read-up)*: un soggetto non può leggere oggetti di classificazione più alta.
+2. **Confinement property** *(no write-down)*: un soggetto non può scrivere oggetti di classificazione più bassa. Questa proprietà evita che un utente possa trasferire dei documenti della sua classificazione a livelli più bassi, eliminando un possibile covert channel.
+
+
+
+**MODELLO BIBA [INTEGRITÀ]**
+<img src="./img/029.png" alt="029" style="zoom:45%;" align="left"/>Un altro modello, questa volta orientato all'integrità, e quindi di interesse per l'uso commerciale ad esempio, è il modello BIBA che è una *rilettura* del modello La-Padula orientato però all'integrità più che alla confidenzialità. Esso implementa due proprietà:
+
+1. **Simple integrity axiom** *(no write-up)*: un soggetto non può modificare oggetti di classificazione più alta. In questo modo si possono consultare documenti più protetti *(pensiamo a dei contratti)* in modo libero, essendo sicuri che siano integri poiché solo chi è al livello dei documenti può modificarli.
+2. **Integrity confinement axiom** *(no read-down)*: un soggetto non può leggere oggetti di classificazione più bassa. Il motivo è sempre evitare dei covert channel nei quali un utente legge documenti di livello più basso e li copia al suo livello di integrità. In questo modo un utente può definire dei contratti a livelli più bassi, garantendone l'integrità, ma non può promuovere l'integrità di documenti a livello più basso.
+
+
+
+**PROBLEMI NOTI**
+I sistemi multi-livello sono complessi da amministrare poiché bisogna definire dei livelli per ogni oggetto e per ogni soggetto. Inoltre, spesso richiedono delle applicazioni dedicate.
+Un altro problema è che tendono a forzare una *over-classification* delle informazioni, richiedi cioè di classificare anche risorse che non ne avrebbero bisogno.
+Se pensiamo in un contesto di rete inoltre, un modello come quello di Bell La-Padula, che non permettere di leggere a livello superiore, implica che le write-up siano *blind*, cioè senza acknowlegement.
+
+<div style="page-break-after: always;"></div>
+
+## MODELLI MULTI-LATERAL
+
+Mentre i modelli multi livello controllava i flussi in di informazione in base al livello di criticità, i modelli multi laterali li controllano in base a raggruppamenti semantici dei dati e degli utenti *(Compartimenti, Progetti, Gruppi, Ruoli)*.
+
+La prima politica che vedremo è semplicemente un'estensione del modello di Bell La-Padula in cui oltre ai livelli ci sono anche dei *compartimenti*. A questo punto un utente può accedere ad una risorsa solo se **livello soggetto $\geq$ livello oggetto** AND **compartimenti oggetto $\subseteq$ compartimenti soggetto**.
+
+
+
+**MURAGLIA CINESE**
+Questo modello è nato per gestire i conflitti di interesse fra risorse di progetti diversi, ovvero per controllare il flusso di dati critici tra aziende concorrenti, limitando l'accesso alle informazioni riservate di una data compagnia da parte di consulenti.
+La politica d'accesso presenta tre livelli: gli **oggetti singoli** sono inclusi in **dataset aziendali** inclusi in **classi di COI fra dataset**.
+
+La regola d'accesso per un soggetto S ad un oggetto O è dunque
+**dataset(O)  = dataset(O' che S ha già letto) OR dataset(O) $\notin$ COI(O' che S ha già letto)**.
+Ovvero un soggetto può leggere solo dataset che ha già letto o dataset che non siano in conflitto di interesse con i dataset degli oggetti già letti da S.
+
+
+
+**CLARK-WILSON**
+<img src="./img/030.png" alt="030" style="zoom:50%;" align="left" />Questo modello è orientato ai domini commerciali e quindi all'integrità dei dati.
+
+
+
+
+
+Si basa su due principi
+
+1. **Well formed transactions**: gli oggetti sensibili sono modificati da un piccolo insieme predefinito di programmi sicuri *(nucleo trusted)*.
+2. **Separation of duty**: ogni soggetto può eseguire solo parte delle operazioni che partecipano in una transazione. Quindi, per eseguire una transazione sono necessari più soggetti.
+
+
+
+**AUDITING E INTRUSION DETECTION** *(non approfondita)*
+Generalmente i dati che un SO può tracciare sono la lettura/scrittura dei dati, la creazione/distruzione di un oggetto, l'accesso degli utenti al sistema, le operazioni amministrative *(creazione utenti)*, le operazioni in modalità privilegiata.
+
+I sistemi di intrusion detection sono dei sistemi *(automatici e non)* che analizzano questi dati per determinare/prevenire tentativi di compromissione o uso non autorizzato del sistema.
+
+
+
+**PRINCIPI DI PROGETTAZIONE PER SO TRUSTED**
+I principi sono i minimi privilegi, la mediazione completa, l'autorizzazione negata per default, multiple point of failure, separation of duties, separazione fra utenti, protezione rispetto al riutilizzo di risorse e accounting e auditing. Tutto ciò in considerazione dei requisiti di usabilità.
