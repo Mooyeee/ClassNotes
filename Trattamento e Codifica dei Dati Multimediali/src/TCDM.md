@@ -1526,20 +1526,20 @@ Inoltre, le onde elettromagnetiche sono anche caratterizzate da un'***intensità
 La maggior parte dello spettro elettromagnetico è invisibile ai nostri occhi; quello che noi riusciamo a percepire è difatti solo una piccola parte dell'intero spettro. In particolare lo spettro visibile va da **380nm** a **760nm** *(in termini di lunghezza d'onda)*.
 Le frequenze più alte appartengono alla **luce ultravioletta**, ai **raggi x** e **gamma**, mentre le frequenze più basse appartengono alle **radiazioni infrarosse**.
 
-![043](img/043.png)
+<img src="img/043.png" alt="043" style="zoom:50%;" />
 
 
 
 **L'OCCHIO E I SUOI SENSORI**
-<img src="img/044.png" alt="044" style="zoom:70%;" align="left" />
+<img src="img/044.png" alt="044" style="zoom:55%;" align="left" />
 
 Cerchiamo adesso di capire com'è fatto l'organo sensibile a queste onde elettromagnetiche; c'è una prima parte che si occupa della *focalizzazione* dell'immagine, il **cristallino** che, appunto, focalizza l'immagine sulla **retina** come una lente.
 Sulla **retina** sono poi presenti due tipi di strutture che si occupano di percepire effettivamente il segnale:
 
 - **CONI**: Si occupano di produrre un segnale per i livelli di luminosità più alti. Esistono tre tipi di coni, che sia attivano in funzione della lunghezza d'onda del segnale:
-  	**L - Long Waves**: Sono i coni più sensibili al rosso.
-  	**M - Middle Waves**: Sono i coni più sensibili al verde.
-  	**S - Short Waves**: Sono i coni più sensibili al blu.
+  	**L - Long Waves**: Più sensibili al rosso.
+  	**M - Middle Waves**: Più sensibili al verde.
+  	**S - Short Waves**: Più sensibili al blu.
   I coni si attivano in quella che si chiama **visione fotopica**. Sono più legati quindi al colore.
 - **BASTONCELLI**: Si occupano di produrre un segnale quando c'è poca luce. Seppur rispondano a tutte le lunghezze d'onda, rappresentano dei toni di grigio, poiché sono più legati all'intensità dell'immagine *(**visione scotopica**)*.
 
@@ -1553,16 +1553,14 @@ In particolare, nell'occhio sono presenti circa *130 milioni* di bastoncelli e c
 
 **RISPOSTA DEI CONI A DIVERSE LUNGHEZZE D'ONDA**
 
-<img src="img/045.png" alt="045" style="zoom:50%;" align="left" />Possiamo osservare nel grafico la risposta ai vari colori dei coni.
-Notiamo che l'occhio è molto più sensibile alla luce nel centro dello spettro visibile.
+<img src="img/045.png" alt="045" style="zoom:100%;" />Possiamo osservare nel grafico la risposta ai vari colori dei coni. Notiamo che l'occhio è molto più sensibile alla luce nel centro dello spettro visibile.
 
-Solitamente la luce che vediamo non corrisponde ad un'unica lunghezza d'onda, ma ad una combinazione di diverse lunghezze d'onda.
-Ad esempio, in presenza di una radiazione luminosa a 470nm saranno attivati maggiormente i coni del blu, mentre quelli del rosso e del verde saranno poco attivi, facendoci percepire una luce celeste.
+Solitamente la luce che vediamo non corrisponde ad un'unica lunghezza d'onda, ma ad una combinazione di diverse lunghezze d'onda; ad esempio, in presenza di una radiazione luminosa a 470nm saranno attivati maggiormente i coni del blu, mentre quelli del rosso e del verde saranno poco attivi, facendoci percepire una luce celeste.
 
-
+<div style="page-break-after: always;"></div>
 
 **SEGNALI REALI**
-<img src="img/046.png" alt="046" style="zoom:50%;" align="right" />Per la creazione di un segnale immagine abbiamo innanzitutto bisogno di una sorgente luminosa, caratterizzata da una sua **emissione in funzione della lunghezza d'onda $E(\lambda)$**, che rappresenta l'ampiezza emessa dalla sorgente in funzione di una certa lunghezza d'onda $\lambda$. 
+<img src="img/046.png" alt="046" style="zoom:60%;" align="right" />Per la creazione di un segnale immagine abbiamo innanzitutto bisogno di una sorgente luminosa, caratterizzata da una sua **emissione in funzione della lunghezza d'onda $E(\lambda)$**, che rappresenta l'ampiezza emessa dalla sorgente in funzione di una certa lunghezza d'onda $\lambda$. 
 Successivamente le onde elettromagnetiche emesse dalla sorgente interagiscono con la scena; gli oggetti facenti parte della scena sono anch'essi caratterizzati da una funzione di $\lambda$, ovvero **$R(\lambda)$** *(riflettanza)*, poiché essi assorbono e riflettono le onde elettromagnetiche; a seconda di come assorbono e riflettono il colore percepito sarà differente.
 Infine, i nostri recettori assorbono anch'essi una funzione $S(\lambda)$.
 
@@ -1589,18 +1587,18 @@ Inoltre, l'occhio umano compensa automaticamente il colore della luce *(**adatta
 **FILTRI COLORE**
 Un'altra cosa che è progettata in base ai nostri sistemi percettivi è la disposizione dei filtri colore; in particolare la quantità di filtri rossi e blu è la metà di quella dei filtri verdi. Questo perché la risposta dei coni sensibili al verde è molto simile alla risposta dei bastoncelli, che abbiamo detto essere molti di più dei coni.
 
-<img src="img/047.png" alt="047" style="zoom:50%;" />
+<img src="img/047.png" alt="047" style="zoom:30%;" />
 
 Visto che abbiamo, per ogni posizione, solo un tipo di filtro, per arrivare poi all'immagine finale dobbiamo fare anche un'operazione di **interpolazione**, ovvero dobbiamo *stimare* il valore dei pixel mancanti di un dato canale analizzando quelli vicini ad esso *(per esempio facendone una media)*.
 
-<img src="img/048.png" alt="048" style="zoom:45%;" align="right" />Questa operazione a volte porta a degli artefatti *(di tipo cromatico)*, in particolare sui bordi, ovvero in quelle zone dove viene a mancare la ***correlazione*** tra i punti vicini.
+<img src="img/048.png" alt="048" style="zoom:35%;" align="right" />Questa operazione a volte porta a degli artefatti *(di tipo cromatico)*, in particolare sui bordi, ovvero in quelle zone dove viene a mancare la ***correlazione*** tra i punti vicini.
 
 
 
 
 
 **SINTESI**
-<img src="img/049.png" alt="049" style="zoom:50%;" align="left" />Quello che l'occhio *(e le camere)* fanno è chiamata **sintesi additiva**, ovvero sommano i contributi dei tre canali. Esiste anche la **sintesi sottrattiva**, che lavora coi colori complementari rispetto a quelli della sintesi additiva.
+<img src="img/049.png" alt="049" style="zoom:40%;" align="left" />Quello che l'occhio *(e le camere)* fanno è chiamata **sintesi additiva**, ovvero sommano i contributi dei tre canali. Esiste anche la **sintesi sottrattiva**, che lavora coi colori complementari rispetto a quelli della sintesi additiva.
 Un esempio di sintesi sottrattiva sono le stampanti *(anche se usano anche il nero per una questione di economicità)*.
 
 
@@ -1657,7 +1655,7 @@ In caso di stampa si parla di **dpi** *(dot per inches)*.
 Più la risoluzione è alta, più il singolo pixel è piccolo.
 La risoluzione **NON** incide sul peso dell'immagine, essa è definita esclusivamente dal numero di pixel e dal numero di bit per pixel.
 
-<img src="img/051.png" alt="051" style="zoom:50%;" align="left" />Avendo un'immagine già acquisita, per sapere la sua dimensione fisica, devo dividere i pixel per la sua risoluzione in ppi *(o per la risoluzione scelta per avere una certa dimensione fisica stampata)*.
+<img src="img/051.png" alt="051" style="zoom:60%;" align="left" />Avendo un'immagine già acquisita, per sapere la sua dimensione fisica, devo dividere i pixel per la sua risoluzione in ppi *(o per la risoluzione scelta per avere una certa dimensione fisica stampata)*.
 Se volessimo diminuire la dimensione fisica di un'immagine potremmo ridurre il numero di pixel e quindi *sotto-campionare*, ma questo porterebbe ad una peggiore qualità dell'immagine, oppure potremmo modificare la risoluzione dell'immagine, modificando così la dimensione fisica del pixel, senza toccare il numero di pixel e/o il numero di bit per pixel *(l'immagine quindi avrà lo stesso peso e qualità di prima, non la modifichiamo)*
 
 
@@ -1665,7 +1663,7 @@ Se volessimo diminuire la dimensione fisica di un'immagine potremmo ridurre il n
 **STAMPANTI**
 Le stampanti in commercio dichiarano di lavorare a 1440, 2880 o più **dpi** *(dots per inch)*; questo risulta strano se consideriamo che una stampa è ottimale a 300 **ppi**; il motivo è che i dpi dichiarati dalle stampanti sono il numero di *gocce di inchiostro* che la stampante riesce a inserire in un pollice, ma per "costruire" un pixel ci possono volere più gocce.
 
-
+<div style="page-break-after: always;"></div>
 
 **ACQUISIZIONE**
 A che risoluzione devo acquisire quindi un'immagine? Dipende da *cosa sto acquisendo* e da *cosa devo farci*.
@@ -1678,7 +1676,10 @@ Quindi nel nostro caso 150 mm / 36 mm * 300 ppi = **1250 ppi**.
 
 **E se l'immagine è acquisita con una camera?**
 Se sappiamo già la destinazione di utilizzo dell'immagine, possiamo stabilire la qualità di acquisizione in fase di scatto; ad esempio se vogliamo visualizzare l'immagine a 10x15cm su schermo *(quindi con 72 dpi)* avremmo 10 cm / 2.54 cm/inch * 72 pixel/inch = **284 pixel**.
+
 **NOTA**: generalmente sono considerate ottime le risoluzioni di 300 dpi per la stampa e 72 dpi per la visualizzazione su schermo. Inoltre, un pollice corrisponde a circa 2.54 cm.
+
+<div style="page-break-after: always;"></div>
 
 ## QUANTIZZAZIONE CROMATICA
 
@@ -1705,7 +1706,7 @@ Ovviamente, maggiore è la profondità colore, maggiore sarà il numero di bit n
 |   150 ppi   |  900x600  | 1.620.000 Bytes |  540.000 Bytes  | 67.500 Bytes  |
 |   300 ppi   | 1800x1200 | 6.480.000 Bytes | 2.160.000 Bytes | 270.000 Bytes |
 
-
+<div style="page-break-after: always;"></div>
 
 **DYNAMIC RANGE & CONTRASTO**
 Il *dynamic range* di un'immagine rappresenta l'intervallo fra l'ampiezza massima e minima di un segnale ed è quindi legato al numero di bit impiegato; un'immagine ben contrastata utilizza tutti i livelli disponibili.
@@ -1736,7 +1737,9 @@ Il dithering può inoltre essere utilizzato anche per eliminare degli artefatti 
 
 
 **HALF TONE PRINTING**
-<img src="img/056.png" alt="056" style="zoom:40%;" align="left" />Un altro processo simile è l'*half tone printing* che consiste nel stampare dei cerchietti di inchiostro nero di dimensioni variabili per simulare una sfumatura.
+Un altro processo simile è l'*half tone printing* che consiste nel stampare dei cerchietti di inchiostro nero di dimensioni variabili per simulare una sfumatura.
+
+<img src="img/056.png" alt="056" style="zoom:60%;"/>
 
 
 
@@ -1744,7 +1747,7 @@ Il dithering può inoltre essere utilizzato anche per eliminare degli artefatti 
 
 ## SEGNALI AUDIO
 
-Il segnale audio, così come la luce, è un fenomeno ondulatorio ma macroscopico rispetto a quest'ultima.
+<img src="img/061.png" alt="061" style="zoom:60%;" align="right"/>Il segnale audio, così come la luce, è un fenomeno ondulatorio ma macroscopico rispetto a quest'ultima.
 Dunque è un **onda** *(che descrive la variazione di pressione in un certo punto)* ed è detta ***longitudinale*** poiché la sorgente sonora vibra nella stessa direzione di propagazione del suono.
 
 Quando consideriamo un segnale *sinusoidale* con un'unica frequenza, periodico ed infinito, stiamo parlando di un **suono puro** o *elementare* o *tono*.
@@ -1775,7 +1778,7 @@ Variazioni di piccola ampiezza producono suoni di bassa intensità. L'intensità
 
 **ATTENZIONE**: Il legame che c'è tra grandezze fisiche e percettive non è però lineare. Generalmente le grandezze percepite aumentano più lentamente di quelle fisiche man mano che queste crescono.
 
-
+<div style="page-break-after: always;"></div>
 
 **ENERGIE IN GIOCO**
 Le energie in gioco nei fenomeni acustici sono irrilevanti rispetto a quelle nel fenomeno luminoso. In particolare i suoni vanno da:
@@ -1796,31 +1799,13 @@ Ovviamente, visto che il nostro sistema percettivo non è comunque in grado di p
 
 
 **CAMPO DI UDIBILITÀ**
-<img src="img/057.png" alt="057" style="zoom:100%;" align="right" />Il campo di udibilità è determinato da valori limite di intensità e di frequenza.
+<img src="img/057.png" alt="057" style="zoom:70%;" align="right" />Il campo di udibilità è determinato da valori limite di intensità e di frequenza.
 Il limite inferiore per l'intensità è costituito dalla **curva di soglia di udibilità**, mentre quello superiore dalla **curva di soglia del dolore**.
 Il limite delle frequenze invece è dato da un valore inferiore tra i 15 e 20 Hz e da uno superiore che si aggira sui 20000 Hz.
 Il valore di intensità di riferimento è quello al quale diventa udibile un segnale a 2 Hz *(ricordiamo che intensità è calcolata in dB)*. Notiamo come non sia lineare l'andamento della curva, a significare che le grandezze
-fisiche e percettive non sono dipendenti linearmente.
+fisiche e percettive non sono dipendenti linearmente.<img src="img/058.png" alt="058" style="zoom:50%;" align="right" />
 
-<img src="img/058.png" alt="058" style="zoom:100%;" align="right" />La stessa cosa vale anche per frequenza e altezza percepita del suono, cosa che viene mostrata nella scala di Mel.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+La stessa cosa vale anche per frequenza e altezza percepita del suono, cosa che viene mostrata nella scala di Mel.
 
 **dB E LIVELLI DEI SUONI**
 Alcuni livelli di intensità del suono sono:
@@ -1862,7 +1847,7 @@ Ovviamente, oltre alla frequenza di campionamento, sulla qualità influisce anch
 **SNR**
 Sappiamo già cos'è l'SNR, ma è importante notare che nel caso ad esempio dei suoni può essere complicato definirlo, poiché il rumore considerato è *tutto* il rumore che interferisce *(anche ad esempio il rumore del mezzo di trasmissione in un determinato momento)* e solitamente non è definibile come nel caso della quantizzazione.
 
-
+<div style="page-break-after: always;"></div>
 
 ## CODIFICA
 
@@ -1874,7 +1859,7 @@ Per la codifica dei segnali audio esistono due principali tecniche:
   Il risultato è quindi una sequenza di onde uguali fra loro *(come forma)* ma con diversa ampiezza.
   Usando dei segnali sfasati è possibile mandare segnali diversi attraverso questa codifica.
 
-<div style="page-break-after: always;"></div>
+
 
 **QUALITÀ AUDIO**
 Nel processo di digitalizzazione la qualità del segnale è data dalla fedeltà di riproduzione del suono e quindi dal numero di campioni e dal numero di bit, ma c'è anche un altro fattore che influenza la qualità audio percepita: la **direzionalità** *(ricordiamo che abbiamo due orecchie e che il suono si riflette nello spazio)*.
@@ -1886,8 +1871,184 @@ Le configurazioni più tipiche sono:
 - **Stereo**: 2 canali, destro e sinistro, posti frontalmente. Usato nei CD.
 - **Sorround 5+1**: 5 canali direzionali che portano medie e alte frequenze e un subwoofer centrale per le basse frequenze *(che non vengono percepite in modo direzionale)*. Usato nei home theater.
 
-
+<img src="img/059.png" alt="059" style="zoom:40%;"/>
 
 **INTERLEAVING E MULTIPLEXING**
 In fase di scrittura su disco, i campioni provenienti da canali diversi vengono scritti in successione; questa tecnica è detta **interleaving** in caso di scrittura su disco o **multiplexing** in caso di trasmissione.
 Per eseguire i campioni in modo sincronizzato saranno necessari dei buffer in riproduzione.
+
+<img src="img/060.png" alt="060" style="zoom:60%;"/>
+
+<div style="page-break-after: always;"></div>
+
+## SEGNALI VIDEO
+
+Come fanno diversi immagini *(i frame)* in successione ad essere percepite come in movimento?
+Nel 1829 si pensò che questo fenomeno avvenisse al livello di retina; si pensava cioè che l'occhio trattenesse per qualche frazione di secondo un'immagine sulla retina, anche dopo che questa non è più visibile realmente. Nel 1912 venne invece ipotizzato che questo fenomeno succedesse ad un livello superiore *(nel cervello)* e venne chiamato **fenomeno phi**.
+
+Questa persistenza della visione, seppur non sia chiaro dove avvenga, è il fenomeno che permette di avere una percezione di movimento visionando diversi frame in una successione più o meno rapida.
+
+
+
+**QUANTO VELOCE? - FRAME RATE**
+**Frame Rate**: frequenza di campionamento rispetto alla variabile temporale. Rappresenta il numero di frame mostrati in un secondo da un video.
+Le prime teleconferenze giravano a 10 fps *(frame per second)* e venivano percepite come dei movimenti a scatti. Successivamente i film muti utilizzarono 16 fps, per poi andare verso i 24 fps usati molto nel cinema. Moderne applicazioni come la TV possono usare 30 o 60 fps mentre altre applicazioni *(es. i giochi)* possono spingersi anche oltre i 120 fps.
+
+Dunque, il **movimento apparente** può essere percepito a frequenze molto basse; un limite inferiore potrebbe essere **16 fps**. 
+
+
+
+**VISUAL HUMAN SYSTEM E PERCEZIONE DI MOVIMENTO**
+Quando vediamo una variazione di intensità in una certa posizione spaziale *(e quindi variazione di intensità rispetto al tempo)* oppure in un certo tempo *(e quindi variazione di intensità rispetto alla posizione)*, essa non viene percepita sempre continua per qualsiasi frequenza, ma, per certi valori di frequenza, questa variazione viene percepita come uno *sfarfallio* *(**flickering**)*.
+Solitamente viene definita una frequenza limite al disopra della quale non viene percepito alcun flicker, detta **Critical Flicker Frequency**.
+
+Dunque abbiamo che se un pattern cambia molto più velocemente del rate di refresh *(immagini che vediamo al secondo, non necessariamente frame diversi)* del nostro sistema visivo, apparirà sfuocato, presenterà flicker.
+Mentre se l'intervallo tra un frame e l'altro è troppo lungo, l'immagine apparirà discontinua.
+
+
+
+**FRAME RATE E CRITICAL FLICKER FREQUENCY**
+La frequenza di flicker dipende da più fattori.
+In particolare la CFF varia da 20 ad 80 Hz in funzione di
+
+1. Luminosità media del display: più è alta e più cresce la CFF
+2. Luminosità ambiente: più è alta e più cresce la CFF
+3. Distanza dallo schermo: più è vicino e più cresce la CFF
+
+
+
+Il frame rate **non deve** essere inferiore alla Critical Flicker Frequency.
+
+**REFRESH E FLICKER**
+Il refresh rate è la frequenza con cui è riprodotta un'immagine *(anche la stessa)* su un display.
+È diverso dal frame rate poiché include anche la ripetizione di una stessa immagine, mentre il frame rate *'conta'* solo le immagini diverse.
+Il refresh rate può essere utilizzato per ridurre il flicker quando il frame rate non ne permette l'eliminazione.
+
+
+
+**SCANSIONE PROGRESSIVA O INTERLACCIATA**
+La scansione progressiva di un video richiede che tutte le linee di un frame vengano trasmesse in sequenza ed in modo continuo.
+Un modo per aumentare il refresh rate è utilizzare una scansione *interlacciata* *(anche se questa tecnica nasce originariamente per ridurre la banda necessaria a trasmettere i video)* che divide il frame in due semiquadri chiamati *field*. Il primo field ha solo le linee dispari, il secondo solo quelle pari. Ognuno dei field viene trasmesso in modo continuo in metà del tempo totale fra un frame e il successivo, raddoppiando difatti il refresh rate.
+
+Ovviamente, andando a prendere una riga si e una no stiamo effettuando un **sottocampionamento**, difatti ogni field è campionato ad istanti diversi, secondo il field rate. Il sottocampionamento introdurrà quindi degli artefatti nelle alte frequenze, ad esempio in scene ad alta velocità, quando c'è una variazione molto rapida, specie nella direzione verticale.
+Per ovviare a questi problemi viene effettuato un blur *(filtraggio passa-basso)*.
+
+<img src="img/062.png" alt="062" style="zoom:100%;"/>
+
+
+
+**AUMENTO FREQUENZA APPARENTE**
+Solitamente nella trasmissione della TV analogica veniva usato l'interlacciamento per risolvere anche il problema del flicker, al cinema il proiettore illumina 2*(o anche 3)* volte lo stesso fotogramma, aumentando così il refresh rate.
+
+Notiamo che al cinema solitamente può bastare anche un refresh rate di 48 Hz poiché la stanza è poco illuminata e la distanza dallo schermo è adatta, mentre ad esempio in ufficio, con una luminosità ambientale più alta e una distanza ridotta è necessario un refresh rate maggiore.
+
+| AMBIENTE | ILLUMINAZIONE | REFRESH RATE Hz |   FRAME RATE Hz   |
+| :------: | :-----------: | :-------------: | :---------------: |
+|  Cinema  |     Buio      |       48        |        24         |
+|    TV    |    Normale    |      50/60      |       25/30       |
+| Ufficio  |   Luminoso    |   66/72/76/85   | Come refresh rate |
+
+<div style="page-break-after: always;"></div>
+
+## RIPRODUZIONE IMMAGINE
+
+Abbiamo che per quanto riguarda la risoluzione spaziale, un video è definito a seconda se il segnale è
+
+- **ANALOGICO**: definito da numero di linee di scansione. Non esistono i pixel, la minima dimensione è la dimensione del fascio di elettroni. L'intensità luminosa dipende dal livello di tensione.
+- **DIGITALE**: numero di pixel per righe e colonne.
+
+Per quanto riguarda invece il colore, generalmente i video usano un spazio colore diverso dal RGB *(solitamente YCbCr)*.
+
+
+
+**RIPRODUZIONE COLORE**
+Lo spazio colore adottato dai video generalmente viene usato per separare l'informazione di intensità *(alla quale ricordiamo siamo più sensibili per via dei recettori che abbiamo negli occhi)* da quella del colore stesso, in modo anche da poter effettuare una compressione sulla parte a cui siamo meno sensibili.
+In realtà questa separazione nasce anche per una questione di storia, in particolare è legata al passaggio dalla TV B/N alla TV a colori; a quel tempo c'era bisogno di rappresentare il colore mantenendo però il segnale luminanza *(che era quello trasmesso in B/N)* compatibile con i ricevitori esistenti e quindi con le stesse temporizzazioni e la stessa banda.
+
+Il problema era codificare immagini composte con i primari additivi RGB in una forma più facilmente utilizzabile e che sia compatibile col vecchio standard.
+La soluzione ideale era ovviamente usare tre canali separati *(R, G, B)* per ogni colore, ma questo non solo non sarebbe stato compatibile col vecchio standard, ma sarebbe stato anche molto costoso in termini di banda. Miscelare le tre componenti su uno stesso canale comporterebbe delle perdite di qualità e non sarebbe comunque stato compatibile. 
+
+Una soluzione proposta allora fu di **separare** la *luminanza* dalla *crominanza*.
+
+
+
+**SEGNALE LUMINANZA**
+Per ottenere il segnale luminanza si esegue una combinazione lineare delle tre componenti primarie RGB. A questo segnale viene applicata una **correzione gamma** *(correzione non lineare)*; questa correzione serve per compensare le caratteristiche di non linearità dei display.
+
+In particolare $Y = 0.299R + 0.587G + 0.114B$	*(in YUV)*.
+
+Possiamo notare come il verde pesi molto di più degli altri canali, questo per via del fatto che i nostri recettori percepiscono il verde in maniera molto simile a come percepiscono la luminanza e ricordiamo che abbiamo molti più bastoncelli che coni, quindi siamo molto più sensibili alla luminanza che alla crominanza.
+
+Notiamo anche che il fatto che la luminanza sia combinazione lineare dei tre canali significa che fisicamente la luminanza la troviamo in tutti e tre i canali RGB. Questo significa che la luminanza è **correlata** ai tre canali che quindi presentano una **ridondanza**, che andando a separare i canali e scorrelare le informazioni possiamo eliminare, cosa molto utile quando parliamo di compressione dei segnali.
+
+
+
+**SEGNALE CROMATICO**
+Nello standard YUV l'informazione colore è codificata in due canali aggiuntivi ottenuti sottraendo la luminanza alle componenti rosso e blu.
+
+In particolare	$U = 0.492(B-Y)$			e			$V = 0.877(R-Y)$.
+L'insieme di queste due componenti si chiama **chroma**.
+
+Ma dov'è il verde?
+Il verde è definito nella luminanza, poiché è quello che compone maggiormente l'informazione di luminanza.
+
+
+
+**GAMMA CORRECTION**
+I display hanno una risposta non lineare rispetto all'input *(in termini di intensità luminosa)* perché riproducono un segnale di intensità con una tensione e questo fenomeno viene corretto con la gamma correction, un'operazione non lineare che passa attraverso un esponenziale e che modifica l'intensità del segnale. Senza gamma correction i valori scuri sono più compressi e quindi mostrati troppo scuri.
+
+<img src="img/063.png" alt="063" style="zoom:100%;"/>
+
+In particolare, la dipendenza tra intensità $B_d$ e tensione $v_d$ è data dalla formula $B_d = v_d^{\gamma_d}$.
+
+I monitor CRT hanno una gamma che va da 2.2 a 2.5.
+La correzione gamma è semplicemente un elevamento con un'opportuna potenza del segnale prima della trasmissione, in modo da renderlo nuovamente lineare.
+Questo discorso vale per il canale della luminanza ma vale anche per i canali cromatici. È stato definito difatti uno spazio **sRGB** ottenuto dal RGB andando a correggere la gamma dei canali.
+
+**IMPORTANTE**: la gamma correction è applicata su valori normalizzati, ovvero riscalati tra 0 e 1, in modo che la correzione non alteri i bianchi ed i neri puri, ma solo i grigi.
+
+<img src="img/064.png" alt="064" style="zoom:40%;"/>
+
+<div style="page-break-after: always;"></div>
+
+**SPAZI COLORE**
+I tre più importanti spazi colore *(nei video analogici)* sono NTSC *(Nord America e Giappone)*, PAL e SECAM *(Europa)*. I segnali analogici usati sono **YUV** *(PAL e SECAM)* e **YIQ** *(NTSC)*.
+
+Un segnale video analogico, una volta digitalizzato viene convertito in formato **YCbCr**, utilizzato anche in molti schemi di compressione. *YUV* e *YCrCb* sono simili per quanto riguarda il metodo di calcolo. Cambiano per quanto riguarda il possibile range di valori: YUV varia da 0-255, YCrCb varia da 16-235/240.
+
+La TV odierna è la *HDTV* che può supportare diversi standard differenti per risoluzione, aspect ratio, frame rate.
+
+
+
+**SOTTOCAMPIONAMENTO CROMA**
+Poiché il nostro sistema visivo è più sensibile all’intensità luminosa che alla croma ha senso ridurre la risoluzione spaziale delle componenti cromatiche piuttosto che quella della componente di luminanza.
+
+Il campionamento del colore è indicato con la notazione **x : y : z** dove
+
+- **x**: numero relativo di campioni di luminanza.
+- **y**: numero campioni chroma per le linee dispari.
+- **z**: numero campioni chroma per le linee pari.
+
+Nella digitalizzazione i campioni Cb e Cr sono di solito campionati orizzontalmente.
+
+<img src="img/065.png" alt="065" style="zoom:40%;" align="right"/>Lo schema 4:4:4 indica che non c'è sotto-campionamento sulle componenti cromatiche, in particolare dice che per 4 campioni di luminanza consecutivi avremmo 4 campioni chroma sulle linee dispari e 4 sulle linee pari.
+
+<img src="img/066.png" alt="066" style="zoom:50%;" align="right"/>Lo schema 4:2:2 indica un sotto-campionamento orizzontale di Cb e Cr di un fattore 2. In particolare, su 4 pixel orizzontali da 0 a 3, tutti i valori di Y sono trasmessi, mentre Cb e Cr sono trasmessi con passo 2: (Cb<sub>0</sub>, Y<sub>0</sub>) (Cr<sub>0</sub>, Y<sub>1</sub>)(Cb<sub>2</sub>, Y<sub>2</sub>)(Cr<sub>2</sub>, Y<sub>3</sub>)(Cb<sub>4</sub>, Y<sub>4</sub>). Questo significa che l'informazione cromatica viene divisa su due pixel, che quindi avranno la stessa chroma.
+
+<img src="img/067.png" alt="066" style="zoom:60%;" align="right"/>Infine, lo schema 4:2:0, che è anche quello utilizzato nella compressione JPEG ed MPEG, sotto-campiona in entrambe le direzioni orizzontale e verticale di un fattore 2. In questo modo abbiamo, per ogni 4 pixel di luminanza, 2 campioni colore nelle righe dispari e 0 nelle righe pari. Questo è come se avessimo un pixel con croma media fra righe e colonne, facendo si che 4 pixel adiacenti condividano la stessa chroma. È come se avessi un *pixellone* di chroma.
+
+Possiamo vedere questo effetto con diversi schemi:
+
+<img src="img/068.png" alt="067" style="zoom:100%;"/>
+
+Questo tipo di compressione va ovviamente ad eliminare informazione, ma a livello percettivo spesso non è notabile questo tipo di perdita, quindi se lo scopo dell'immagine è essere visualizzata da umani può aver senso sotto-campionare così la chroma.
+
+Possiamo vedere quanto spazio ci porta a risparmiare questo tipo di operazione nella seguente tabella
+
+| SUBSAMPLING | LUMINANZA (Y) | CROMINANZA (U e V) | TOTALE  | MEMORIA PER PIXEL | PERCENTUALE MEMORIA |
+| :---------: | :-----------: | :----------------: | :-----: | :---------------: | :-----------------: |
+|    4:4:4    |    4 Byte     |       8 Byte       | 12 Byte |      3 Byte       |        100%         |
+|    4:2:2    |    4 Byte     |       4 Byte       | 8 Byte  |      2 Byte       |         66%         |
+|    4:2:0    |    4 Byte     |       2 Byte       | 6 Byte  |     1.5 Byte      |         50%         |
+|    4:1:1    |    4 Byte     |       2 Byte       | 6 Byte  |     1.5 Byte      |         50%         |
+
