@@ -2052,3 +2052,104 @@ Possiamo vedere quanto spazio ci porta a risparmiare questo tipo di operazione n
 |    4:2:0    |    4 Byte     |       2 Byte       | 6 Byte  |     1.5 Byte      |         50%         |
 |    4:1:1    |    4 Byte     |       2 Byte       | 6 Byte  |     1.5 Byte      |         50%         |
 
+
+
+## COMPRESSIONE
+
+Sappiamo che il *costo* di un segnale è espresso attraverso il suo peso e che dipende dal campionamento e dalla quantizzazione di questo. In particolare, per
+
+- Immagini il peso è dato da
+  - campionamento spaziale *(numero pixel)*
+  - Profondità colore
+- Suono il peso è dato da
+  - Frequenza di campionamento
+  - Livelli di quantizzazione
+  - Numero canali
+- Video il peso è dato da
+  - Campionamento spaziale *(numero pixel)*
+  - Campionamento temporale *(numero di frame/sec)*
+  - Profondità colore
+  - Audio
+
+
+
+**ESEMPIO NUMERICO VIDEO SENZA COMPRESSIONE**
+Immaginiamo di dover memorizzare un film di 2 ore in uno standard televisivo NTSC, quindi con una risoluzione di 720x480 pixel, con una profondità colore di 3x8 = 24 bit a 30 fps *(trascuriamo l'audio)*.
+
+Avremmo 720 x 480 <sub>*pixel/frame*</sub> x 30 <sub>*frames*</sub> x 24 <sub>*bit/pixel*</sub> x 2x60x60 <sub>*s*</sub> = 2.24 * 10<sup>11</sup> Byte!
+Per poter memorizzare questo film sarebbero necessari 24 DVD *(da 8.7 GB)*, per poterne usare uno solo dovremmo comprimere 23.9 volte.
+
+Se ipotizziamo di avere una risoluzione full HD a 60 fps
+1920 x 1080 <sub>*pixel/frame*</sub> x 60 <sub>*frames*</sub> x 24 <sub>*bit/pixel*</sub> x 2x60x60 <sub>*s*</sub> = 2.68 * 10<sup>12</sup> Byte!
+In questo caso sarebbero necessari 288 DVD!
+
+E ricordiamo che abbiamo trascurato l'audio.
+
+Abbiamo visto dunque che il problema della compressione è un problema grande e che è utile affrontare.
+La compressione è il processo di riduzione dei dati necessari a rappresentare una data informazione.
+
+Matematicamente questo si traduce in una trasformazione in un insieme di dati statisticamente scorrelati *(ovvero ridurre la ridondanza)*.
+
+Solitamente la compressione deve soddisfare alcuni requisiti:
+
+- Deve essere garantita una certa qualità del segnale compresso; deve cioè essere definito un ***grado di fedeltà*** al segnale originale. Ovviamente questo grado di fedeltà varia in base alle applicazioni.
+- Il livello computazionale del processo di codifica/decodifica deve essere accettabile per l'applicazione specifica.
+
+
+
+**TECNICHE DI COMPRESSIONE**
+Le tecniche di compressione si suddividono in due famgilie:
+
+- **ERROR FREE O LOSS LESS**: algoritmi di compressione senza perdita di informazioni, il segnale può essere decompresso e ricostruito senza che si perda alcuna informazione *(utile in ambito medico ad esempio)*.
+- **LOSSY**: algoritmi di compressione con perdita di informazioni, il segnale ricostruito è un segnale **diverso** dal segnale originale, ma che solitamente a livello percettivo appare uguale *(ad esempio i segnali televisivi)*. Ovviamente il livello di compressione raggiunto da questo tipo di algoritmi è generalmente maggiore di quelli loss less.
+
+
+
+**DATI E INFORMAZIONI**
+Dati e informazioni non sono la stessa cosa: i dati sono gli strumenti tramite i quali è rappresentata l'informazione. Una stessa informazione può essere rappresentata con diversi quantitativi di dati.
+
+La compressione si basa sulla rimozione dei dati ridondanti, cosa che è matematicamente quantificabile.
+Dati due insiemi differenti di dati per descrivere la stessa informazione, possiamo definire la ridondanza dei dati come $C = b_1/b_2$, dove $C$ è il **rapporto di compressione**, $b_1$ sono il numero di bit per rappresentare l'informazione nel primo insieme *(prima della compressione)* e $b_2$ sono il numero di bit per rappresentare l'informazione nel secondo insieme *(dopo la compressione)*.
+
+Dal rapporto di compressione possiamo calcolare la **ridondanza relativa** come $R = 1 - 1/C$.
+
+Se $b_1 = b_2$, $R = 0$: non ci sono dati ridondanti tra la prima e la seconda rappresentazione.
+Un rapporto di compressione di 10, che si indica anche come 10:1, sta a dire che il primo insieme necessita di 10 bit dove il secondo ne necessita solo di 1. La corrispondente ridondanza è 0.9; il 90% dei dati del primo insieme è ridondante.
+
+<div style="page-break-after: always;"></div>
+
+## ESEMPI DI RIDONDANZA
+
+Quando si sceglie un algoritmo di compressione, non lo si sceglie in base al tipo di segnale *(un'immagine piuttosto che un video)*, ma in base al **contenuto del segnale**. L'algoritmo è funzione di come è fatto il segnale.
+
+<img src="img/069.png" alt="069" style="zoom:100%;"/>
+
+Guardando l'istogramma possiamo subito notare che la prima immagine usa solo 4 livelli di 256 disponibili, sprecando gli altri. Questo è un tipo di ridondanza chiamata **ridondanza della codifica**, potrei evitare di salvare i livelli non usati senza perdere alcuna informazione.
+La seconda immagine invece, al contrario della prima, utilizza tutti i livelli dell'istogramma, ma si ripete spazialmente, potremmo rappresentare l'immagine anche una sola colonna e non perdere alcuna informazione. Questa è chiamata **ridondanza spaziale**.
+Notiamo anche che, dal punto di vista percettivo, la terza immagine sembra avere meno informazione delle altre, mentre se guardiamo l'istogramma possiamo notare che c'è dell'altra informazione non percepita. Questo crea una **ridondanza percettiva**, potrei eliminare l'informazione non percepita, anche se, a differenza di prima, questa volta andrei a cancellare dell'informazione che nel segnale originale era invece presente.
+
+<div style="page-break-after: always;"></div>
+
+## RIDONDANZA DELLA CODIFICA
+
+L'istogramma dei livelli di grigio di un'immagine fornisce importanti informazioni su come ridurre il quantitativo di dati necessario per rappresentare l'immagine.
+
+<img src="img/070.png" alt="070" style="zoom:100%;"/>
+
+Se invece che rappresentare il numero di pixel con un certo valore sull'asse verticale, rappresentiamo il numero di pixel con quel valore diviso il numero totale di pixel otteniamo la **probabilità di occorrenza del livello di grigio $r_k$**: $p_r(r_k) = n_k/N*M$.
+
+A questo punto se definiamo $l(r_k)$ come numero di bit necessario per descrivere il k-esimo livello di grigio, possiamo anche definire il numero medio di bit per pixel per descrivere l'immagine in toni di grigio
+$$
+L_{avg} = \sum\limits_{k=0}^{L-1}l(r_k)p_r(r_k)
+$$
+In un'immagine con 256 livelli di grigio, se per ogni livello si usano 8 bit, $L_{avg} = 8$ e se l'immagine ha dimensioni NxM, saranno necessari NxMx8 bit.
+
+
+
+**STRATEGIA DI RIDUZIONE DELLA RIDONDANZA**
+Possiamo minimizzare la $L_{avg}$ attraverso una ***codifica a lunghezza variabile VLC***.
+Questo tipo di codifica permette di usare un numero minore di bit per rappresentare i livelli più probabili e vice versa ed è una tecnica loss less.
+
+Osserviamo nell'immagine come per i livelli più probabili si utilizzino meno bit e viceversa, cosa che ci porta ad avere un $L_{avg}$ minore, e quindi una minore ridondanza. Se i livelli meno probabili sono assenti, non importa il numero di bit che usano, tanto non li salviamo.
+
+<img src="img/071.png" alt="071" style="zoom:100%;"/>
