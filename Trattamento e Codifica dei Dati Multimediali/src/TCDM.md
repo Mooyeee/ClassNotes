@@ -2153,3 +2153,129 @@ Questo tipo di codifica permette di usare un numero minore di bit per rappresent
 Osserviamo nell'immagine come per i livelli più probabili si utilizzino meno bit e viceversa, cosa che ci porta ad avere un $L_{avg}$ minore, e quindi una minore ridondanza. Se i livelli meno probabili sono assenti, non importa il numero di bit che usano, tanto non li salviamo.
 
 <img src="img/071.png" alt="071" style="zoom:100%;"/>
+
+<div style="page-break-after: always;"></div>
+
+## RIDONDANZA SPAZIALE
+
+<img src="img/072.png" alt="072" style="zoom:100%;"/>
+
+Quando abbiamo un istogramma uniforme la VLC non ha alcun effetto, poiché tutti i valori sono equiprobabili.
+
+Possiamo però notare che
+
+- lungo le righe c'è una forte ridondanza spaziale.
+- lungo le colonne no.
+
+
+
+**RUN-LENGTH ENCODING (RLE)**
+Possiamo ridurre la ridondanza spaziale introducendo delle coppie **run-length**: il primo valore individua un valore di intensità, il secondo il numero di volte che si ripete.
+
+Nell'esempio abbiamo 256 possibili valori di intensità e ognuno di essi si ripete per 256 volte; ci servono quindi due valori per ogni riga. Il rapporto di compressione sarà quindi C = 256x256x8 / 2x256x8 = 128 : 1.
+
+
+
+## RIDONDANZA PERCETTIVA
+
+<img src="img/073.png" alt="073" style="zoom:100%;"/>
+
+L’immagine è percepita come se avesse un valore di grigio uniforme. Non è così e lo si capisce dall’istogramma. Possiamo eliminare le informazione ignorate dal nostro sistema percettivo e sostituire un unico valore pari al valore medio. In questo modo avremmo C = NxMx8/8 = NxM : 1.
+
+Con questo approccio c'è inevitabilmente una perdita.
+
+<div style="page-break-after: always;"></div>
+
+## RIDONDANZA STATISTICA
+
+**ENTROPIA**: Misura della quantità di dati minima necessaria per codificare *(senza perdita)* una sorgente di informazione. L'entropia misura dunque il numero **medio minimo** di simboli binari *(0 e 1)* necessari a codificare il messaggio. È una misura del grado di incertezza della sorgente: se un simbolo ha probabilità 1 *(tutti gli altri hanno probabilità 0)*, l'incertezza è nulla, ovvero informazione nulla.
+
+
+
+**CODIFICA DI HUFFMAN**
+Un algoritmo per la riduzione della ridondanza di codifica è la codifica di huffman.
+La codifica avviene secondo una struttura ad albero binario costruita sulla base delle frequenze dei singoli caratteri e mira a trovare il numero minimo di bit per pixel per un dato segnale.
+È un VLC: ai caratteri più frequenti viene associato un codice di pochi bit, mentre la lunghezza del codice cresce al diminuire della frequenza del carattere, ed è quindi una codifica senza perdita.
+
+Si consideri il caso di un documento in cui compaiono 5 caratteri A, B, C, D, E.
+La frequenza dei singoli caratteri e': f(A)=0.45, f(B)=0.25, f(C)=0.15, f(D)=0,05, f(E)=0.10.
+
+<img src="img/074.png" alt="074" style="zoom:50%;" align="right"/>L'algoritmo di Huffman prende i caratteri con probabilità minore e li mette in fondo all'albero, andando a costruire man mano l'albero sommando i due nodi inferiori e prendendo i due minimi tra la somma e le altre probabilità.
+
+
+
+**RIDONDANZA SPAZIALE E TEMPORALE: RLE**
+Sorgenti con memoria: il valore del simbolo corrente dipende dal valore del simbolo precedente.
+L'algoritmo RLE sfrutta la memoria presente nei campioni del segnale.
+
+Gran parte del contenuto informativo di un pixel è ridondante e può essere ottenuto a partire dal contenuto informativo dei pixel vicini usando un **mapping** differente dell'immagine più efficiente ma generalmente non interpretabile visivamente.
+
+Questo tipo di algoritmo veniva usato nei fax; avendo del testo molti pixel sono bianchi e quindi è utile memorizzare il valore *(0 sfondo, 1 testo solitamente)* ed il numero di volte che si ripete.
+
+Può essere impiegata anche per la codifica di immagini a colori quando ci sono pixel consecutivi di egual colore. Nel caso di immagini reali *(in cui i bit generalmente non sono uguali in sequenze)* tuttavia è poco efficiente questa strategia, perché aumenterebbe il numero di bit necessari per memorizzare l'immagine *(avrò due valori per ogni pixel e C < 1)*.
+
+<div style="page-break-after: always;"></div>
+
+**RIDONDANZA SPAZIALE E TEMPORALE: DIFFERENTIAL CODING**
+<img src="img/075.png" alt="075" style="zoom:50%;" align="right"/>Immaginiamo di avere questo segnale sinusoide; possiamo osservare che di fatto i valori vicini sono correlati da una certa legge. Potremmo pensare, invece di codificare ogni livello a sé *(e quindi codificare i livelli da 0 a 16)*, di codificare la differenza tra un livello e l'altro *(dovendo così codificare solo dei valori tra -2 e 2)*. Questo algoritmo è chiamato **DPCM** nei segnali audio codificati con PCM.
+In questo modo si passa da un istogramma distribuito su più livelli ad uni più piccato *(stretto)* del segnale originale. A questo punto risulta molto utile un algoritmo VLC per ridurre la ridondanza di codifica.
+
+Nel caso delle immagini si opera generando un’immagine differenza fra pixel contigui *(mantenendo intatto il valore del primo pixel, per poter ricostruire l'immagine)* applicando un operatore che approssima la derivata prima *(gradiente)* o la derivata seconda *(Laplaciano)*; questo equivale ad applicare un filtro passa alto all'immagine e ottenerne gli *edges*.
+A causa delle ridondanze spaziali presenti in generale nelle immagini l’immagine differenza ha un istogramma più stretto e quindi un’entropia minore.
+
+
+
+**CODIFICA PREDITTIVA**
+<img src="img/076.png" alt="076" style="zoom:30%;" align="right"/>Loseless JPEG non usa la DCT e non introduce perdita, ma valuta le differenze tra il valore **effettivo** del pixel *x* ed un suo valore **predetto** da alcuni suoi vicini ABC *(sopra e a sinistra)*. Questa sequenza di valori differenziali viene poi codificata con un VLC tipo Huffman, riportando il primo pixel identicamente.
+
+La predizione può essere fatta con diverse formule, come A + B - C, (A + B) / 2 ecc.
+Con una predizione effettiva è possibile ottenere un istogramma ancora più piccato di quello ottenuto con la DPCM.
+
+
+
+**ALGORITMI LOSSLESS UNIVERSALI**
+*E se non si conosce la distribuzione di probabilità? (ad esempio perché non ho già tutto il segnale)*
+Esistono algoritmi loseless che non richiedono a priori la conoscenza della distribuzione di probabilità dei simboli dell'alfabeto e modellano ***dinamicamente*** le caratteristiche statiche dei dati da comprimere e adeguano di conseguenza la codifica.
+Alcuni algoritmi di questo tipo sono l'Adaptive Huffman Coding e gli algoritmi **Lempel-Ziv** *(alla base di gzip, pkzip ecc)*.
+
+
+
+**LZW (LEMPEL ZIV WELCH)**
+LZW è un algoritmo di compressione che rimuove la ridondanza di codifica e la ridondanza spaziale e non necessita a priori della conoscenza della probabilità dell'occorrenza dei simboli da codificare.
+
+L'algoritmo costruisce un dizionario che contenga i simboli da codificare:
+
+- Immagine a 8 bit, dizionario a 9 bit *(512 possibili livelli)*.
+- Le prime 256 parole sono associate ai 256 valori di intensità.
+- Quando si incontrano due pixel contigui con la stessa intensità, si utilizza la codifica a 9 bit per codificarli, invece di utilizzare 2x8 bit. Ovviamente se non ho pixel che si ripetono, peggioro il numero di bit necessari, mentre se ci sono sequenze che si ripetono questa codifica può essere vantaggiosa.
+
+## CODIFICA VIDEO: INTER FRAMES
+
+Nei video esiste una correlazione non solo tra i **pixel dello stesso fotogramma**, ma anche tra i **pixel di fotogrammi** adiacenti: un fotogramma ed i due adiacenti *(successivo e precedente)* spesso risultano molto simili. Questa **ridondanza temporale** tra fotogrammi vicini che ne sfrutta le loro minime differenze viene trattata dalla **codifica inter frames**.
+
+In particolare, questa correlazione tra un frame ed il successivo viene trattata dalla codifica predittiva che codifica l'errore di predizione con un VLC. La predizione viene fatta attraverso i **vettori di moto** che definiscono lo spostamento dell'immagine dello frame precedente per arrivare in quello successivo. *(Lo vedremo in dettaglio quando parleremo di MPEG)*.
+
+Anche qui ovviamente è molto più efficace codificare la differenza tra la predizione e la realtà piuttosto che le differenze tra i frame. Quando ci sono cambi di scena questo tipo di algoritmi non funziona bene ovviamente *(le differenze saranno enormi)*.
+
+
+
+## RIDONDANZA PERCETTIVA
+
+Questo tipo di ridondanza deriva dalle caratteristiche del nostro sistema percettivo: non tutta l'informazione ha la stessa importanza per esso.
+Il nostro sistema percettivo non valuta ciascun pixel/campione quantitativamente, ma sfrutta caratteristiche particolare *(edge, texture, frequenze)* per raggruppare i pixel/campioni in insiemi significativi.
+La riduzione di ridondanza percettiva ovviamente comporta una perdita quantitativa di informazione: si parla dunque di **quantizzazione**. Questo tipo di compressione è irreversibile.
+
+
+
+**RIDONDANZA PSICO-UDITIVA**
+<img src="img/077.png" alt="077" style="zoom:50%;" align="right"/>Abbiamo visto com'è fatta la nostra soglia di udibilità in presenza di un solo tono; ma cosa succede in presenza di più toni? Quando c'è un tono **dominante** *(con un'ampiezza maggiore degli altri)*, questo crea un effetto di **mascheramento** dei toni vicini, che ne modifica la soglia di udibilità e non vengono percepiti. Alcune tecniche di compressione tengono conto più che di tutte le componenti presenti nella banda, di quelle che sono effettivamente udibili *(e quindi non mascherate)*.
+
+
+
+**RIDONDANZA PSICO-VISUALE**
+**Legge di Weber**: la sensibilità alle variazioni di luminosità diminuisce man mano che l’immagine diventa più scura. Questo significa che possiamo quantizzare più *grossolanamente* nelle zone più scure.
+
+Siamo più sensibili al rumore nelle regioni uniformi *(a bassa frequenza)* piuttosto che nelle regioni ad alta frequenza. Questo ci permette di usare tecniche come il **dithering** per creare un livello di dettaglio percepito maggiore dopo aver sotto-campionato un'immagine *(quantizzazione IGS - Improved Gray Scale)*.
+
+Il sistema visivo umano è più sensibile alle variazioni di luminanza che non a quelle di crominanza. Questo significa che possiamo quantizzare più *grossolanamente* la codifica delle componenti di crominanza.
+
