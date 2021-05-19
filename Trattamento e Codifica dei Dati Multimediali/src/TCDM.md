@@ -2279,3 +2279,148 @@ Siamo più sensibili al rumore nelle regioni uniformi *(a bassa frequenza)* piut
 
 Il sistema visivo umano è più sensibile alle variazioni di luminanza che non a quelle di crominanza. Questo significa che possiamo quantizzare più *grossolanamente* la codifica delle componenti di crominanza.
 
+## RIDONDANZE E CORRELAZIONE FRA COMPONENTI
+
+Nel dominio diretto, le componenti di un segnale *x* sono fra loto significativamente ***correlate***, ovvero la stessa informazione è contenuta in più componenti *(dati)* e quindi c'è **ridondanza**.
+Nel dominio delle frequenze è possibile effettuare una migliore scorrelazione dei dati *(ricordiamo che la maggior parte delle informazioni di un segnale è contenuta nelle sue basse frequenze)*.
+
+<img src="img/078.png" alt="078" style="zoom:40%;"/>
+
+Dunque, se possiamo codificare il segnale con meno componenti del segnali *(ad esempio i coefficienti DFT a basse frequenze)*, le restanti componenti possono essere pesantemente quantizzate *(o addirittura eliminate)* con una piccola perdita.
+
+<img src="img/079.png" alt="079" style="zoom:40%;"/>
+
+
+
+**TRASFORMATE**
+Abbiamo visto la trasformata di Fourier, ma ne esistono di diverse, seppur hanno tutte una forma abbastanza simile; tutte operano sulla nostra funzione $f(x)$ attraverso il **kernel**, ovvero attraverso la parte di funzione che caratterizza la trasformata *(nel caso della DTFT era costituito dall'esponenziale complesso)*. In generale questo processo viene chiamato ***mapping*** ed è un processo reversibile.
+
+La scelta di una trasformata può dipendere dalla capacità di decorrelare i dati della trasformata, dalla semplicità di realizzazione, dalla minore visibilità dei difetti nella ricostruzione.
+
+Alcune trasformate sono
+
+- **Karhunen-Loeve Transform *(KLT)***: chiamata anche analisi alle componenti principali, è la trasformata *ottima*, infatti è quella che decorrela meglio i dati, ma è computazionalmente inefficiente.
+- **Discrete Cosine Transform *(DCT)***: è la trasformata che approssima meglio il comportamento della KLT, anche se è comunque più complessa computazionalmente della Walsh ed Hadamard Transform *(WLT)* che approssima anch'essa la KLT ma assume solo valori -1 o +1, essendo meno valida della DCT, anche se viene usata a volte nei video.
+  Questa trasformata è usata negli algoritmi di codifica degli standard di compressione più usati *(jpeg ed mpeg)*.
+- **Wavelet Transform**: diversa dalle altre trasformate, invece di andare solo nel dominio delle frequenze, si porta dietro sia le informazioni delle frequenze che quelle del tempo/spazio. Si porta dietro anche un *compromesso* del dominio di partenza.
+  Permette di eseguire un'analisi **multirisoluzione**. È impiegata nel *jpeg2000*.
+
+
+
+## DISCRETE COSINE TRANSFORM
+
+**RIPASSO DFT**
+Data una funzione $f(x)$, la sua DFT $F(u)$ è $F(u) = 1/M \sum f(x) g(u,x)$, con $g(u, x) = e^{-j2\pi/M ux}$.
+
+La DFT è una trasformata lineare, invertibile dove $g(u, x)$ è detto **kernel** della trasformazione diretta. Dal kernel dipendono le proprietà della trasformata.
+
+Avere una trasformata con $M = 16$ significa avere a disposizione 16 versori nel dominio trasformato campionati su 16 campioni *(16 vettori base, ciascuno di 16 componenti)*. Quando trasformiamo un segnale andiamo ad applicare dei *pesi* ad ogni versore per capire quale combinazione di quei versori crea il segnale nel dominio di partenza.
+
+In foto vediamo solo 9 versori, poiché gli altri si ripetono/si ripetono a segno invertito per via delle proprietà di parità/disparità del coseno/seno.
+
+<img src="img/080.png" alt="080" style="zoom:100%;"/>
+
+<img src="img/081.png" alt="081" style="zoom:50%;" align="left"/>
+Questo accade nel caso monodimensionale; nel mondo bidimensionale, i '*mattoncini*' cambiano leggermente: non ne avremmo più $M$, ma $M^2$, ovvero avremmo una funzione bidimensionale. Nell'esempio abbiamo $M = 4$.
+Notiamo nell'immagine che abbiamo variazioni di frequenza in due direzioni, $u$ e $v$.
+
+Avendo $M = 4$, i vari versori sono campionati in una griglia di 4x4 pixel. Notiamo che il primo blocco, che contiene solo frequenza zero non è altro che la componente continua del segnale.
+Considerando queste basi di 4x4 pixel, ci stiamo riferendo ad un segnale reale di 4x4 pixel, poiché cercando i pesi di ogni versore è come se li sovrapponessimo per ricreare il segnale originale.
+
+
+
+**DCT**
+Ora se passiamo dalla DFT alla DCT, stiamo solo cambiando il *kernel* della trasformata. In particolare, il kernel della DCT è $g(x, u) = \alpha (u) \cos[\frac{(2x+1)\pi u}{2N}]$.
+**ATTENZIONE**: la DCT ***NON*** è la parte reale della DFT; la DCT definisce un insieme nuovo di basi.
+
+La DCT è anch'essa lineare ed il suo kernel diretto è uguale a quello inverso *(simmetrico)* ed è **separabile ** *(posso suddividere operazioni multidimensionali in più operazioni monodimensionali)*.
+
+<div style="page-break-after: always;"></div>
+
+<img src="img/082.png" alt="082" style="zoom:40%;" align = "left"/>Ovviamente, utilizzando solo il coseno, la trasformata DCT è solo reale a differenza della DFT.
+Anche nel caso della DCT, se imponiamo ad esempio $N = 8$, stiamo definendo 8 versori campionati su 8 campioni che descrivono un segnale reale ad 8 campioni.
+
+Inoltre, guardando nel dominio delle frequenze il segnale, possiamo notare subito quali frequenze hanno dei contributi minori e possono quindi essere sacrificate: eliminare alcuni campioni con poco contributo nel dominio delle frequenze riduce di poco la qualità rispetto a d eliminare alcuni campioni nel segnale originale.
+
+Anche per la DCT, la trasformata bidimensionale è costituita da NxN *blocchettini* di NxN pixel che definiscono i versori del kernel.
+Nella codifica jpeg, N vale 8: questo significa che avremmo 8x8 *blocchettini* di 8x8 pixel ciascuno. La codifica produce una matrice 8x8 contenente i pesi di ogni versore per ricreare l'immagine originale.
+Dunque, la DCT ha la stessa dimensione del segnale originale; nel caso di un'immagine di NxM pixel, otteniamo una matrice di NxM coefficienti.
+Questa matrice conterrà in alto a sinistra i contributi a basse frequenze, mentre in basso a destra quelli ad alta frequenza.
+
+<img src="img/083.png" alt="083" style="zoom:40%;"/>
+
+Notiamo che la DCT, a differenza della DFT, ha molti valori nulli, poiché scorrela meglio l'informazione e possiamo comprimerla maggiormente.
+**NOTA**: il logaritmo iniziale serve ad avere una visualizzazione relativa sui 256 livelli dei monitor.
+
+<img src="img/084.png" alt="084" style="zoom:40%;" align = "left"/>Dunque, una maggiore quantità di informazione è presente nei primi coefficienti della DCT rispetto allo stesso numero di coefficienti della DFT. Nell'esempio possiamo vedere un'approssimazione di una rampa con i primi tre coefficienti delle trasformate.
+
+<div style="page-break-after: always;"></div>
+
+## TRASFORMATA WAVELET
+
+Abbiamo detto che la trasformata wavelet ci permette di fare un'**analisi multirisoluzione**, cosa che ci permette di analizzare oggetti grandi in dimensioni a risoluzioni minori e viceversa: se abbiamo oggetti di dimensioni diverse possiamo analizzare contemporaneamente più risoluzioni, anche perché alcune caratteristiche nascoste ad una data risoluzione possono essere individuabili ad un'altra. Questo tipo di algoritmi è utilizzato per il riconoscimento di oggetti.
+
+
+
+**STRUTTURA PIRAMIDALE**
+<img src="img/085.png" alt="085" style="zoom:40%;" align = "left"/>Un modo per analizzare più risoluzione è utilizzare una struttura piramidale che alla base ha l'immagine a risoluzione originale e man mano che sale scala la risoluzione, codificando però solo le differenze tra un livello e l'altro. Questo approccio non è però quello che utilizzeremo per la compressione, poiché ci fa portar dietro un segnale più grande di quello originale.
+
+
+
+
+
+**CODIFICA PER SOTTOBANDE**
+<img src="img/086.png" alt="086" style="zoom:40%;" align="left"/>Per prima cosa, nella trasformata wavelet, il segnale è **decomposto** in un insieme di **sottosegnali** *(sottobande)* a banda limitata, utilizzando dei filtri passabanda *complementari* *(ciò che passa in un filtro è bloccato negli altri)*. A questo punto ciascuna banda avrà un certo numero di campioni inferiore a quelli del segnale originale e quindi possiamo sottocampionare le sottobande senza introdurre aliasing *(così facendo la somma dei campioni di ogni sottobanda è uguale al numero di campioni del segnale originale)*.
+Per ricostruire il segnale vengono utilizzati dei filtri inversi.
+
+**E nel mondo bidimensionale?**
+Nel mondo a due dimensioni possiamo implementare dei filtri che lavorino in una dimensione e che lavorino prima sulle righe e poi sulle colonne *(su una dimensione alla volta quindi)*.
+In immagine possiamo vedere che viene applicato un passa-basso ed un passa-alto sulle righe e successivamente vengono nuovamente applicati passa-alto e passa-basso sulle colonne dei segnali risultanti. Il risultato sono 4 immagini, ognuna delle quali è grande 1/4 dell'immagine originale.
+
+<img src="img/087.png" alt="087" style="zoom:50%;"/>
+
+<div style="page-break-after: always;"></div>
+
+<img src="img/088.png" alt="088" style="zoom:60%;" align="left"/>Avendo un'immagine con un istogramma *piatto*, con la trasformata wavelet otterremo un'immagine con un'istogramma ugualmente *piatto* ma che usa un quarto dei bit e tre immagini di alte frequenze che invece avranno degli istogrammi più piccati e quindi su cui sarà molto vantaggioso applicare delle tecniche di riduzione di ridondanza.
+
+Altre parti ancora delle immagini ad alta frequenza potrebbero avere bassi contributi, quindi possono essere direttamente eliminate.
+
+
+
+
+
+**DECOMPOSIZIONE MULTIRISOLUZIONE**
+<img src="img/089.png" alt="089" style="zoom:60%;" align="right"/>Possiamo decomporre nuovamente l'immagine approssimata più volte, ricavando ad ogni livello una nuova immagine approssimata. In questo modo otteniamo le basse frequenze in alto a sinistra e le alte in basso a destra.
+
+Notiamo inoltre che in questo modo ci portiamo dietro anche delle informazioni spaziali sull'immagine, oltre alle informazioni sulla frequenza.
+
+Notiamo anche che nonostante le iterazioni fatte, il numero di pixel necessari per la trasformata sono uguali al numero di pixel che richiede l'immagine originale.
+
+Ovviamente possiamo ridurre la ridondanza di codifica su ogni livello delle immagini ad alta frequenza *(o eliminare contributi nulli)* e fornire così una buona compressione.
+
+
+
+**FUNZIONE DI SCALA**
+Nell'analisi multirisoluzione, il filtro passa-basso prende il nome di ***funzione di scala***, mentre il filtro passa-alto è chiamato ***wavelet*** e viene usato per descrivere la differenza in informazione fra due approssimazioni adiacenti. 
+
+
+
+**APPLICAZIONI**
+Ovviamente, se volessimo ad esempio ottenere solo le variazioni verticali di un'immagine, potremmo annullare i contributi delle alte frequenze orizzontali nella trasformata wavelet e ricostruire l'immagine, oppure potremmo ricostruire solo le alte frequenze andando ad annullare l'immagine approssimata.
+La trasformata wavelet inoltre può essere usata anche per fare **denoising** applicando una soglia alle alte frequenze *(ricordiamo che dopo la prima iterazione le frequenze in basso a destra di ogni livello sono alte relativamente, ogni livello divide la banda delle frequenze a metà)*.
+
+
+
+**PACCHETTI WAVELET**
+In alcune applicazioni può essere utile creare dei **pacchetti** wavelet, ovvero decomporre i vari coefficienti a loro volta per creare delle parti di contributi più precise ed eliminare quelle che hanno poco contenuto informativo. Questo tipo di operazione viene usata per le impronte digitali. 
+
+<img src="img/090.png" alt="090" style="zoom:50%;"/>
+
+
+
+**HEISEMBERG**
+Il **principio di indeterminazione** di Heisemberg dice che non si può conoscere con certezza contemporaneamente il valore di due variabili che descrivono un certo fenomeno. Nel caso degli elettroni le due variabili sono la quantità di moto $\Delta v$ ed il tempo $\Delta t$: se conosco esattamente il valore di uno dei due non posso avere informazioni sull'altra. Dobbiamo quindi accettare una certa incertezza $K \leq \Delta t * \Delta v$.
+
+Allo stesso modo, in un segnale originale abbiamo informazioni certe sul tempo *(o spazio)*, ma non sappiamo nulla delle frequenze. Nella trasformata di Fourier abbiamo informazioni sulle frequenze, ma non sul tempo. Nella trasformata wavelet abbiamo informazioni su entrambe accettando però un'incertezza.
+
+<img src="img/091.png" alt="091" style="zoom:100%;"/>
