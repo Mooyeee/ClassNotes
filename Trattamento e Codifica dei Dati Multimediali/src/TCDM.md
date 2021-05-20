@@ -1,4 +1,4 @@
-## MULTIMEDIALITÀ E MULTIMODALITÀ
+MULTIMEDIALITÀ E MULTIMODALITÀ
 
 **MEDIA**: strumento atto al trasporto di informazioni.
 **MULTI-MEDIA**: insieme di più strumenti per il trasporto di informazione.
@@ -2424,3 +2424,110 @@ Il **principio di indeterminazione** di Heisemberg dice che non si può conoscer
 Allo stesso modo, in un segnale originale abbiamo informazioni certe sul tempo *(o spazio)*, ma non sappiamo nulla delle frequenze. Nella trasformata di Fourier abbiamo informazioni sulle frequenze, ma non sul tempo. Nella trasformata wavelet abbiamo informazioni su entrambe accettando però un'incertezza.
 
 <img src="img/091.png" alt="091" style="zoom:100%;"/>
+
+<div style="page-break-after: always;"></div>
+
+## MODELLO DI COMPRESSIONE
+
+Un sistema per la compressione di immagini è generalmente formato da due unità distinte: il ***codificatore*** *(o compressore)* e il ***decodificatore*** *(o decompressore)*.
+
+<img src="img/092.png" alt="092" style="zoom:50%;"/>
+
+In particolare il *codificatore di sorgente* riduce la ridondanza del segnale, mentre il *codificatore di canale* ne incrementa l'immunità al rumore.
+Se $f(x,y) = f^{\wedge}(x, y)$ il sistema è error-free.
+
+
+
+**CODIFICATORE E DECODIFICATORE DI SORGENTE**
+In generale il codificatore/decodificatore di sorgente opera sulle tre forme di ridondanza viste precedentemente.
+
+Il primo blocco solitamente ci permette di spostarci da uno spazio all'altro *(mapping)*, in modo da gestire meglio le ridondanze spaziali, quindi a volte questo primo passaggio è solo preparatorio e non necessariamente introduce già la compressione.
+Successivamente il segnale viene quantizzato per eliminare la ridondanza percettiva, passo che non è reversibile essendo appunto una quantizzazione. Infine viene poi ridotta la ridondanza di codifica.
+Non necessariamente negli algoritmi di compressione sono presenti tutte e tre le fasi *(nella compressione loss-less ad esempio non c'è quantizzazione)*. In altri casi mapping e quantizzazione possono essere effettuati contemporaneamente.
+
+<img src="img/093.png" alt="093" style="zoom:70%;"/>
+
+Con la compressione loss-less si possono raggiungere livelli di compressioni di circa 10:1, con la lossy generalmente non c'è un limite, dipende dal compromesso che si fa tra compressione e qualità.
+
+**CODIFICA CON TRASFORMATE**
+Una tipica compressione a perdita di informazione è la **codifica con trasformate** che opera nel dominio trasformato. Per il mapping viene usata una trasformata *lineare* e *reversibile*. Il mapping in questa fase prevede anche una suddivisione dell'immagine in sotto-immagini sulle quali verrà poi applicata la trasformata coseno.
+Nella fase di mapping **NON** si ha compressione, è solo una preparazione alle fasi di compressione, che viene realizzata quantizzando o addirittura trascurando i coefficienti con ampiezza poco significativa.
+
+<img src="img/094.png" alt="094" style="zoom:50%;"/>
+
+Nella decodifica c’è sempre un blocco in meno della codifica poichè la quantizzazione è un fenomeno irreversibile.
+
+<img src="img/095.png" alt="095" style="zoom:50%;"/>
+
+
+
+**CRITERI DI FEDELTÀ OGGETTIVA**
+Con la quantizzazione si perde anche **informazione non ridondante**. E’ necessario poter valutare **quantitativamente** questa perdita attraverso la **qualità del segnale ricostruito**, cioè valutando la sua fedeltà rispetto all’originale.
+
+Per fare questo definiamo il **segnale errore**:			$e(x, y) = f^{\wedge}(x,y) - f(x,y)$
+Nel caso delle immagini questo segnale non è altro che l'immagine delle differenze tra il segnale ricostruito ed il segnale originale *(per il punto (x, y))*.
+
+Un'altra misura è l'**errore totale** che è la somma degli errori di ogni pixel, ma che è poco significativa poiché un'errore potrebbe anche essere negativo:			$\sum\sum e(x,y)$
+
+Una misura più significativa è il **Root Mean Square error**:			$e_{rms} = \sqrt{\frac{1}{MN} \sum\limits_{x=0}^{M-1}\sum\limits_{y=0}^{N-1} e(x, y)^2}$ 
+
+In particolare, viene elevato l'errore al quadrato per avere un valore non influenzato dai segni, viene fatta la media per avere un valore che mi dia un'informazione generale sul quantitativo di errore su ogni pixel e viene messo sotto radice per aver un valore dello stesso ordine di grandezza del segnale.
+
+Infine viene definito anche l'SNR:			$\frac{\sum\limits_{x=0}^{M-1}\sum\limits_{y=0}^{N-1}f^{\wedge}(x,y)^2}{\sum\limits_{x=0}^{M-1}\sum\limits_{y=0}^{N-1}[f^{\wedge}(x,y)-f(x,y)]^2}$
+
+L'RMS richiede la conoscenza dell'**input** e dell'**output**, mentre nel caso del SNR si può anche approssimare il rumore.
+
+**CRITERI DI FEDELTÀ SOGGETTIVA**
+Ovviamente il criterio oggettivo non sempre rispecchia quello soggettivo e quindi quello della qualità percepita. Per ottenere un criterio soggettivo solitamente bisogna avere un numero di osservatori che valutino il segnale in una scala che può essere:
+
+- **ASSOLUTA** *(a singolo stimolo)*: viene valutato il segnale decompresso e la scala rappresenta quanto sia alta o bassa la qualità percepita dell'immagine.
+
+<img src="img/096.png" alt="096" style="zoom:50%;"/>
+
+- **RELATIVA** *(a doppio stimolo)*: vengono visualizzate due immagini e viene valutato quanto l'una sia migliore dell'altra.
+
+<img src="img/097.png" alt="097" style="zoom:50%;"/>
+
+Le scale possono avere un numero dispari di elementi *(per permettere una risposta media)* o pari *(per obbligare l'utente a prendere una scelta)*.
+Successivamente verranno applicate delle tecniche di analisi dei dati su queste risposte soggettive per ottenere un **Mean Opinion Score**, ovvero per ricavare delle metriche oggettive che però seguano le risposte soggettive, in modo da avere una risposta *matematica*. Dobbiamo quindi cercare di descrivere oggettivamente la percezione.
+
+
+
+Possiamo vedere un esempio di come le misure oggettive possano divergere rispetto alle misure soggettive.
+
+<img src="img/098.png" alt="098" style="zoom:50%;"/>
+
+<div style="page-break-after: always;"></div>
+
+**CODIFICA CON TRASFORMATE**
+Possiamo usare il RMS per avere un'idea di quale trasformata introduca meno errore in un segnale.
+Nell'immagine possiamo vedere come la trasformata coseno introduca meno rumore delle altre.
+
+<img src="img/099.png" alt="099" style="zoom:50%;"/>
+
+<img src="img/100.png" alt="100" style="zoom:60%;" align="left"/>Possiamo usare il RMS anche per decidere quale dimensione delle sotto-immagini sia ottimale, tenendo a mente che al crescere di *n* diminuisce la correlazione fra pixel e quindi la possibilità di comprimere e peggiora l'efficienza computazionale.
+
+Nell'esempio accanto è stato usato un metodo di troncamento del 75% dei coefficienti, ovvero vengono scartati il 75% dei coefficienti.
+
+
+
+Ovviamente nel caso di 2x2 avrò un solo coefficiente *(quello della componente continua)*, quindi l'errore è lo stesso su tutte le trasformate.
+
+Notiamo che dopo un certo punto l'errore sale, proprio perché diminuisce la correlazione fra pixel; se non c'è correlazione non possiamo scorrelare per creare una compressione.
+La dimensione ideale in termini di errore è 16x16, ma essendo difficile da gestire computazionalmente si preferisce usare 8x8.
+
+Possiamo vedere nell'esempio come la dimensione delle sotto-immagini influisca sul risultato finale: nel caso di *n = 2*, con 75% di troncamento, abbiamo che per ogni 4 pixel si avrà un solo *pixellone* col valor medio dei 4 originali. Al crescere di *n* diminuisce quindi l'effetto di blocchettizzazione.
+
+<img src="img/101.png" alt="101" style="zoom:60%;"/>
+
+<div style="page-break-after: always;"></div>
+
+**WAVELET**
+A differenza della trasformata coseno, la trasformata wavelet non necessita della suddivisione dell'immagine iniziale, poiché introduce già di suo una visione a multi-risoluzione. Inoltre, la maggior parte del contenuto informatico è contenuto in un numero limitato di coefficienti, quindi il restante può essere quantizzato/troncato.
+
+
+
+**CONFRONTO**
+Possiamo vedere che con la DCT l'errore si manifesta nella *blocchettizzazione*, mentre nella Wavelet l'errore introduce del *blur*, andando ad eliminare solo alcune parti delle alte frequenze.
+
+<img src="img/102.png" alt="102" style="zoom:100%;"/>
