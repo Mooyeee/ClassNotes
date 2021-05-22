@@ -1,4 +1,4 @@
-MULTIMEDIALITÀ E MULTIMODALITÀ
+# MULTIMEDIALITÀ E MULTIMODALITÀ
 
 **MEDIA**: strumento atto al trasporto di informazioni.
 **MULTI-MEDIA**: insieme di più strumenti per il trasporto di informazione.
@@ -2531,3 +2531,66 @@ A differenza della trasformata coseno, la trasformata wavelet non necessita dell
 Possiamo vedere che con la DCT l'errore si manifesta nella *blocchettizzazione*, mentre nella Wavelet l'errore introduce del *blur*, andando ad eliminare solo alcune parti delle alte frequenze.
 
 <img src="img/102.png" alt="102" style="zoom:100%;"/>
+
+<div style="page-break-after: always;"></div>
+
+## COMPRESSIONE JPEG
+
+Il **J**oint **P**hotographic **E**xperts **G**roup è un formato standard di memorizzazione delle immagini fotografiche che permette un'elevata compressione con una degradazione accettabile della qualità *(è quindi una compressione **lossy**)*.
+JPEG è uno **standard**: ciò significa che bisogna seguire certe regole in fase di codifica per poi poter decodificare il segnale. Tuttavia, è uno standard *flessibile*, definisce varie operazioni da eseguire sulle immagini ma che possono anche essere saltate.
+Non viene imposto come eseguire la compressione, ma solo come devono essere i dati compressi per poterli decomprimere; definisce per lo più una *guideline* per la compressione mentre ha delle specifiche più rigide per la decompressione.
+
+
+
+**PIPELINE JPEG**
+
+<img src="img/103.png" alt="103" style="zoom:60%;"/>
+
+La prima cosa che generalmente viene fatta nella pipeline JPEG è spostarsi dallo spazio RGB allo spazio YCbCr, in modo da decorrelare *luminanza* e *crominanza*; in questo passaggio vengono anche sotto-campionati i canali cromatici Cb e Cr *(poiché siamo più sensibili alla luminanza che alla crominanza ed è quindi più importante preservare la prima)*.
+Successivamente, per ogni canale, viene suddiviso il canale in blocchi 8x8 e, su ciascun blocco, viene applicata la **trasformata coseno** *DCT*. Questo significa ottenere, per ogni blocco, ***64 coefficienti*** in una matrice in cui in alto a sinistra ci sono i coefficienti relativi alle basse frequenze.
+Su questi coefficienti viene applicata una ***quantizzazione***, ovvero viene rimossa una parte di questi coefficienti secondo una strategia. A seconda di questa strategia si otterrà una qualità migliore o peggiore.
+Ovviamente anche in questa fase solitamente si eliminano più coefficienti dai canali Cb e Cr piuttosto che da Y.
+
+Le parti della pipeline che introducono perdita sono quindi il primo sotto-campionamento e la quantizzazione sui blocchetti.
+
+
+
+**1. CONVERSIONE SPAZIO CROMATICO**
+Questo è un passaggio opzionale, potrebbe anche non essere fatto ma va ovviamente specificato; il JPEG si porta dietro anche informazioni su quale spazio colore è andato a lavorare.
+Come abbiamo detto prima, questo passaggio solitamente fa uso delle caratteristiche del nostro sistema psico-visivo e campionare più *grossolanamente* la crominanza. Solitamente i canali del colore vengono campionati in **4:2:0**, ovvero vengono preservati, per ogni 4 campioni di luminanza, 2 campioni di chroma sulle linee dispari e 0 su quelle pari. In altre parole ho una componente chroma per ogni blocco di 2x2 pixel.
+
+
+
+**2. SUDDIVISIONE IN BLOCCHI 8x8 PIXEL**
+A questo punto, ciascun canale dell'immagine viene suddiviso in blocchi di 8x8 pixel sui quali si andrà poi a lavorare in frequenza, applicando la *DCT* che sappiamo produrre una matrice di coefficienti grande quanto il segnale su cui va a lavorare, quindi in questo caso una matrice di 64 coefficienti.
+
+<img src="img/104.png" alt="104" style="zoom:60%;"/>
+
+
+
+**3. ANALISI IN FREQUENZA - DCT**
+Abbiamo detto che nel JPEG si usa la *DCT*; i coefficienti che ne derivano rappresentano le ampiezze dei segnali armonici *(coseno)* che sommati ricostruiscono il segnale originale.
+A questo punto per ogni canale, ad ogni blocco di 8x8 pixel nel dominio dello spazio, corrisponde un blocco di 8x8 coefficienti nel dominio delle frequenze, ordinati da in alto a sinistra *(basse fq)* verso in basso a destra *(alte fq)* in ordine di frequenze. In particolare, il primo coefficiente di ogni blocco è il valor medio del blocco di 8x8 pixel orignario *(ovvero è la sua **componente continua DC**)*.
+
+Si definisce poi un ***Q factor*** *(o quantization table)* $Q(u,v)$ che divide la matrice dei coefficienti $F(u,v)$ e genera dei coefficienti quantizzati $F^{\wedge}(u,v) = round(\frac{F(u,v)}{Q(u,v)}) $.
+Sono state definite delle tabelle $Q(u,v)$ da studi psicofisici con lo scopo di massimizzare la compressione minimizzando la perdita percepita, ma è anche possibile definire tabelle customizzate.
+La libertà che si ha in questo passaggio è giustificata dal fatto che la quantizzazione non deve *(non si può)* decodificare. Questo significa anche che se usiamo due softwre diversi per codificare un'immagine in jpeg, seppur potremmo pensare che l'algoritmo usato sia lo stesso, è possibile che i segnali di output differiscano.
+
+Notiamo che le tabelle per la luminanza differiscono da quelle per la crominanza; quelle per la crominanza hanno coefficienti che diventano molto alti molto prima rispetto a quelli della tabella della luminanza; se ho un $q(u,v)$ molto alto, il risultante $f^{\wedge}(u,v)$ sarà zero visto che viene effettuato anche un $round$.
+Questo significa che quantizziamo maggiormente la crominanza.
+
+<img src="img/105.png" alt="105" style="zoom:40%;"/>
+
+Poiché i valori della tabella di quantizzazione sono abbastanza elevati, i valori dei coefficienti quantizzati sono significativamente più bassi e hanno una varianza minore, cosa che agevola la codifica successiva.
+Possiamo inoltre variare il rapporto di compressione semplicemente cambiando la tabella di quantizzazione *(influendo anche sulla qualità finale)*.
+In fase di decodifica andremmo poi a *riscalare* i coefficienti ai loro valori originali rimoltiplicandoli per il Q factor $\tilde{F}(u,v) = F^{\wedge}(u,v) Q(u,v)$.
+
+<img src="img/106.png" alt="106" style="zoom:40%;" align="left"/>I coefficienti quantizzati sono ottenuti arrotondando all'intero più vicino: i coefficienti meno significativi tendono ad azzerarsi. Rimangono i coefficienti relativi ai contributi informativi più importanti. I valori in alta frequenza *(generalmente già piccoli)* vengono molto spesso arrotondati a 0. Il risultato è la concentrazione di pochi coefficienti diversi da 0 in alto a sinistra e 0 tutti gli altri. Solitamente la maggior perdita viene introdotta nelle zone a più alta frequenza.
+
+Ricostruendo poi il segnale e confrontandolo con quello originale è possibile ottenere anche un segnale errore per vedere in che zone ci sono più errori dovuti alla compressione.
+
+
+
+Notiamo in questo esempio che la qualità è abbastanza buona anche con 16 coefficienti diversi da zero.
+
+<img src="img/107.png" alt="107" style="zoom:60%;"/>
