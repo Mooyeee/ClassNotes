@@ -2589,8 +2589,56 @@ In fase di decodifica andremmo poi a *riscalare* i coefficienti ai loro valori o
 
 Ricostruendo poi il segnale e confrontandolo con quello originale è possibile ottenere anche un segnale errore per vedere in che zone ci sono più errori dovuti alla compressione.
 
+Possiamo notare che nelle regioni a bassa frequenza abbiamo un rapporto di compressione maggiore, mentre nelle aree ad alta frequenza abbiamo meno compressione ma più errore. Nonostante ciò, tuttavia, dal punto di vista percettivo, gli errori delle zone a bassa frequenza spesso sono molto più evidenti.
+Questo ci dice anche che, a parità di *Q factor*, non è detto che su segnali diversi si raggiunga lo stesso rapporto di compressione, poiché questo dipende anche da come è composto il segnale stesso.
+
 
 
 Notiamo in questo esempio che la qualità è abbastanza buona anche con 16 coefficienti diversi da zero.
 
 <img src="img/107.png" alt="107" style="zoom:60%;"/>
+
+<div style="page-break-after: always;"></div>
+
+**4. MAPPING COEFFICIENTI DCT**
+Il tipo di mapping applicato ai coefficienti **quantizzati** è differente per
+
+- **Componente Continua *DC***: viene applicata una tecnica **DPCM** *(Differential Pulse Code Modulation)* poiché esiste una relazione statitica nelle immagini tra le componenti *DC* di blocchi adiacenti, ed è quindi vantaggioso codificare la *DC* di un blocco come differenza rispetto al valore del blocco precedente.
+- **Componenti Variabili *AC***: vengono ordinate tramite una lettura zig-zag, creando un vettore che contiene i coefficienti dalle frequenze più basse alle più alte, cosa che rende particolarmente efficace una **Run Length Encoding *RLE*** *(in fondo al vettore ci sono i coefficienti ad alta frequenza, molti dei quali nulli)*.
+
+<img src="img/108.png" alt="108" style="zoom:60%;"/>
+
+
+
+**5. CODIFICA ENTROPICA DEI DATI**
+A questo punto, avendo introdotto degli istogrammi più piccati con la codifica DPCM, risulta vantaggioso applicare una codifica **VLE** ai dati.
+In pratica i dati vengono suddivisi in *parole* (stringhe di bit), viene analizzata la frequenza statistica di ciascuna *parola* e ognuna viene ricodificata con un codice a lunghezza variabile in funzione della frequenza di apparizione. Un codice corto per le parole che appaiono frequentemente e via via codici più lunghi per quelle meno frequenti. Complessivamente il numero di bit necessari per rappresentare i dati si riduce consistentemente.
+
+
+
+**CODIFICA SEQUENZIALE VS PROGRESSIVA**
+<img src="img/109.png" alt="109" style="zoom:50%;" align="left"/>Nella **codifica sequenziale** i blocchi DCT vengono codificati e trasmessi uno dopo l’altro. Nelle immagini a colori, le diverse componenti vengono alternate tra di loro *(interleaving)*. Se il file JPEG viene trasmesso attraverso un canale di comunicazione lento *(esempio: immagini in una pagina web)*, il decodificatore può già visualizzare le prime righe dell’immagine prima che il download sia completato.
+
+Nella **codifica progressiva** invece è possibile trasmettere prima una porzione dei coefficienti AC *(spectral selection)*, oppure i bit più significativi *(successive approximation)*, o combinazioni miste. Questo permette al decodificatore di visualizzare rapidamente un'anteprima con qualità ridotta.
+
+
+
+**PRESTAZIONI MEDIE JPEG**
+Possiamo notare in questi esempi come la compressione ottenuta dipenda anche dal segnale utilizzato; seppur la seconda immagine abbia un *Q factor* più alto, e quindi ha più qualità, subisce una maggior compressione poiché ha più basse frequenze. Questo fa si anche che la blocchettizzazione sia più evidente nella seconda immagine.
+
+<img src="img/110.png" alt="110" style="zoom:60%;"/>
+
+
+
+**JPEG 2000**
+JPEG 2000 è una variante di JPEG che lavora con le trasformate wavelet e che lavora quindi con una multi-risoluzione. Questo implica che gli artefatti che introduce questo tipo di standard non è la blocchettizzazione di JPEG, ma un taglio di alte frequenze in tutta l'immagine, introducendo un *blur*.
+
+<img src="img/111.png" alt="111" style="zoom:40%;" align="left"/>Generalmente, a livelli estremi, questo tipo di artefatto è meno fastidioso di quello del JPEG normale, ma in queste situazioni spesso si scarterebbe comunque il risultato.
+
+Il punto forte di JPEG 2000 è la multi-risoluzione, che permette di avere delle immagini a risoluzioni minori a seconda del contesto di visualizzazione.
+
+
+
+
+
+<img src="img/112.png" alt="112" style="zoom:40%;" align="left"/>Un ulteriore vantaggio di JPEG 2000 è la possibilità di definire delle **Regioni Di Interesse *ROI*** che permettano di avere una qualità maggiore in certe parti dell'immagini e una qualità minore in altre.
