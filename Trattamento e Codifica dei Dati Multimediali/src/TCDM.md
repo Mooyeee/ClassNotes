@@ -2712,3 +2712,254 @@ SVG è un linguaggio per grafica 2D ed è ormai lo standard per le immagini vett
 | Alpha Channel      |  SI  |   NO    |   SI    |
 | Animazioni         |  SI  |   NO    |   NO    |
 
+<div style="page-break-after: always;"></div>
+
+## COMPRESSIONE VIDEO
+
+Ricordiamo che la compressione lavora sulla ridondanza e in particolare cerca di ridurla al minimo. In un video avremmo ancora i 3 tipi di ridondanza visiti fino ad ora *(codifica, spaziale e percettiva)*, ma queste ridondanze si presentano in due domini: nel dominio **spaziale** *(ridondanza **intra-frame**, si riduce la ridondanza nel singolo frame)* e nel dominio **temporale** *(ridondanza **inter-frame**, si riduce la ridondanza fra frame consecutivi)*.
+
+Alcune soluzioni sono:
+
+- Per la ridondanza spaziale
+  - Codifica predittiva e ridondanza spaziale
+  - Comprimere le singole immagini *(ad es. con jpeg, Motion JPEG)*
+- Per la ridondanza temporale
+  - Differenza fra frame successivi
+  - Codifica predittiva e ridondanza temporale, si codifica la differenza fra un frame e la predizione del successivo *(MPEG)*
+
+
+
+**DIFFERENZA FRA FRAME SUCCESSIVI**
+La differenza di frame successivi è ottimale per zone dell’immagine che cambiano poco o nulla, ad esempio negli sfondi, in movimenti lenti, ma funziona poco in zone con movimenti bruschi e/o cambi di scena. Ovviamente se si individua una differenza molto grande tra frame *(come in un cambio di scena)* può aver senso evitare di codificare la differenza e codificare direttamente il frame successivo.
+
+<img src="img/113.png" alt="113" style="zoom:60%;"/>
+
+
+
+**MOTION COMPENSATION**
+Per eseguire una predizione su cui operare poi con la compressione bisogna ***individuare*** e ***compensare*** il moto degli oggetti in scena *(studiando il disallineamento dei pixel o delle regioni che costituiscono l'oggetto)*. Anche in questo caso, quando la differenza fra due frame è troppo grande si cambia strategia di compressione, usando diversi **tipi di frame**.
+
+I tipi di frame sono:
+
+- **I-FRAME**: Quando non esiste una forte correlazione fra frame successivi, la strategia di compressione è simile al *JPEG*. Questi frame si chiamano *Independent Frame* o *Intra-Frame*.
+- **P-FRAME**: I frame per i quali invece viene eseguita la predizione, ovvero quelli per i quali viene applicata sia la compressione intra-frame che inter-frame, vengono chiamati *Predictive Frame*.
+
+
+
+**STIMA DEL MOTO**
+Per effettuare una stima del moto, un frame viene diviso in *blocchetti*  *(**macroblocchi**)* di 16x16 pixel nel canale di intensità e di 8x8 nei canali cromatici *(per via del sotto-campionamento che viene eseguito sui canali cromatici)* e si cerca di individuare un **vettore di moto** per ogni blocco.
+
+<img src="img/114.png" alt="114" style="zoom:60%;"/>
+
+Il frame corrente*(quello da codificare)* è chiamato **Target Frame**; si cerca, dato un macroblocco del target frame, il più simile macroblocco nel **Reference Frame** *(che può essere un frame precedente o successivo)*; il disallineamento tra il blocco del reference frame e quello del target frame è chiamato **Motion Vector**.
+
+Il macroblocco viene cercato nel reference frame generalmente all'interno di una **finestra di osservazione** *(non nell'intero frame quindi)*, visto che generalmente i movimenti nei video sono concentrati, tra frame, in un certo spazio. Questo limite è utile per ridurre la complessità computazionale dell'algoritmo *(o anche per evitare problemi nel caso di oggetti simili nella stessa scena)*. In più, se il movimento dell'oggetto dovesse essere troppo, anche dal punto di vista percettivo non vedremmo il vero movimento.
+
+<img src="img/115.png" alt="115" style="zoom:80%;"/>
+
+<img src="img/116.png" alt="116" style="zoom:60%;"/>
+
+**COMPENSAZIONE DEL MOTO**
+Notiamo come per la predizione dei frame venga creata una mappa con dei vettori di traslazione che identifichino i macroblocchi più simili del reference frame e di quanto questi vengono traslati per costruire la predizione.
+
+<img src="img/117.png" alt="117" style="zoom:40%;"/>
+
+A questo punto l'encoder calcola la differenza fra il frame da codificare ed il frame predetto, creando il *motion compensated difference frame* **MCD(n)**, che ha una correlazione fra pixel minore rispetto a quella che si otterrebbe facendo la differenza tra frame veri.
+Per poter decodificare poi avremmo bisogno del **MCD** e dei **vettori di moto**, in modo da poter ricostruire la predizione e ricavarne il frame originale tramite la differenza *(ovviamente il primo frame ci serve così com'è, per poter costruire poi gli altri)*.
+
+<img src="img/118.png" alt="118" style="zoom:60%;"/>
+
+
+
+I macroblocchi del frame target non corrispondo quindi a dei macroblocchi in griglia nel frame di reference e possono anche essere sovrapposti.
+
+<img src="img/119.png" alt="119" style="zoom:60%;"/>
+
+Quanto detto fino ad ora è generalmente applicato sul canale della luminanza, essendo quello non sottocampioanto ed essendo il canale che porta più informazioni sul moto.
+
+<div style="page-break-after: always;"></div>
+
+**MOTION ESTIMATION**
+Per creare i vettori di moto, generalmente viene traslato il macroblocco del frame target per trovare il corrispondente nel frame reference. Viene naturale pensare ad una traslazione di un pixel, ma in realtà nell'evoluzione del MPEG è possibile effettuare la traslazione con una risoluzione migliore come potrebbe essere mezzo pixel o un quarto di pixel, cosa che permette di *inseguire* movimenti più rapidi.
+
+Ovviamente, se abbiamo un oggetto che entra in scena e prima non era visibile, nella porzione di questo oggetto, non potendo predirlo, ci sarà un'errore molto elevato; per questo motivo si lavora anche sul frame ***successivo***, e non solo quello ***precedente***, per stimare il vettore di moto.
+
+<img src="img/120.png" alt="120" style="zoom:60%;"/>
+
+Abbiamo quindi due tipi di predizione:
+
+- **FORWARD PREDICTION**: il reference frame è uno dei frame precedenti ed il frame codificato si indica come **P-Frame** *(Prediction Frame)*
+- **BACKWARD PREDICTION**: il reference frame è uno dei frame successivi ed il frame codificato si indica come **B-Frame** *(Bidirectional Frame)*
+
+La stima dei vettori di moto è un calcolo computazionalmente complesso, ma è svolto solo dall'encoder e quindi questa stima non è inclusa nella definizione degli standard di compressione video, che si concentrano per lo più sul decoder fissando le dimensioni dei macroblocchi, la precisione nella stima dei vettore e il range di spostamento dei macroblocchi.
+
+
+
+**RICERCA DEL VETTORE DI MOTO**
+Per la ricerca dei macroblocchi, come abbiamo detto, si scorre il macroblocco target in una *finestra* del frame reference alla ricerca del macroblocco più *vicino* che sia simile al blocco target.
+Per ogni spostamento viene applicata una misura di spostamento **MAD**, *Distorsione Media Assoluta* fra i pixel dei due macroblocchi disallineati, che calcola quanto sono diversi i macroblocchi.
+
+$MAD(i,j) = \frac{1}{N^2}\sum\limits_{k=0}^{N-1}\sum\limits_{l=0}^{N-1}|C(x+k, y+l) - R(x+k+i, y+l+j)|$
+con
+
+- $k, l$ indici dei pixel
+- $i, j$ indici degli spostamenti
+- $C(x+k, y+l)$ pixel del macroblocco target
+- $R(x+k+i, y+l+j)$ i pixel del macroblocco reference
+
+Il vettore di moto cercato è quello che di coordinate $(i,j)$ che abbia il valore minimo per questa differenza.
+
+Il metodo di ricerca più semplice *(e più costoso)* è la **ricerca esaustiva**, in cui sequenzialmente vengono considerati tutti i pixel in una finestra. Questo tipo di ricerca è molto onerosa in termini computazionali però.
+Sfruttando la **ridondanza spaziale** tra i vari frame però, è possibile stabilire che la probabilità di trovare un blocco simile man mano che ci si allontana dal blocco di partenza diminuisce in modo esponenziale con l'aumentare della distanza. Questo concetto ci porta a degli algoritmi di ricerca più veloci come il *2D logarithmic search* e la *ricerca in tre passi*.
+
+
+
+**2D LORITHMIC SEARCH**
+<img src="img/121.png" alt="121" style="zoom:50%;" align="left"/>Questo algoritmo calcola la MAD in 9 posizione centrare sul macroblocco nella finestra reference; questa ricerca viene effettuata sul punto che da errore minore, dimezzando la finestra di ricerca ad ogni passo.
+Ovviamente se si sbaglia già al primo punto non si troverà il blocco e si avrà un errore grande; se non abbiamo quella ipotesi di ridondanza spaziale l'algoritmo non funziona bene.
+
+
+
+
+
+
+
+**RICERCA IN 3 PASSI**
+<img src="img/122.png" alt="122" style="zoom:50%;" align="left"/>Questo algoritmo sfrutta la multirisoluzione; cerca su un'immagine a risoluzione più bassa la posizione del macroblocco del target frame e, una volta individuata, passa a risoluzioni maggiori lavorando nell'intorno della posizione identificata prima, cosa che porta ad un raffinamento della posizione con un costo computazionale inferiore.
+Anche in questo caso un'errore iniziale ci porta a non identificare il macroblocco cercato.
+
+Se non troviamo alcun valore di MAD sufficientemente basso è possibile considerare il frame come un *I-FRAME* perché potremmo essere di fronte ad un cambio di scena ad esempio o comunque a dei movimenti che risulterebbero più costosi da codificare in modo predittivo piuttosto che normalmente.
+
+Generalmente esistono due organizzazioni in grado di sviluppare ed approvare standard di codifica digitale: **ITU-T** che definisce degli standard chiamati anche *raccomandazioni* denotati dalla sigla **H.26x** ed **ISO** che definisce degli standard **MPEG-x**.
+
+<div style="page-break-after: always;"></div>
+
+## PRIMO STANDARD: H-261
+
+Un primo standard di compressione video è H-261 che è basato sul ***motion compensation*** e usa solo due tipi di frame:
+
+- *I-FRAMES*, trattati come immagini indipendenti e codificate similmente a JPEG 
+- *P-FRAMES*, codificati applicando il *MC*, utilizzando una codifica predittiva di tipo forward *(fa dunque la predizione solo sui frame precedenti)*
+
+La riduzione della ***ridondanza temporale*** avviene nella codifica del *P-FRAME* mentre la codifica dell’*I-FRAME* realizza solo la riduzione di ***ridondanza spaziale***.
+Utilizza uno scorrimento dei macroblocchi di 1 pixel e la finestra di ricerca è di *p = 15 pixel* *(finestra di 31x31)*.
+
+Gli *I-FRAMES* vengono quindi codificati più o meno come nel caso di JPEG, suddividendo i macroblocchi in blocchetti 8x8 e applicando la DCT e la quantizzazione *(anche se in questo caso non si usa un Q Factor, ma una costante **step_size**)*.
+
+<img src="img/123.png" alt="123" style="zoom:60%;"/>
+
+I *P-FRAMES* invece vengono codificati coi vettori di moto; per ciascun macroblocco si valuta il vettore di moto e si calcola l'errore di predizione. Per ciascun blocco di errore 8x8 si applica poi la DCT e la quantizzazione. Viene poi applicata la codifica entropica al segnale e al **vettore di moto**, in modo da poter riscostruire poi la predizione.
+
+<img src="img/124.png" alt="124" style="zoom:60%;"/>
+
+**QUANTIZZAZIONE**
+Come abbiamo detto prima, non viene usato un *Q Factor*, ma una costante che semplifica l'algoritmo *(quando quantizziamo i P-FRAMES tra l'altro stiamo già quantizzando degli istogrammi molto piccati, essendo degli errori)*. Per gli *I-FRAMES* lo **step_size** vale 8, mentre per i *P-FRAMES* vale 2*scale*, dove *scale* è un intero tra [0, 2p+1]. 
+
+
+
+## MPEG
+
+MPEG-1 e MPEG-2 consentono la rappresentazione di contenuti audiovisivi, comunemente utilizzati su supporti digitali o per la trasmissione. MPEG-1 usa una risoluzione *Common Intermediate Format* di 320x240 e trasmette con bassi transfer rate e non usa interlacciamento.
+MPEG-2 permette l'interlacciamento ed usa una maggiore risoluzione ed un maggior transfer rate. Viene usato spesso nei DVD. Per i video ad alta risoluzione è nato MPEG-3, mentre per una maggiore compressione ed efficienza è stato definito MPEG-4.
+MPEG-7 ed MPEG-21 definiscono degli standard per la rappresentazione del contenuto dei dati multimediali e permettono information retrieval, filtering e management.
+
+
+
+**MPEG: STRUTTURA GERARCHICA DEI DATI**
+La struttura dei dati di MPEG parte dai blocchi 8x8 che abbiamo già visto che costituiscono un macroblocco di 16x16. Ogni macroblocco è ordinato su una **slice** *(le slice hanno dimensioni variabili, non sono necessariamente tutte lunghe uguali)*.
+Le slice compongono poi il frame *(Picture)*. Le pictures sono organizzate in **Group of Pictures**, che hanno inizialmente un *I-FRAME* e poi una serie di frame predetti, fino ad arrivare all'ultimo che contraddistingue ad esempio il passaggio da una scena all'altra.
+
+<img src="img/125.png" alt="125" style="zoom:60%;"/>
+
+<img src="img/126.png" alt="126" style="zoom:60%;"/>
+
+<div style="page-break-after: always;"></div>
+
+**SLICE**
+L'utilizzo delle slice permette di minimizzare la propagazione degli errori, perché se ci fosse un qualche errore durante la codifica/decodifica di una slice, il video può comunque essere decodificato, lasciando l'errore confinato nella slice corrotta.
+
+
+
+**QUANTIZZAZIONE**
+A differenza dell'H-261, MPEG usa delle tabelle di quantizzazione differenti per *inter-coding* ed *intra-coding*. In particolare, per l'*intra-coding* assume un approccio più simile al JPEG. Nel caso di *inter-coding* il segnale è già più semplificato essendo un errore e quindi non è necessario avere una tabella molto articolata.
+
+
+
+**BIDIRECTIONAL MOTION COMPENSATION**
+Un'altra differenza dal H-261 è l'introduzione di una prediction in entrambe le direzioni: MPEG usa sia frame precedenti che successivi per identificare i vettori di moto, poiché ci sono casi in cui il frame precedente non è sufficiente per una buona stima del vettore di moto. Ad esempio quando l’oggetto considerato nel target frame, nel frame precedente è parzialmente occluso.
+
+<img src="img/127.png" alt="127" style="zoom:60%;"/>
+
+
+
+**TIPI DI PICTURE**
+Dunque, i tipi di picture introdotti da MPEG sono
+
+- **Intra Pictures (I-Pictures)**: indipendenti, sono codificate sfruttando la ridondanza della picture stessa *(simil JPEG)*.
+- **Predicted Pictures (P-Pictures)**: sono codificate con predizione rispetto alla picture I o P ***precendete*** *(forward prediction)*
+- **Bidirectional Pictures (B-Pictures)**: sono codificate con predizione rispetto alle picture I o P ***precendeti o successive*** *(backward prediction)* o anche entrambe.
+  La backward prediction introduce inevitabilmente un ritardo nelle real time application e la necessità di buffering.
+
+Rispetto a questi tipi di frame le strategie di compressione possono essere differenti.
+
+<img src="img/128.png" alt="128" style="zoom:60%;"/>
+
+**TIPI DI MACROBLOCCHI**
+Non sempre tutti i macroblocchi di un frame sono codificati allo stesso modo. Nel caso di frame di tipo I, sono tutti codificati come nel JPEG, può cambiare la matrice di quantizzazione.
+
+<img src="img/131.png" alt="131" style="zoom:60%;"/>
+
+In un frame di tipo P invece alcuni blocchi potrebbero essere codificati come intra-blocchi *(stile JPEG)*; in funzione della **MAD** si può scegliere se codificare un macroblocco come intra o come predicted.
+
+<img src="img/129.png" alt="129" style="zoom:60%;"/>
+
+Nei frame di tipo B invece, i macroblocchi possono essere codificati come intra, predicted dal *past reference*, predicted dal *future reference* o predicted da una interpolazione fra i due.
+
+<img src="img/130.png" alt="130" style="zoom:60%;"/>
+
+Ovviamente, i frame hanno un certo ordinamento temporale: partono tutti da un *I-FRAME* e se codifichiamo male questo *I-FRAME*, l'errore si propagherà a quelli ottenuti da esso. Per questo motivo cambia anche la strategia di compressione dei vari frame in base al tipo; i frame di tipo I sono compressi di meno, mentre ai frame predetti viene applicata una compressione più aggressiva, in particolare ai frame di tipo B, che non predicono altri frame.
+
+<div style="page-break-after: always;"></div>
+
+## MPEG 2
+
+MPEG-2 è un'evoluzione di MPEG-1 ed utilizza la stessa struttura base della codifica e dello stream.
+MPEG-2 introduce
+
+- **Diversi Profili e Livelli** rendendolo più flessibile per diversi formati video. Alcune sono definite per HDTV, altre per videoconferenze, ecc.
+
+<img src="img/133.png" alt="133" style="zoom:45%;"/>
+
+- **Video Interlacciati e Progressivi**
+- **Estensioni** nella struttura dati
+- **Diversi Frame Rate**
+- **Diversi Sottocampionamenti Chroma**; permette di usare 4:2:2 e 4:4:4.
+
+
+
+**VIDEO INTERLACCIATO**
+Poter interlacciare i video, ovvero dividere i frame in field pari e dispari, ci permette di effettuare una migliore stima dei vettori di moto, poiché ogni field può essere predetto sia dal field pari che dispari del frame precedente o successivo.
+
+<img src="img/132.png" alt="132" style="zoom:60%;"/>
+
+
+
+**PATTERN COEFFICIENTI DCT**
+A causa dell'interlacciamento, le righe consecutive appartengono a field diversi e quindi c'è meno correlazione fra loro e di conseguenza le componenti ad alta frequenza ***verticali*** hanno ampiezza maggiore e ha senso prenderle prima in considerazione, per questo MPEG-2 permette di usare un pattern alternativo per la lettura dei coefficienti della DCT.
+
+<img src="img/134.png" alt="134" style="zoom:50%;"/>
+
+**SCALABILITÀ**
+MPEG-2 è una codifica *scalabile*; vengono definiti contemporaneamente un layer base e uno o più layer di qualità superiore. Il layer base può essere codificato, trasmesso e decodificato indipendentemente per fornire un video a qualità base, la codifica/decodifica dei layer superiori dipende invece dalla codifica/decodifica del layer base. Questo perché MPEG-2 è destinato a diverse applicazioni.
+
+La scalabilità sono:
+
+- **Scalabilità SNR**: il layer superiore fornisce un SNR più alto.
+  Questo viene effettuato facendo una ***quantizzazione*** dei coefficienti DCT più grossolana nel layer base e viene codificata la differenza fra i coefficienti quantizzati e quelli originali.
+  Nel layer superiore è possibile ottenere una migliore qualità aggiungendo ai coefficienti grossolani la differenza fra gli originali e quelli quantizzati meglio.
+- **Scalabilità Spaziale**: il layer superiore fornisce una risoluzione spaziale superiore.
+  In questa modalità i dati vengono suddivisi in due gruppi: i dati che costruiscono l'immagine a bassa risoluzione e i dati che permettono di ricostruirla a piena risoluzione.
+- **Scalabilità Temporale**: il layer superiore fornisce frame rate più alti.
+- **Scalabilità Ibrida**: combinazione di due delle precedenti.
+- **Partizionamento dei Dati**: divide i coefficienti DCT in partizioni.
+  La partizione base contiene i coefficienti DCT alle basse frequenze, la partizione successiva contiene i coefficienti DCT alle alte frequenze.
