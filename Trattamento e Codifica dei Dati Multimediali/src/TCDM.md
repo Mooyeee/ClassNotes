@@ -2642,3 +2642,73 @@ Il punto forte di JPEG 2000 è la multi-risoluzione, che permette di avere delle
 
 
 <img src="img/112.png" alt="112" style="zoom:40%;" align="left"/>Un ulteriore vantaggio di JPEG 2000 è la possibilità di definire delle **Regioni Di Interesse *ROI*** che permettano di avere una qualità maggiore in certe parti dell'immagini e una qualità minore in altre.
+
+<div style="page-break-after: always;"></div>
+
+## FORMATI
+
+Un ***formato*** è una **regola** con la quale una descrizione di un segnale *(ad esempio di un'immagine)* è memorizzata in un file elettronico. Il formato contiene sia i dati *(ad es. l'immagine)* che le informazioni su come leggere ed interpretare il file *(ad esempio l'algoritmo di compressione)*. Le proprietà dei formati variano in termini di risoluzione, profondità colore, capacità di riprodurre il colore, tipi di compressione e possibilità di supportare o meno metadati.
+
+
+
+**BITMAP**
+Il formato *bitmap* codifica ogni pixel con il numero di bit della profondità colore assegnata all'immagine. Questo formato permette anche di inserire una compressione senza perdita *(RLE Run Length Encoding)*.
+Le immagini sono memorizzate da in basso a sinistra riga per riga.
+
+Contiente un header, la mappa colori e i dati.
+
+
+
+**GIF**
+Il formato GIF, a differenza di altri, utilizza una colormap per i colori con un numero di bit per pixel di al più 8 *(256 colori)*; ovviamente questa quantizzazione dei colori introduce degli errori che possono però essere mitigati col *dithering*. Esegue una compressione LZW con interlacciamento e supporta la trasparenza *(1/0, senza livelli intermedi)*. Un aspetto particolare è che permette di memorizzare più immagini per creare delle animazioni *(ogni immagine può avere una colormap diversa)*.
+
+
+
+**TIFF**
+Il Tagged Image File Format è un formato senza perdita ed è molto versatile sulle dimensioni e sulla profondità di bit. Può adottare una compressione LZW. Il formato TIFF è utile per la riproduzione fedele del colore, difatti può contenere della metainformazioni *(i tag)* riguardo alla risoluzione, la compressione, lo spazio colore usato, i filtri di Bayern usati ecc.
+
+
+
+**PNG**
+Il Portable Network Graphics è un formato alternativo al GIF, che ne supera la limitazione sui 256 colori, permette la compressione senza perdita ed ha un **alpha channel** che permette di gestire la trasparenza con 256 livelli, a differenza del ON/OFF del GIF. Esiste anche una versione di PNG, **APNG** che supporta anche delle animazioni.
+
+
+
+**JPEG & JPEG2000**
+Abbiamo visto come funziona il JPEG, esso è utile per salvare delle immagini fotografiche ed è un formato con perdita che non supporta la trasparenza. Non è utilizzabile per manipolare le immagini a causa della sua perdita.
+
+JPEG2000 è il corrispettivo basato su tecnologie wavelet per una miglior compressione che non genera bocchettizzazione e permette di definire delle regioni di interesse.
+
+
+
+**POSTSCRIPT**
+È un formato basato su una descrizione vettoriale; gli elementi di una pagina sono definiti attraverso vettori. Include testo ed elementi grafici vettoriali, ma può includere anche immagini bitmap. Non ha compressione, è memorizzato come ASCII.
+
+
+
+**PDF**
+È un formato che contiene informazioni miste come font, formattazione, colori, grafiche. Supporta la compressione.
+
+
+
+**SVG**
+SVG è un linguaggio per grafica 2D ed è ormai lo standard per le immagini vettoriali. Deriva da Postscript.
+
+
+
+**EXIF**
+È un formato utilizzato dalle camere digitali che contiene diversi tag *(più del TIFF)* con informazioni sulla camera e sulle condizioni di acquisizione. Può includere anche informazioni proprietarie criptate.
+
+
+
+**ALCUNI CONFRONTI**
+
+| Caratteristica     | GIF  |  JPEG   |   PNG   |
+| :----------------- | :--: | :-----: | :-----: |
+| Lossless           |  SI  |   NO    |   SI    |
+| True Color (depth) |  NO  | SI (24) | SI (48) |
+| Colormap           |  SI  |   NO    |   SI    |
+| Transparency       |  SI  |   NO    |   SI    |
+| Alpha Channel      |  SI  |   NO    |   SI    |
+| Animazioni         |  SI  |   NO    |   NO    |
+
