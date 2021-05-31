@@ -2963,3 +2963,94 @@ La scalabilità sono:
 - **Scalabilità Ibrida**: combinazione di due delle precedenti.
 - **Partizionamento dei Dati**: divide i coefficienti DCT in partizioni.
   La partizione base contiene i coefficienti DCT alle basse frequenze, la partizione successiva contiene i coefficienti DCT alle alte frequenze.
+
+<div style="page-break-after: always;"></div>
+
+## COMPRESSIONE AUDIO
+
+Le due cose più banali che si possono fare per ridurre il peso di un file audio sono
+
+- Ridurre i livelli di quantizzazione: riduce il numero di bit per campione *(ad esempio passando da 32 bit a 16)* con un rapporto di compressione 2:1 *(abbastanza basso)* e con un notevole deterioramento del SNRq.
+- Ridurre la frequenza di campionamento *(ad esempio da 44 kHz a 22 kHz)* che comporta un perdita totale di tutte le informazioni ad alta frequenza, con potenziale aliasing e con un rapporto di compressione di 2:1.
+
+
+
+**METODI LOSELESS**
+Per ridurre i dati necessari a salvare un file audio in maniera loseless, possiamo operare come nel caso delle immagini con una codifica RLE; in particolare questo tipo di codifica può risultare utile a codificare i **momenti di silenzio** del segnale.
+È possibile anche utilizzare un approccio DPCM con una codifica entropica.
+
+
+
+**METODI LOSSY *(PREDIZIONE)***
+Un esempio è l'ADPCM, DPCM Adattivo, che predice il valore di un campione a partire dal valore di più campioni precedenti e codifica l'errore di predizione, quantizzandolo. La parte adattiva entra in gioco nella quantizzazione; il passo di quantizzazione non è costante, ma cambia a seconda della dinamica.
+
+
+
+**MASCHERAMENTO IN FREQUENZA**
+<img src="img/135.png" alt="135" style="zoom:60%;" align="left"/>Abbiamo già visto com'è fatto il campo di udibilità del nostro sistema uditivo in presenza di un tono e come l'intensità necessaria per sentire il tono cambia in base alla frequenza.
+Ma cosa succede in presenza di più toni? Avviene il **mascheramento**; un tono con una grande intensità *(tono mascherante)*, **modifica la soglia di udibilità** dei toni vicini *(toni mascherati)*, alzandola.
+
+Più è alta l'intensità del tono mascherante e più è alta la sua frequenza, maggiore è il suo effetto, ovvero maggiore è la banda di frequenza che maschera.
+
+<div style="page-break-after: always;"></div>
+
+**BANDE CRITICHE**
+<img src="img/136.png" alt="136" style="zoom:60%;" align="left"/>Il nostro udito funziona *per bande*; se ascoltiamo due toni dentro una stessa *banda critica*, il suono percepito non è una combinazione lineare dei due toni, i due toni interferiscono fra loro e il risultato è un tono **inferiore alla somma**. Se ascoltiamo due toni in due bande differenti invece vale il principio di sovrapposizione e il suono percepito è effettivamente la somma dei due toni. Sono state individuate 25 bande critiche nel range di frequenze udibili. La larghezza delle bande aumenta con l'aumentare delle frequenze interessate.
+L’effetto di mascheramento, diminuisce con l’allargarsi dell'intervallo tra la frequenza mascherante e quella mascherata, ma è **maggiore se l’intervallo è contenuto all’interno di una delle bande critiche**.
+
+
+
+**MASCHERAMENTO TEMPORALE**
+<img src="img/137.png" alt="137" style="zoom:50%;" align="left"/>Ogni suono ad alta intensità provoca una saturazione dei recettori all’interno dell’orecchio che richiedono del tempo per poter ripristinare le condizioni iniziali e riuscire ad udire nuovamente un suono. Più è intenso il suono di test, minore è il tempo necessario perché venga udito. Più è lunga la durata temporale del tono mascherante, maggiore è il tempo necessario perché possa esser riudito un tono di test.
+
+
+
+**RICAPITOLANDO**
+Mascheramento in frequenza
+
+- Un tono più basso può mascherare un tono più alto e viceversa.
+- Maggiore è la potenza del tono che maschera, maggiore è il suo effetto, cioè più ampia è la banda di frequenze che maschera.
+- Maggiore è la frequenza del tono che maschera, maggiore è il suo effetto, cioè più ampia è la banda di frequenze che maschera.
+
+
+
+Mascheramento temporale
+
+- Maggiore è la potenza del tono che maschera, maggiore è il tempo necessario affinché l’orecchio ripristini le sue condizioni normali di udibilità.
+- Più è lunga la durata temporale del tono mascherante maggiore è il tempo necessario affinché possa esser riudito un tono di test.
+- Minore è la potenza del tono mascherato maggiore è il tempo necessario per udirlo.
+
+
+
+L’obiettivo è rimuovere le parti di un segnale audio acusticamente irrilevanti.
+
+## MPEG AUDIO
+
+Lo standard MPEG esegue diverse operazioni per comprimere i file audio:
+
+1. Applica un banco di filtri all’input per scomporlo in frequenze: codifica il segnale audio utilizzando una rappresentazione spettrale. Divide quindi il segnale in bande di frequenze e per ognuna di queste bande si applica il modello psico-acustico. Queste bande potrebbero essere della stessa ampiezza, ma potrebbero anche essere diverse, ad esempio per emulare le bande critiche del nostro sistema uditivo.
+2. Quantizza l’output dei filtri, in particolare
+   - Mantiene il rumore della quantizzazione al di sotto della soglia di mascheramento.
+   - Trasmette le componenti in frequenza che sono state mascherate con un numero minore di bit.
+3. Codifica.
+
+
+
+La codifica audio MPEG è composta da tre livelli indipendenti *(un po' come MPEG2 per i video)* che differiscono per qualità e compressione. I livelli superiori possono interpretare i livelli più bassi.
+I livelli successivi sfruttano una maggiore complessità del modello psico-acustico e quindi permetto una maggiore compressione per un dato livello di qualità audio.
+
+- Livello I: algoritmo base con qualità abbastanza buona.
+- Livello II: maggior compressione al costo di una maggior complessità dell’encoder e del decoder.
+- Livello III *(MP3)*: utilizza sia la Sub-Band-Coding che una Adaptive Transfrom Coding; più complesso ma la complessità è più in codifica che decodifica, da qui il successo degli MP3 players.
+
+
+
+**MPEG CODING ALGORITHM**
+
+<img src="img/138.png" alt="138" style="zoom:45%;"/>
+
+1. Utilizza filtri per dividere il segnale audio in 32 sotto-bande di frequenza *(filtraggio sub-band)*.
+2. Determina, per ciascuna banda, il mascheramento causato dalle bande vicine applicando il modello psico-acustico scelto. 
+3. Se la potenza in una banda è inferiore alla soglia di mascheramento, la banda mascherata non viene codificata.
+4. Altrimenti, determina il numero di bit necessari a rappresentare il coefficiente tale che il rumore introdotto dalla quantizzazione sia sotto l'effetto di mascheramento. In pratica, le bande non affette dal masking vengono codificate cosi come sono, le bande mascherate ma che risultano comunque udibili vengono codificate, ma viene codificato solo l'eccesso sopra la soglia di masking.
+5. Codifica con Huffman.
