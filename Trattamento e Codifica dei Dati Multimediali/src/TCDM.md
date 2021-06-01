@@ -2253,7 +2253,7 @@ L'algoritmo costruisce un dizionario che contenga i simboli da codificare:
 
 Nei video esiste una correlazione non solo tra i **pixel dello stesso fotogramma**, ma anche tra i **pixel di fotogrammi** adiacenti: un fotogramma ed i due adiacenti *(successivo e precedente)* spesso risultano molto simili. Questa **ridondanza temporale** tra fotogrammi vicini che ne sfrutta le loro minime differenze viene trattata dalla **codifica inter frames**.
 
-In particolare, questa correlazione tra un frame ed il successivo viene trattata dalla codifica predittiva che codifica l'errore di predizione con un VLC. La predizione viene fatta attraverso i **vettori di moto** che definiscono lo spostamento dell'immagine dello frame precedente per arrivare in quello successivo. *(Lo vedremo in dettaglio quando parleremo di MPEG)*.
+In particolare, questa correlazione tra un frame ed il successivo viene trattata dalla codifica predittiva che codifica l'errore di predizione con un VLC. La predizione viene fatta attraverso i **vettori di moto** che definiscono lo spostamento dell'immagine del frame precedente per arrivare in quello successivo. *(Lo vedremo in dettaglio quando parleremo di MPEG)*.
 
 Anche qui ovviamente è molto più efficace codificare la differenza tra la predizione e la realtà piuttosto che le differenze tra i frame. Quando ci sono cambi di scena questo tipo di algoritmi non funziona bene ovviamente *(le differenze saranno enormi)*.
 
