@@ -2363,7 +2363,7 @@ Abbiamo detto che la trasformata wavelet ci permette di fare un'**analisi multir
 
 
 **STRUTTURA PIRAMIDALE**
-<img src="img/085.png" alt="085" style="zoom:40%;" align = "left"/>Un modo per analizzare più risoluzione è utilizzare una struttura piramidale che alla base ha l'immagine a risoluzione originale e man mano che sale scala la risoluzione, codificando però solo le differenze tra un livello e l'altro. Questo approccio non è però quello che utilizzeremo per la compressione, poiché ci fa portar dietro un segnale più grande di quello originale.
+<img src="img/085.png" alt="085" style="zoom:40%;" align = "left"/>Un modo per analizzare più risoluzioni è utilizzare una struttura piramidale che alla base ha l'immagine a risoluzione originale e man mano che sale scala la risoluzione, codificando però solo le differenze tra un livello e l'altro. Questo approccio non è però quello che utilizzeremo per la compressione, poiché ci fa portar dietro un segnale più grande di quello originale.
 
 
 
