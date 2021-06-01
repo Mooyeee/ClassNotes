@@ -2815,7 +2815,7 @@ Sfruttando la **ridondanza spaziale** tra i vari frame però, è possibile stabi
 
 
 **2D LORITHMIC SEARCH**
-<img src="img/121.png" alt="121" style="zoom:50%;" align="left"/>Questo algoritmo calcola la MAD in 9 posizione centrare sul macroblocco nella finestra reference; questa ricerca viene effettuata sul punto che da errore minore, dimezzando la finestra di ricerca ad ogni passo.
+<img src="img/121.png" alt="121" style="zoom:50%;" align="left"/>Questo algoritmo calcola la MAD in 9 posizioni centrate sul macroblocco nella finestra reference; questa ricerca viene effettuata sul punto che da errore minore, dimezzando la finestra di ricerca ad ogni passo.
 Ovviamente se si sbaglia già al primo punto non si troverà il blocco e si avrà un errore grande; se non abbiamo quella ipotesi di ridondanza spaziale l'algoritmo non funziona bene.
 
 
