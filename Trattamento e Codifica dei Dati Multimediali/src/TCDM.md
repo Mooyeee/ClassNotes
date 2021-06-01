@@ -2286,7 +2286,7 @@ Nel dominio delle frequenze è possibile effettuare una migliore scorrelazione d
 
 <img src="img/078.png" alt="078" style="zoom:40%;"/>
 
-Dunque, se possiamo codificare il segnale con meno componenti del segnali *(ad esempio i coefficienti DFT a basse frequenze)*, le restanti componenti possono essere pesantemente quantizzate *(o addirittura eliminate)* con una piccola perdita.
+Dunque, se possiamo codificare il segnale con meno componenti del segnale stesso *(ad esempio i coefficienti DFT a basse frequenze)*, le restanti componenti possono essere pesantemente quantizzate *(o addirittura eliminate)* con una piccola perdita.
 
 <img src="img/079.png" alt="079" style="zoom:40%;"/>
 
