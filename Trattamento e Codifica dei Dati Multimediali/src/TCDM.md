@@ -2451,7 +2451,7 @@ Con la compressione loss-less si possono raggiungere livelli di compressioni di 
 
 **CODIFICA CON TRASFORMATE**
 Una tipica compressione a perdita di informazione è la **codifica con trasformate** che opera nel dominio trasformato. Per il mapping viene usata una trasformata *lineare* e *reversibile*. Il mapping in questa fase prevede anche una suddivisione dell'immagine in sotto-immagini sulle quali verrà poi applicata la trasformata coseno.
-Nella fase di mapping **NON** si ha compressione, è solo una preparazione alle fasi di compressione, che viene realizzata quantizzando o addirittura trascurando i coefficienti con ampiezza poco significativa.
+Nella fase di mapping, in questo caso, **NON** si ha compressione, è solo una preparazione alle fasi di compressione, che vengono realizzate quantizzando o addirittura trascurando i coefficienti con ampiezza poco significativa.
 
 <img src="img/094.png" alt="094" style="zoom:50%;"/>
 
