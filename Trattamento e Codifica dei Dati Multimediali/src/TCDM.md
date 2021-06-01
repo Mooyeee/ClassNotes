@@ -1802,7 +1802,7 @@ Ovviamente, visto che il nostro sistema percettivo non è comunque in grado di p
 <img src="img/057.png" alt="057" style="zoom:70%;" align="right" />Il campo di udibilità è determinato da valori limite di intensità e di frequenza.
 Il limite inferiore per l'intensità è costituito dalla **curva di soglia di udibilità**, mentre quello superiore dalla **curva di soglia del dolore**.
 Il limite delle frequenze invece è dato da un valore inferiore tra i 15 e 20 Hz e da uno superiore che si aggira sui 20000 Hz.
-Il valore di intensità di riferimento è quello al quale diventa udibile un segnale a 2 Hz *(ricordiamo che intensità è calcolata in dB)*. Notiamo come non sia lineare l'andamento della curva, a significare che le grandezze
+Il valore di intensità di riferimento è quello al quale diventa udibile un segnale a 2 kHz *(ricordiamo che intensità è calcolata in dB)*. Notiamo come non sia lineare l'andamento della curva, a significare che le grandezze
 fisiche e percettive non sono dipendenti linearmente.<img src="img/058.png" alt="058" style="zoom:50%;" align="right" />
 
 La stessa cosa vale anche per frequenza e altezza percepita del suono, cosa che viene mostrata nella scala di Mel.
