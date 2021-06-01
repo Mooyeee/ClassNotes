@@ -2807,7 +2807,7 @@ con
 - $C(x+k, y+l)$ pixel del macroblocco target
 - $R(x+k+i, y+l+j)$ i pixel del macroblocco reference
 
-Il vettore di moto cercato è quello che di coordinate $(i,j)$ che abbia il valore minimo per questa differenza.
+Il vettore di moto cercato è quello di coordinate $(i,j)$ che abbia il valore minimo per questa differenza.
 
 Il metodo di ricerca più semplice *(e più costoso)* è la **ricerca esaustiva**, in cui sequenzialmente vengono considerati tutti i pixel in una finestra. Questo tipo di ricerca è molto onerosa in termini computazionali però.
 Sfruttando la **ridondanza spaziale** tra i vari frame però, è possibile stabilire che la probabilità di trovare un blocco simile man mano che ci si allontana dal blocco di partenza diminuisce in modo esponenziale con l'aumentare della distanza. Questo concetto ci porta a degli algoritmi di ricerca più veloci come il *2D logarithmic search* e la *ricerca in tre passi*.
