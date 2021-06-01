@@ -1834,7 +1834,7 @@ In KB *(kilobyte)* sarà $Weight = (fc*D*b*Nc)/(8*1024)$. *(8 perché 1 B = 8 bi
 
 **FILTRO ANTI-ALIASING**
 Abbiamo detto che prima del campionamento il segnale audio viene filtrato passabasso per limitare le frequenze e quindi l'aliasing, mantenendo solo le frequenze udibili.
-Dopo la conversione DA, nell'output possono essere di nuovo presenti alte frequenze a causa del campionamento e della quantizzazione, dato che il segnale digitale è a gradini e che quindi contengono alte frequenze. Dunque anche dopo la conversione DA viene applicato un filtro passabasso.
+Dopo la conversione DA, nell'output possono essere di nuovo presenti alte frequenze a causa del campionamento e della quantizzazione, dato che il segnale digitale è a gradini e che quindi conterrà alte frequenze. Dunque anche dopo la conversione DA viene applicato un filtro passabasso.
 
 
 
