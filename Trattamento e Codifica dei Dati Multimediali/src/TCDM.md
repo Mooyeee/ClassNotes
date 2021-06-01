@@ -2218,7 +2218,7 @@ Può essere impiegata anche per la codifica di immagini a colori quando ci sono 
 
 **RIDONDANZA SPAZIALE E TEMPORALE: DIFFERENTIAL CODING**
 <img src="img/075.png" alt="075" style="zoom:50%;" align="right"/>Immaginiamo di avere questo segnale sinusoide; possiamo osservare che di fatto i valori vicini sono correlati da una certa legge. Potremmo pensare, invece di codificare ogni livello a sé *(e quindi codificare i livelli da 0 a 16)*, di codificare la differenza tra un livello e l'altro *(dovendo così codificare solo dei valori tra -2 e 2)*. Questo algoritmo è chiamato **DPCM** nei segnali audio codificati con PCM.
-In questo modo si passa da un istogramma distribuito su più livelli ad uni più piccato *(stretto)* del segnale originale. A questo punto risulta molto utile un algoritmo VLC per ridurre la ridondanza di codifica.
+In questo modo si passa da un istogramma distribuito su più livelli ad uno più piccato *(stretto)* del segnale originale. A questo punto risulta molto utile un algoritmo VLC per ridurre la ridondanza di codifica.
 
 Nel caso delle immagini si opera generando un’immagine differenza fra pixel contigui *(mantenendo intatto il valore del primo pixel, per poter ricostruire l'immagine)* applicando un operatore che approssima la derivata prima *(gradiente)* o la derivata seconda *(Laplaciano)*; questo equivale ad applicare un filtro passa alto all'immagine e ottenerne gli *edges*.
 A causa delle ridondanze spaziali presenti in generale nelle immagini l’immagine differenza ha un istogramma più stretto e quindi un’entropia minore.
