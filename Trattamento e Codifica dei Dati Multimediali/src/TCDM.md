@@ -2557,7 +2557,7 @@ Le parti della pipeline che introducono perdita sono quindi il primo sotto-campi
 
 **1. CONVERSIONE SPAZIO CROMATICO**
 Questo è un passaggio opzionale, potrebbe anche non essere fatto ma va ovviamente specificato; il JPEG si porta dietro anche informazioni su quale spazio colore è andato a lavorare.
-Come abbiamo detto prima, questo passaggio solitamente fa uso delle caratteristiche del nostro sistema psico-visivo e campionare più *grossolanamente* la crominanza. Solitamente i canali del colore vengono campionati in **4:2:0**, ovvero vengono preservati, per ogni 4 campioni di luminanza, 2 campioni di chroma sulle linee dispari e 0 su quelle pari. In altre parole ho una componente chroma per ogni blocco di 2x2 pixel.
+Come abbiamo detto prima, questo passaggio solitamente fa uso delle caratteristiche del nostro sistema psico-visivo e campiona più *grossolanamente* la crominanza. Solitamente i canali del colore vengono campionati in **4:2:0**, ovvero vengono preservati, per ogni 4 campioni di luminanza, 2 campioni di chroma sulle linee dispari e 0 su quelle pari. In altre parole ho una componente chroma per ogni blocco di 2x2 pixel.
 
 
 
