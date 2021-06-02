@@ -1788,7 +1788,7 @@ Le energie in gioco nei fenomeni acustici sono irrilevanti rispetto a quelle nel
 
 |     Frequenza      | Tipologia |
 | :----------------: | :-------: |
-|   20 Hz - 50 Hz    |   Bassi   |
+|   20 Hz - 500 Hz   |   Bassi   |
 |  500 Hz - 8000 Hz  |   Medi    |
 | 8000 Hz - 20000 Hz |   Acuti   |
 
