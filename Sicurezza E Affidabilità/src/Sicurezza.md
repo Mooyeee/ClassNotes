@@ -858,3 +858,340 @@ I sistemi di intrusion detection sono dei sistemi *(automatici e non)* che anali
 
 **PRINCIPI DI PROGETTAZIONE PER SO TRUSTED**
 I principi sono i minimi privilegi, la mediazione completa, l'autorizzazione negata per default, multiple point of failure, separation of duties, separazione fra utenti, protezione rispetto al riutilizzo di risorse e accounting e auditing. Tutto ciò in considerazione dei requisiti di usabilità.
+
+## SICUREZZA NELLE APPLICAZIONI
+
+**GLOSSARIO**
+
+|          TERMINE          | SIGNIFICATO                                                  |
+| :-----------------------: | ------------------------------------------------------------ |
+|    **SECURITY POLICY**    | Un insieme di regole che determinano come un sistema o un'organizzazione protegge le risorse critiche e sensibili. |
+|       **WEAKNESS**        | Un tipo di errore nel progetto o nell'implementazione oppure un'operazione di un sistema software che, in condizioni appropriate, può portare all'introduzione di una *vulnerabilità* nel sistema. |
+|     **VULNERABILITÀ**     | L'occorrenza di una o più *weakness* in un sistema software. Può essere sfruttata da terze parti per violare la *security policy* del sistema. |
+|        **EXPLOIT**        | Una tecnica che permette di sfruttare una *vulnerabilità* per violare la *security policy* di un sistema. |
+|   **MINACCIA (THREAT)**   | Causa di violazione della *security policy* di un sistema che può causare danni (accesso non autorizzato, rivelazione o modifica di informazioni, disabilitazione di un servizio). |
+|   **ATTACCO (ATTACK)**    | Un'azione o una tipologia di azione *(**schema di attacco**)* intenzionale volta alla violazione della *security policy* di un sistema. |
+| **ATTACCANTE (ATTACKER)** | Entità che effettua un *attacco*.                            |
+|     **CONTROMISURA**      | Un'azione o tecnica che elimina, previene, mitiga o individua una *vulnerabilità*, *minaccia* o *attacco*. |
+
+
+
+**ATTACCHI**
+
+<img src="./img/031.png" alt="024" style="zoom:45%;" align="left" />Possiamo osservare come, per eseguire un *attacco*, un *attaccante* sfrutta una *vulnerabilità* (e quindi esegue un *exploit*) del sistema attaccato o per ricavare informazioni dal sistema *(attacco passivo)* o per eseguire determinate azioni sul sistema *(attacco attivo)*. Le contromisure sono inserite tra l'*attaccante* e la *vulnerabilità* del sistema.
+
+
+
+<div style="page-break-after: always;"></div>
+
+**CARATTERISTICHE DI UN ATTACCO**
+Un *attacco* può essere caratterizzato da diversi fattori:
+
+- **TIPOLOGIA**
+  - Attivo: Altera le risorse del sistema.
+  - Passivo: Acquisisce informazioni dal sistema e basta.
+- **POINT OF INITIATION**
+  - Interno: L'*attaccante* ha accesso alle risorse del sistema, ma le vuole utilizzare in modo differente.
+  - Esterno: L'*attaccante* non ha accesso alle risorse, risiede al di fuori del perimetro del sistema.
+- **METHOD OF DELIVERY**
+  - Diretto: L'*attaccante* attacca il sistema direttamente.
+  - Indiretto: L'*attaccante* utilizza un terzo sistema per accedere al sistema target o per amplificare l'*attacco*.
+
+
+
+**CATALOGHI**
+Diverse organizzazioni si occupano di collezionare e riportare *weakness*, *schemi di attacco*, *vulnerabilità* di software noti. Le più note sono MITRE, finanziata dal dipartimento della difesa americana, il Web Application Security Consortium, non legato ad organizzazioni governative e l'Open Web Application Security Project, non-profit e sostenuta da diverse aziende.
+
+Alcuni cataloghi
+
+- **Common Weakness Enumeration (CWE)**: È un elenco formale di *weakness* destinato agli sviluppatori e agli esperti di sicurezza.
+- **Common Attack Pattern Enumeration and Classification (CAPEC)**: Un catalogo di *attack pattern*; mentre CWE descrive le *weakness* presenti in un software, CAPEC descrive come queste sono tipicamente sfruttate dagli *attaccanti*.
+- **Common Vulnerability and Exposures (CVE)**: Un elenco aggiornato di *vulnerabilità* che riguardano software molto diffusi.
+
+
+
+**COMMUNICAZIONE CLIENT/SERVER**
+L'web è basato su un'architettura client/server; il client invia delle richieste al server tramite il protocollo HTTP utilizzando un URL che indica la risorsa *(pagina)* richiesta e contiene il nome del server web.
+Nella versione più semplice di HTTP il client apre una connessione TCP, richiede una risorsa, il server risponde e chiude la connessione.
+
+Le pagine web sono scritte in HTML e CSS che vengono interpretati dal client e visualizzati. Il client può fare delle richieste GET, passando dei parametri al server nel URL, o delle richieste POST, inserendo i parametri nel campo *body* della richiesta. In entrambi i casi il server genera dinamicamente una pagina HTML con il contenuto appropriato; questa generazione dinamica avviene tramite lo **scripting server-side**, ovvero il server esegue del codice per generare la pagina. È possibile però fare anche dello **scripting client-side** tramite JavaScript; il codice è incluso nella pagina nei tag *\<script\>*. Attraverso questo codice è possibile accedere ad alcune informazione *(cookies)*, osservare o modificare lo stato del documento HTML o inviare richieste HTTP.
+
+
+
+## ATTACCHI BASATI SU INJECTION
+
+Andiamo ora a vedere come è possibile utilizzare quello che sappiamo sulla comunicazione client/server per sferrare degli *attacchi*, in particolare passando al server dei parametri inaspettati.
+
+
+
+**NEUTRALIZZAZIONE IMPROPRIA**
+Avviene quando manca un controllo sugli input passati dall'utente.
+
+<img src="./img/032.png" alt="032" style="zoom:100%;"/>
+
+Cosa succede se inserisco un valore sbagliato, ad esempio, nel campo *data di nascita*?
+Generalmente non sappiamo cosa può succedere, poiché non sappiamo fino a dove arriva quel valore nell'applicazione; se penetra in certi contesti d'uso potrebbe essere utilizzato in modi imprevisti, e quindi il valore errato va *neutralizzato* prima dell'uso.
+Speso viene aggiunto un controllo lato client *(nella pagina stessa)* ma tuttavia è insufficiente: un utente malevolo potrebbe inviare i dati direttamente al server web, senza passare per il form della pagina web. È necessario dunque anche un controllo lato server.
+
+**Esempio**: [www.things.com/orders.asp?custID=112&itemId=20&qty=20&**price=200**](https://www.youtube.com/watch?v=dQw4w9WgXcQ)
+Nel caso in cui mancasse un controllo lato server, cambiando il valore del prezzo, un *attaccante* potrebbe acquistare degli articoli ad un prezzo ridotto. Lo stesso problema è presente anche nelle richieste POST; sebbene il contenuto non sia visibile nel URL, un *attaccante* potrebbe comunque creare delle richieste ad hoc.
+
+La soluzione è verificare la correttezza degli input sia lato client che lato server.
+
+<div style="page-break-after: always;"></div>
+
+## CROSS SITE SCRIPTING (XSS)
+
+È un attacco di tipo code injection che si verifica quando un *attaccante* riesce ad eseguire del codice malevolo all'interno del browser di un utente sfruttando una *vulnerabilità* di un sito web ignaro dell'*attacco*. Il codice malevolo è implementato in un linguaggio di scripting, come JavaScript, poiché, seppur sia eseguito in un ambiente protetto *(il browser)* che non permette la modifica del sistema ospitante, permette di accedere ad informazioni sensibili come i ***cookies***, permette di inviare richieste HTTP verso qualsiasi destinazione e può modificare l'HTML della pagina corrente.
+
+
+
+**CONSEGUENZE**
+
+- **Furto di cookie**: si può accedere ai cookie tramite la variabile *document.cookie*; l'*attacante* potrebbe inviarli al proprio server e utilizzarli per estrarre dati sensibili come ID di Sessione per altri servizi *(tipo Amazon)*.
+- **Keylogging**: l'*attaccante* può registrare un keylogger tramite un event listener per registrare ed inviare al proprio server tutti i caratteri inseriti dall'utente *(e ricavarne quindi potenziali password)*.
+- **Phishing**: l'*attaccante* può creare un fake login *(ad esempio della banca)* per indurre l'utente a introdurre i propri dati.
+
+
+
+**TIPOLOGIE**
+Esistono tre tipologie di attacchi di tipo XSS:
+
+- **Persistent XSS**: il codice malevolo risiede nel database del sito web e la *vulnerabilità* è presente nel codice di script del server; questa permette all'*attaccante* di caricare sul server il codice malevolo che verrà poi scaricato dalla vittima.
+
+  *Esempio*: l'*attaccante* inserisce un commento in un forum contente dello script malevolo; appena un utente richiederà di vedere gli ultimi commenti, il server invierà anche lo script malevolo, che il browser della vittima interpreterà ed eseguirà.
+
+- **Reflected XSS**: il codice malevolo risiede nella richiesta HTTP della vittima; l'*attaccante* ha in qualche modo fatto sì che la vittima invii una richiesta HTTP al server all'interno della quale ci sia il codice malevolo. La *vulnerabilità* risiede sempre nello scripting lato server.
+
+  *Esempio*: l'*attaccante* invia alla vittima un URL che esegue una GET verso un server che restituisce i parametri stessi della GET *(ad esempio il server potrebbe restituire una pagina con: "Hai cercato: {parametri}")*; come parametri, l'*attaccante* inserisce lo script malevolo. Quando la vittima cliccherà sul link, il server restituirà una pagina con lo script malevolo che il browser della vittima interpreterà ed eseguirà.
+
+- **DOM-Based XSS**: il codice malevolo risiede ancora nella richiesta HTTP della vittima come prima, ma la *vulnerabilità* questa volta risiede nello scripting lato client.
+
+  *Esempio*: ipotizziamo di avere un sito per scegliere il linguaggio preferito che si aspetta delle richieste del tipo [www.site.com/page?**default=French**]() per impostare una scelta di default; il server genera poi una pagina dinamica e la invia al client che la costruisce nel proprio browser. L'*attaccante* può a questo punto creare un URL malevolo impostando **default=\<script\> ... \<\\script\>**.
+  Il server invierà una pagina dinamica che estrae tale default dall'URL lato client, dunque **NON** invia lo script malevolo alla vittima, ma quest'ultima, eseguendo la pagina dinamica, lo estrarrà ed eseguirà dal URL stesso tramite il suo motore JavaScript.
+
+<div style="page-break-after: always;"></div>
+
+**PERSISTENT XSS**
+<img src="./img/033.png" alt="033" style="zoom:47%;" align="left"/>L'idea è che l'*attaccante* utilizzi un form del sito web per inserire del codice malevolo nel database del sito **(1)**; la vittima, ignara, richiederà una pagina al server web **(2)** che, ignaro anch'esso, includerà nella pagina il codice malevolo **(3)**, in modo che poi il browser della vittima lo esegua **(4)**.
+
+
+
+**REFLECTED XSS**
+<img src="./img/034.png" alt="034" style="zoom:47%;" align="left"/>L'idea qui è che l'*attaccante* crei un URL contenente una stringa malevola **(1)** e lo invii alla vittima convincendola a cliccarci sopra **(2)**; a questo punto il sito web a cui si riferisce l'URL invia una pagina di risposta alla vittima contente la stringa malevola **(3)**. Il browser della vittima interpreta la stringa malevola come script valido e lo esegue **(4)**.
+
+
+
+**DOM-BASED XSS**
+<img src="./img/035.png" alt="035" style="zoom:47%;" align="left"/>Questo tipo di XSS sfrutta lo scripting lato client e l'inizio è simile a prima: l'*attaccante* crea un URL con lo script malevolo **(1)** e lo invia all'utente che ci clicca **(2)**. Il server questa volta risponde con una pagina dinamica **(3)**; il codice JavaScript all'interno di questa pagina estrae il codice malevolo dall'URL **(4)** e lo esegue nel browser della vittima **(5)**.
+
+<div style="page-break-after: always;"></div>
+
+**CONTROMISURE**
+Le contromisure adottate per questo tipo di attacchi si basano sulla purificazione dell'input dell'utente; questo tipo di operazione può essere configurata in base al contesto d'uso del codice HTML, dal momento di prevenzione *(cioè se farlo al ricevimento di codice HTML o all'invio della pagina)* e dalla locazione del controllo *(client side o server side)*. I principali metodi si basano sulla **codifica** e sulla **convalida**.
+
+
+
+**CONTESTO**
+<img src="./img/036.png" alt="036" style="zoom:50%;" align="left"/>In questo esempio, la stringa d'attacco sfrutta il fatto che il carattere `"` viene visto come terminatore dal browser e può essere utilizzato per inserire del codice nella pagina web.
+<img src="./img/037.png" alt="037" style="zoom:60%;" align="left"/>La soluzione potrebbe essere disabilitare l'inserimento del doppio apice. In un contesto differente però *(ad esempio se il terminatore fosse `#` )* questa soluzione sarebbe inutile.
+Occorre dunque considerare i diversi contesti in cui un input viene inserito.
+
+
+
+**INBOUND/OUTBOUND**
+Ci si riferisce al momento in cui l'applicazione può effettuare i controlli:
+
+- Inbound: alla ricezione dell'input.
+- Outbound: all'invio dell'input all'utente.
+
+La scelta di una strategia o dell'altra dipende dall'architettura dell'applicazione; se il sistema ha un unico punto di ingresso ovviamente è più semplice fare un controllo inbound, viceversa se l'input viene costruito tramite diverse chiamate è più semplice outbound.
+
+
+
+**LOCAZIONE CONTROLLO**
+Ovviamente, implementare un controllo lato server protegge da *Persistent* e *Reflected* XSS, mentre un controllo lato client protegge da *DOM-Based* XSS, poiché abbiamo detto che i primi due sfruttano *vulnerabilità* nello scripting lato server, mentre il terzo usa *vulnerabilità* dello scripting lato client. 
+
+
+
+**ENCODING**
+La tecnica dell'encoding consiste nella trasformazione *(escaping)* degli input in modo che il browser non possa interpretarli come codice. Vengono tradotti ad esempio i caratteri `<` e `>` in `$lt;` e `&gt;`. Queste operazioni vengono effettuate da libreria apposite ed è fortemente sconsigliato implementarle da zero in quanto potrebbero essere molto complesse.
+JavaScript, per alcune funzioni fornite dal sistema, implementa l'encoding in maniera trasparente.
+
+<img src="./img/038.png" alt="038" style="zoom:50%;"/>
+
+**CONVALIDA DELL'INPUT (VALIDATION)**
+Gli approcci si distinguono per
+
+- **Strategia di Classificazione**: ovvero come identificare un input valido da uno non valido; le principali tecniche sono:
+  - **Blacklisting**: si elencano le caratteristiche degli input pericolosi attraverso dei pattern *(regex)*.
+    Questa soluzione è complessa, in quanto sono molti i pattern da elencare e inoltre invecchia male; bisogna cioè aggiungere ogni volta nuovi input pericolosi man mano che vengono scoperti.
+  - **Whitelisting**: si elencano i pattern degli input validi.
+    Questa soluzione ha una complessità che varia in funzione della complessità dell'input e generalmente è più longeva.
+- **Outcome**: gli input invalidi possono essere gestiti in due modi:
+  - **Rejection**: l'input viene scartato.
+  - **Sanitization**: viene rimosso il codice non valido dall'input e si mantiene solo la parte non pericolosa. Per effettuare sanitization è meglio affidarsi a librerie note e ben testate, in quanto è un processo molto complesso.
+
+
+
+Possiamo osservare un esempio di encoding nella seguente immagine: generalmente i browser moderni implementano di default dei meccanismi di sicurezza come questo per proteggersi dagli attacchi DOM-Based *(meglio non fare assunzioni sul browser utilizzato da un cliente però)*.
+
+<img src="./img/039.png" alt="039" style="zoom:100%;"/>
+
+È anche importante notare che uno sviluppatore potrebbe anche decidere di decodificare l'input codificato dal browser per esigenze di sviluppo, rendendo il codice vulnerabile ad attacchi DOM-Based.
+
+Questo tipo di attacchi può anche inviare informazioni personali a qualsiasi altro server, nell'esempio sottostante si invia l'userAgent *(informazioni sul browser utilizzato)* ad una ricerca google.
+
+<img src="./img/040.png" alt="040" style="zoom:100%;"/>
+
+
+
+## SQL INJECTION
+
+Un altro attacco basato sull'injection è il SQL Injection, che consiste nell'inserimento in un sistema di una query SQL attraverso l'input utente. L'obiettivo è modificare l'esecuzione di un comando SQL parametrico all'interno dell'applicazione, agendo sul parametro stesso. Questo tipo di attacchi può leggere/modificare dati sensibili da un database, eseguire operazioni di amministrazione *(shutdown)* o recuperare file presenti nel DBMS.
+
+Vediamo un esempio: il server si aspetta nei campi **uid** e **pwd** un nome utente ed una password, ma se, sfruttando il terminatore `'`, inseriamo del codice SQL possiamo ottenere diversi risultati. In questo caso viene settato l'utente *fabrizio* come admin.
+
+<img src="./img/041.png" alt="041" style="zoom:100%;"/>
+
+
+
+**CONTROMISURE**
+Anche qui, una buona contromisura è utilizzare delle librerie di encoding dell'input, in modo che non venga riconosciuto come comando valido.
+
+<div style="page-break-after: always;"></div>
+
+## BUFFER MANIPULATION
+
+Un **buffer** è uno spazio di memoria dove possono essere conservati dei dati, come un array o una stringa.
+Un primo attacco basato sulla buffer manipulation è il **buffer overflow**, che si basa sulla scrittura in uno spazio di memoria al di fuori dei limiti del buffer predisposto, andando a sovrascrivere i valori nelle aree di memoria adiacenti.
+In linguaggi come Java, operazioni del genere solitamente non sono permesse e generano delle eccezioni di tipo *OutOfBounds*, ma, per esempio, in C viene lasciata libera scelta al programmatore che può anche scegliere di non fare nulla se il programma prova ad accedere ad aree di memoria fuori dal buffer.
+
+Solitamente, un buffer overflow viene causato da un programma che copia un buffer *a* contente dati ricevuti da un utente in un buffer *b* **senza effettuare controlli** sul fatto che *b* sia abbastanza grande da contenere i dati.
+
+
+
+**STACK & ACTIVATION RECORD**
+<img src="./img/042.png" alt="042" style="zoom:40%;" align="left"/>Quando viene evocata una funzione, viene allocata della memoria per i parametri della funzione, per le variabili locali della funzioni e per l'**indirizzo di ritorno** della funzione e il **previous frame pointer**, ovvero l'indirizzo delle variabili locali del chiamante.
+Questa struttura è detta **activation record** della chiamata di funzione.
+
+Ogni volta che un metodo viene invocato, nello stack viene allocato un nuovo activation frame. Il *previous frame pointer* è chiamato anche *Base Pointer (BP)*.
+Lo stack inoltre cresce verso il basso; parte da 0xffffffff e *cresce* fino a 0x00000000. Gli array invece vengono riempiti verso i numeri alti di memoria. Questo fa si che una scrittura out of bound vada a sovrascrivere le aree di memoria che precedono la memoria dedicata all'array.
+
+
+
+Consideriamo il seguente programma
+
+```c
+int f(){
+	int pass;
+	int buff[8];
+	pass = 0;
+	buff[8] = 97;
+	printf("%d\n", pass);
+	return 0;
+}
+
+int main(int argc, char* argv[]) {
+	int x;
+	x = 1;
+	f();
+	printf("%d\n", x);
+}
+```
+
+
+
+Notiamo che il main chiama una funzione *f()* che dichiara un array di 8 posizioni e scrive sulla nona, quindi scrive in buffer overflow. Quando il main viene chiamato, sullo stack viene allocato il suo activation frame, che conterrò anche la sua variabile *x*. Quando il main chiama *f()*, verrà allocato un nuovo activation frame sullo stack, quello di *f()*, contenente anche la sua variabile *pass* e il suo buffer *buff*.
+
+Notiamo come quando *f()* scrive in buff[8], non sta facendo altro che sovrascrivere un area di memoria sopra il buffer stesso *(perché appunto i buffer crescono verso l'alto)*, in particolare sovrascrive la variabile *pass*.
+
+<img src="./img/043.png" alt="042" style="zoom:60%;"/>
+
+La cosa interessante tuttavia è che, tramite buffer overflow, si può scrivere in qualsiasi area di memoria *raggiungibile* dal buffer, come ad esempio il **return address**; se modifichiamo quella zona di memoria, possiamo far eseguire al programma del codice malevolo, poiché a questo punto la funzione, anziché tornare al main, salterà all'indirizzo inserito.
+
+Un esempio di *vulnerabilità* di tipo buffer overflow è l'ormai deprecata funzione **gets()** di C che prende un input da tastiera e lo inserisce in un buffer, senza però controllare che le dimensioni del buffer siano sufficienti. Al suo posto viene usata **fgets(buf, BUFSIZE, stdin)** che copia al più BUFSIZE byte nel buffer. Tuttavia, un programmatore che usa male fgets potrebbe comunque scrivere del codice vulnerabile ad un buffer overflow, come in questo esempio dove viene usato un numero diverso dalla dimensione del buffer per BUFFSIZE *(ad esempio perché magari inizialmente il buffer era di 300 byte e il programmatore non ha aggiornato correttamente il codice)*:
+
+```c
+void readFile(char *fileName) {
+	char buf[256];
+    int bytes = 300;
+	fgets(buf, bytes, file);
+}
+
+int main(int argc, char *argv[]) {
+	readFile(argv[1]);
+	return 0;
+}
+```
+
+**SHELLCODE**
+Generalmente, il codice eseguito negli attacchi di tipo buffer overflow è uno **shellcode**, ovvero un piccolo programma che usa la chiamata di sistema *execve* per sostituire il processo corrente con uno nuovo, in questo caso con una shell.
+Solitamente, durante un buffer overflow, vengono scritte in memoria *(solitamente all'interno del buffer stesso)* una serie di NOP *(istruzione assembly che non fa nulla)* di contorno allo shellcode vero e proprio, in modo da poter eseguire un salto '*impreciso*', utile se lo stack cresce in maniera non deterministica.
+
+Per un *attaccante* è utile eseguire lo shellcode in programmi eseguiti con privilegi di amministratore, in modo che anche lo shellcode abbia tali permessi.
+
+
+
+**ATTACCO**
+Per portare a termine un *attacco*, bisogna '*riempire*' la memoria in un certo modo; occorre scrivere un indirizzo valido in BP per non causare *segmentation faults*; si potrebbe usare per esempio il BP del chiamante, ottenibile monitorando con un debugger un'esecuzione precedente del sistema *(gli indirizi di memoria sono virtuali e non variano tra le esecuzioni)*. Un altro approccio può essere provare l'attacco più volte con valori casuali di BP finché l'attacco non ha successo.
+
+A questo punto il buffer vero e proprio *(la porzione 'valida')* viene sovrascritta col codice malevolo e si sostituisce il **return address** con un indirizzo all'interno del buffer, che si trovi prima della parte di shellcode. Veranno eseguite quindi un po' di NOP fino ad arrivare allo shellcode.
+
+È importante notare che i buffer overflow scrivono **tutta** la zona in overflow, non possono scrivere, ad esempio, solo il return address; è molto difficile che ci sia una *weakness* in grado di permettere ciò e, anche se fosse, a quel punto l'*attaccante* può già saltare al suo codice malevolo, senza necessità di iniettarlo tramite buffer overflow, implementando un altro tipo di attacco.
+
+
+
+Esempio di file di input che permetta l'attacco:
+
+<img src="./img/044.png" alt="044" style="zoom:60%;"/>
+
+
+
+**HEAP BUFFER OVERFLOW**
+Abbiamo visto buffer overflow su stack, ma questo tipo di attacco può essere fatto anche sullo heap; non permette la scrittura del return address, ma può modificare comunque altre variabili come i puntatori a funzione.
+
+<div style="page-break-after: always;"></div>
+
+**CONTROMISURE: CANARY VALUE**
+<img src="./img/045.png" alt="044" style="zoom:60%;" align="left"/>Un primo tipo di protezione contro questi attacchi sono i *canary value*; il compilatore inserisce delle istruzioni a compile time che, ad ogni invocazione di funzione, inseriscono un valore di controllo sullo stack, dopo il BP. Tipicamente il *canary value* è un valore random, generato in fase di inizializzazione del programma.
+Ad ogni uscita di funzione viene controllato il *canary value* che deve essere identico al valore inserito in precedenza *(il sistema lo ricorda poiché lo memorizza in un area di memoria 'lontana' dallo stack)*. Se il controllo fallisce, viene sollevato un messaggio d'errore e l'esecuzione termina.
+
+Generalmente il compilatore permette diversi layer di protezione:
+**-f-stack-protector**: aggiunge il *canary value* solo alle funzioni che possono presentare *vulnerabilità* con maggiore probabilità *(allocazione, buffer grandi)*.
+**-f-stack-protector-all**: controlla tutte le funzioni, ma è costoso in termini computazionali.
+**-f-stack-protector-strong**: compromesso tra protezione e overhead.
+
+
+
+**ADDRESS SPACE LAYOUT RANDOMIZATION (ASLR)**
+Questa è la *contromisura* addotta nei moderni sistemi operativi; alcuni indirizzi di memoria del virtual address space cambiano da un esecuzione all'altra, rendendo più difficile la scrittura degli *exploit*; diventa difficile indovinare l'indirizzo da utilizzare per sovrascrivere il *return address* e il *Base Pointer*.
+
+
+
+**EXECUTABLE SPACE PROTECTION**
+Questo tipo di *contromisura* richiede il supporto dell'hardware e permette al sistema operativo di distinguere le aree di memoria contenenti dati da quelle contenenti codice da eseguire.
+Nei processori è supportata tramite il bit NX: l'ultimo bit di un indirizzo indica se una pagina contiene codice eseguibile o meno.
+Praticamente in questo modo si rende la memoria dati non eseguibile; anche se l'*attaccante* scrive l'*exploit* nel buffer, questo non potrà essere eseguito.
+
+
+
+**ESP vs JIT**
+Alcuni linguaggi interpretati fanno uso di compilatori Just-in-time *(JIT)* che interpretano uno script di input e generano al volo del codice eseguibile in linguaggio macchina. Questo codice va posizionato per forza su pagine eseguibili.
+Questo permette di eseguire degli attacchi tramite JIT *(JIT spraying)* che sfruttano il buffer overflow senza incappare nella *contromisura* dell'ESP poiché utilizzano la memoria dedicata al compilatore JIT.
+
+
+
+**BUFFER OVERFLOW IN JAVA**
+Java protegge i buffer da buffer overflow, tuttavia il codice *nativo* intorno ad un programma Java può essere affetto da *vulnerabilità* di questo tipo *(ad esempio la JVM che è scritta in C++ o le librerie implementate in linguaggio nativo)*.
+
+
+
+**BUFFER OVERREAD**
+Con buffer overread si intende un attacco il quale determina la lettura di una zona di memoria oltre i limiti di un buffer.
+Tale zona di memoria potrebbe contenere dei dati sensibili che potrebbero essere rivelati all'attaccante.
+Un esempio è **heartbleed**, riguardante SSL.
+
+<img src="./img/046.png" alt="046" style="zoom:100%;"/>
+
+Il bug era reso possibile da un mancato controllo del parametro **length** del messaggio **heartbeat** che viene mandato al server per verificare che questo sia ancora online; questo poteva essere sfruttato per recuperare informazioni utili.
