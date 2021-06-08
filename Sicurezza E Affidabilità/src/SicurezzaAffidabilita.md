@@ -1195,3 +1195,263 @@ Un esempio è **heartbleed**, riguardante SSL.
 <img src="./img/046.png" alt="046" style="zoom:100%;"/>
 
 Il bug era reso possibile da un mancato controllo del parametro **length** del messaggio **heartbeat** che viene mandato al server per verificare che questo sia ancora online; questo poteva essere sfruttato per recuperare informazioni utili.
+La correzione implementa un controllo del parametro **length** con la lunghezza effettiva del messaggio: se discordano la richiesta viene scartata silenziosamente.
+
+<div style="page-break-after: always;"></div>
+
+## NULL POINTER DEREFERENCE
+
+Prima di parlare degli attacchi che sfruttano la null pointer dereference, vediamo cosa sono i **puntatori** in C.
+
+<img src="./img/047.png" alt="047" style="zoom:50%;" align="left"/>**PUNTATORE**: Variabile che contiene un '*numero*' che rappresenta un indirizzo di una cella di memoria.
+In C si indicano con **type *\*nome***; accedendo a ***nome*** si ottiene l'indirizzo contenuto nel puntatore, accedendo a ***\*nome*** si ottiene il valore della cella puntata dal puntatore *(con &nome si accede all'indirizzo della variabile nome)*.
+
+Quando una variabile puntatore non punta a niente, le viene assegnato il valore **NULL**; per il sistema operativo questo è dunque un indirizzo invalido, utilizzarlo genera un *segmentation fault*, ma per l'hardware è un indirizzo come gli altri ed è l'indirizzo 0, ovvero l'indirizzo della prima cella di memoria.
+
+
+
+**MEMORIA E PROCESSI**
+I sistemi operativi assegnano ad ogni processo un proprio spazio di indirizzi di memoria virtuale e ogni processo opera sul proprio spazio di indirizzi virtuale. Questi indirizzi vengono mappati su indirizzi fisici dalla **MMU** *(quindi l'indirizzo **x** del processo **A** corrisponde ad una cella di memoria che è diversa da quella a cui corrisponde l'indirizzo **x** del processo **B**)*.
+
+I processi possono accedere solo ad indirizzi di memoria a loro assegnati, provando ad accedere ad altri indirizzi non assegnati genera un'eccezione, ma possono chiedere al sistema operativo di mappare indirizzi virtuali su indirizzi fisici tramite la funzione di sistema **mmap**, che, preso come parametro l'indirizzo fisico da mappare e la regione da mappare *(potrebbe essere ad esempio un file)*, restituisce l'indirizzo della memoria mappata o MAP_FAILED se la chiamata fallisce.
+
+
+
+**MMAP E INDIRIZZO 0**
+Se assegniamo con **mmap** la pagina 0 all'interno dello spazio di indirizzi del processo, l'indirizzo 0 *(NULL)* diventa un indirizzo valido, ovvero non avremmo più *segmentation fault* utilizzandolo.
+
+**NOTA**: la *segmentation fault* lanciata dal sistema quando il programma dereferenzia un puntatore NULL serve per evitare errori più difficili da notare, che potrebbero avere conseguenze peggiori.
+
+
+
+**COME VIENE SFRUTTATO**
+Tipicamente quanto detto viene sfruttato per iniettare dati malevoli all'interno di un programma in esecuzione, la *mmap* viene quindi usata come '*trampolino*' per eseguire del codice malevolo in modalità kernel.
+
+<div style="page-break-after: always;"></div>
+
+**SPAZIO INDIRIZZI KERNEL**
+Il kernel ha un proprio spazio indirizzi, tuttavia i processi spesso hanno bisogno di eseguire delle *kernel system calls* per effettuare operazioni '*protette*', come ad esempio leggere un file.
+Il context switch tra processi e kernel è tuttavia costoso, quindi ciò che viene fatto per velocizzare il tutto è mappare il codice del kernel nello spazio del processo.
+Dunque i processi non possono eseguire codice kernel '*saltando*' nel suo spazio di memoria, per via del *memory protection* che lo impedisce, per questo esistono questi entry point *(le system calls appunto)*.
+
+
+
+**SO E NULL DEREFERENCE**
+Anche il sitema operativo può contenere dei difetti, tra i quali una null pointer dereference; in questo caso tipicamente il sistema operativo crasha, ma spesso questa *weakness* può essere sfruttata da un *attaccante* per eseguire codice malevolo con permessi di amministratore di sistema.
+Questo vale anche per singoli moduli del sistema operativo *(ad esempio i device driver)*.
+
+Questa *weakness* è particolarmente grave quando il puntatore dereferenziato è un puntatore a funzione; in questo caso si può sfruttare la *mmap* per eseguire funzioni puntate da puntatori NULL; se mappiamo l'indirizzo 0 all'interno dello spazio di indirizzi del processo possiamo far si che un puntatore a funzioni posto a NULL esegua una funzione da noi desiderata.
+
+
+
+**ATTACCO**
+L'*attacco* si svolge eseguendo *mmap* e scrivendo all'indirizzo zero il codice malevolo.
+Viene poi eseguita una chiamata di sistema in modo che un puntatore a funzione sia posto a NULL e che il kernel usi tale puntatore per invocare la funzione, eseguendo di fatto il codice all'indirizzo zero.
+
+Il codice malevolo eseguito in modalità kernel solitamente assegna permessi di root al processo corrente *(il kernel può assegnare root a qualsiasi processo)* ed esegue vari comandi nel processo *(ad esempio shellcode)*.
+
+
+
+**CONTROMISURE** 
+Per prevenire questi attacchi, i kernel recenti di Linux hanno un parametro di configurazione detto ***mmap_min_addr*** che indica l’indirizzo minimo che si può mappare *(questo indirizzo di default è 4096)*.
+Tuttavia esistono delle *vulnerabilità* che permettono di superare questo limite.
+
+
+
+**ESEMPI DI VULNERABILITÀ**
+Le *socket* utilizzate per comunicare in rete hanno un campo *struct proto_ops* che contiene dei puntatori a funzioni *(tipo accept, bind, shutdown)*. Tuttavia, se non implementate, questi puntatori rimangono NULL. Non veniva verificato che questi puntatori fossero diversi da NULL prima di utilizzarli.
+
+<div style="page-break-after: always;"></div>
+
+## JAVA SECURE CODING GUIDELINES
+
+Vediamo alcune linee guida per il secure coding in Java raggruppate per linee guida dipendenti dal dominio, quindi per le quali è difficile automatizzare il controllo, e quelle indipendenti dal dominio, con controllo automatizzabile.
+
+
+**DOMAIN DEPENDENT**
+
+- **Limit Lifetime of Sensitive Data**: i dati sensibili potrebbero essere ispezionati da un *attaccante* se l'applicazione usa degli oggetti per memorizzarli e questi non sono garbage collected, se ho pagine di memoria scaricate su disco *(swap)* o se mostriamo i dati sensibili in messaggi di debugging.
+
+  La soluzione è ripulire i dati *(ad esempio sovrascrivere la stringa usata per ricevere la password dell'utente)*.
+
+- **Store Passwords Using Hash Functions**: le password salvate in plain text possono essere osservate da un *attaccante*, conviene usare delle hash functions poiché sono poco costose e l'inverso è infeaseable. Preferire SHA256 a MD5 per le password.
+
+- **Minimizzare Visibilità Variabili**: evitare di dichiarare variabili fuori dal loro *scope* di utilizzo.
+  <img src="./img/048.png" alt="048" style="zoom:25%;"/>
+
+- **Rendere le Classi Non Serializzabili**: tramite la serializzazione un *attaccante* può accedere allo stato interno degli oggetti *(ad esempio ai suoi campi private)*.
+
+- **Rendere le Classi Non Deserializzabili**: Un *attaccante* potrebbe creare un oggetto ad hoc che può essere deserializzato anche se la classe non è serializzabile.
+
+- **Creare Classi Non Clonabili**: Un *attaccante* potrebbe evitare di eseguire il costruttore della vostra classe *(che potrebbe contenere security checks)*, ad esempio creando una sottoclasse che si limita ad implementare il metodo *clone*.
+
+  Una soluzione è implementare il metodo *clone* lanciando un'eccezione nel caso venga utilizzato.
+
+- **Gestire gli Overflow**: ad esempio gli int overflow, alcune classi lo fanno di default.
+
+
+
+**DOMAIN INDEPENDENT**
+
+- **EI_EXPOSE_REP(EI)**: ritornare un riferimento di un oggetto mutabile memorizzato nei campi interni di un altro oggetto potrebbe esporre la struttura di questo secondo oggetto. Ritornare una copia nuova dell'oggetto è un approccio migliore.
+- **EI_EXPOSE_REP2 (EI2)**: memorizzare un riferimento ad un oggetto esterno mutabile internamente potrebbe esporre la rappresentazione interna. Modificando l'oggetto esterno modificherebbe anche quello interno. L'ideale sarebbe creare una copia dell'oggetto prima di memorizzarlo.
+- **DMI_EMPTY_DB_PASSWORD**: evitare di connettersi ad un database senza utilizzare una password.
+- **DMI_CONSTANT_DB_PASSWORD**: evitare di connettersi ad un database utilizzando una password hardcoded *(scritta nel codice)*. Chiunque abbia accesso al codice o al codice compilato può estrapolare facilmente la password e connettersi al database.
+- **MS_SHOULD_BE_FINAL**: se abbiamo un campo *statico* e *pubblico* ma non *final*, del codice esterno potrebbe cambiare il suo valore.
+
+<div style="page-break-after: always;"></div>
+
+## SICUREZZA NELLE RETI
+
+Anche nelle reti gli obiettivi della sicurezza sono i classici **Confidenzialità**, **Integrità** e **Disponibilità** con particolare riguardo verso il *controllo degli accessi* e l'*autenticazione/non ripudio*, ma l'esposizione ad attacchi è maggiore; un computer in rete è accessibile da milioni di altri computer attraverso Internet, i messaggi scambiati attraverso la rete attraversano molti nodi intermedi non controllabili e la comunicazione è gestita via software, perciò è più semplice automatizzare gli attacchi.
+
+Ricordiamo che la trasmissione di dati in rete avviene tra **applicazioni** *(ad esempio un'applicazione client email comunica con un'applicazione server email)*; mettere in comunicazione queste applicazioni richiede la **commutazione di pacchetti**: i dati delle applicazioni vengono scomposti in pacchetti inviati individualmente nel nodo mittente e successivamente ricostruiti nel nodo destinatario. A questi pacchetti vengono corredati ulteriori dati per identificare l'applicazione di cui fanno parte, per l'instradamento ed il linking tra macchine.
+
+In particolare:
+
+- A livello di **data link** viene implementato il *MAC Address* che identifica fisicamente una macchina, in genere la più vicina a cui è possibile mandare il pacchetto *(in realtà a questo livello si chiamano frames)* per essere poi ritrasmesso.
+- A livello di **rete** viene implementato l'*IP Address* che identifica la macchina su cui risiede il destinatario finale del pacchetto, in modo che si possa instradarlo verso di essa.
+- A livello di **trasporto** si risolvono i problemi riguardo il *sequenziamento dei pacchetti*, ovvero viene deciso come dividere il messaggio in pacchetti e soprattutto come ricomporre i pacchetti in sequenza per ricreare i messaggi *(i pacchetti possono arrivare in ordine sparso, alcuni possono addirittura non arrivare e richiedono una ritrasmissione)*.
+  Il livello di trasporto però risolve anche l'indirizzamento tra applicativi; esso identifica il vero destinatario finale dei dati, ovvero l'applicazione sulla macchina. Per identificare tale applicativo viene aggiunto il **numero di porta**.
+
+<img src="./img/049.png" alt="046" style="zoom:100%;"/>
+
+<div style="page-break-after: always;"></div>
+
+**TIPOLOGIE DI ATTACCHI**
+<img src="./img/050.png" alt="046" style="zoom:50%;" align="left"/>Vediamo alcuni tipi di attacchi in rete:
+
+- **Intercettazione**: sono attacchi alla *confidenzialità* nei quali il flusso comunque avviene tra mittente e destinatario, ma l'*attaccante* è in grado di intercettarlo e di leggerlo.
+
+  Alcuni sono ad esempio lo **sniffing su LAN** in cui il mezzo trasmissivo *(cavo)* è condiviso tra i nodi collegati. Impostando la scheda di rete in *modalità promiscua* si disattiva il filtraggio dei pacchetti e si può leggere tutto il traffico.
+
+  Ricordiamo che non necessariamente un *attaccante* ha bisogno di leggere i dati, ma anche solo sapere tra chi sono scambiati può fornire delle informazioni utili *(analisi del traffico di rete)*.
+
+  Questi attacchi possono essere eseguiti anche con tecniche come il *rough wireless access point* nel quale una scheda di rete si impone come access point per poi leggere i dati delle macchine che vi si connettono, o anche lavorando con mezzi fisici leggendo '*per induzione elettromagnetica*' dei dati dal cavo.
+
+- **Modifica dei Dati**: in questo caso il flusso del mittente viene bloccato e sostituito da un flusso generato dall'*attaccante*; chi intercetta i dati li ritrasmette anche, possibilmente modificati.
+  Si possono inviare falsi messaggi, messaggi modificati o replicare vecchi messaggi intaccando l'*integrità* o anche reindirizzare/eliminare i pacchetti intaccando la *disponibilità*.
+  Questo tipo di attacchi permette anche di falsificare l'identità di una chiave pubblica o fare il dirottamento di una sessione.
+
+- **Creazione di Traffico**: prevede un attacco dove i dati vengono generati appositamente dall'*attaccante*.
+  Qualche esempio riguarda la violazione dell'autenticazione *(confidenzialità)* per esempio indovinando la password per account ricorrenti *(admin, guest ecc)* o per account con password facili da indovinare.
+  Si possono ancora, oltre a leggere le password trasmesse in chiaro, fornire delle password che facciano fallire il meccanismo di autenticazione che presenta *vulnerabilità*.
+
+  Si possono anche creare attacchi di *spoofing* nei quali viene falsificata l'identità di un nodo tramite *pharming*, dove un nodo che impersona un altro nodo, *phishing*, che è spesso passo preliminare di un attacco di pharming *(e che consiste nell'invogliare la vittima ad accedere al servizio camuffato tramite email)* e *IP Spoofing* che consiste nella creazione di traffico con un IP falso ad esempio perché magari certi IP potrebbero non aver bisogno di autenticazione in una certa rete.
+  Il pharming generalmente viene eseguito emulando lo scenario applicativo originale e sfruttando confusione fra URL con nomi simili e/o alterando le table DNS in modo da reinderizzare il traffico verso un server malevolo.
+
+- **Denial Of Service**: prevede il blocco del flusso tra intermediari, in modo da minare la *disponibilità*. Un esempio è *synflood*.
+
+**DOS: SYN FLOOD**
+In TCP quando si instaura una connessione, il client manda al server un messaggio di **syn** per sincronizzare i numeri di pacchetti indicando il numero del pacchetto corrente; il server risponde con un **ack** e col numero di pacchetto che si aspetta dal client e con il suo numero di pacchetti e si aspetta un **ack** dal client.
+Se l'ack si perde, andrebbe rifatto tutto da capo, ma per ottimizzare il tutto TCP permette di memorizzare in un buffer le connessioni per ritrasmettere subito in caso di mancanza di ack.
+<img src="./img/051.png" alt="051" style="zoom:100%;"/>
+
+Questo permette di mandare una serie di messaggi di syn andando a riempire il buffer del server fino a renderlo non disponibili ad altri utenti.
+
+<img src="./img/052.png" alt="052" style="zoom:100%;"/>
+
+
+
+Altri attacchi di tipo DOS sono ad esempio
+
+- Attacchi fisici a computer e apparati di rete *(solitamente prevedibili e difficili da attuare)*.
+- Flooding come syn flooding o attraverso protocolli ICMP come ***ping.***
+- Smurf Flooding: l'*attaccante* manda tante richieste ***ping*** a tanti host diversi inserendo però come indirizzo di provenienza quello della vittima *(IP spoofing)*, in modo che questa riceva tante risposte ai vari ping.
+- DDoS: si utilizzano dei terminali '*zombie*' per attuare il flooding.
+- Attacchi DNS: reindirizzamento del traffico attraverso modifiche alle table DNS.
+
+
+
+**PRIMA DELL'ATTACCO**
+Generalmente prima di un *attacco*, un *attaccante* deve studiare il sistema target, vedere quali porte sono aperte nel firewall, studiare le debolezze del software in uso *(debolezze note)* e soprattutto applicare il ***social engineering***: molto spesso i problemi più importanti di sicurezza hanno come causa le persone che usano il sistema piuttosto che la tecnologia stessa.
+Ad esempio si potrebbe ottenere l'accesso ad un edificio non autorizzato con la scusa di aver perso il badge, ottenere informazioni riservate per telefono o indovinare la password di una persona perché semplice o perché usata su siti insicuri e usa sempre la stessa.
+
+<div style="page-break-after: always;"></div>
+
+## DIFESE CONTRO ATTACCHI DALLA RETE
+
+Molti attacchi possono essere mitigati tramite un attento management del sistema e degli utenti, ovvero applicando tempestivamente le security patches, riconfigurando la rete, ricerca di *vulnerabilità* ecc.
+
+
+
+**FIREWALL**
+Il *muro taglia fuoco* è un particolare tipo di muro utilizzato in edilizia resistente al fuoco per contrastare la diffusione di incendi negli edifici. Nell'informatica il ***firewall*** è un hardware e/o software utilizzato per controllare il traffico in ingresso/uscita di una **rete fidata** rispetto a **reti non sicure**.
+
+Esistono due tipi di firewall:
+
+- **PACKET FILTER**: agisce a livello di rete e monitora dunque gli **header IP** e **TCP** dei pacchetti *(guarda principalmente gli indirizzi di rete e le porte applicative)*.
+
+  Esegue dunque la selezione basandosi sull'indirizzo IP di provenienza e dalla porta usata.
+  Alcuni esempi sono il blocco del traffico verso porte *(servizi)* o provenienti da host pericolosi o comunque non provenienti da host fidati, il blocco di pacchetti malformati *(protezione da DoS)* e il blocco dei pacchetti esterni con IP interni alla rete fidata *(protezione contro IP Spoofing)*.
+
+  Le regole dei packet filter possono essere sia white-list che black-list.
+
+- **APPLICATION GATEWAY**: agisce a livello di applicativo e monitora i dati applicativi stessi *(che corrispondo ad un **flusso** di pacchetti)*.
+
+  In questo modo, per comunicare con un'applicazione interna alla rete, bisogna connettersi prima al firewall *(che quindi fa da proxy)*. Il firewall a sua volta si connette all'applicazione e replica i messaggi fra le due applicazioni.
+
+  Si possono configurare firewall diversi per diversi protocolli applicativi, ad esempio si può usare un proxy FTP per accettare trasferimenti in entrata e bloccare quelli in uscita e un proxy MAIL per fare un filtraggio anti-SPAM. 
+
+
+
+**SOLUZIONE MISTA 1: SCREENED SUBNET**
+<img src="./img/053.png" alt="053" style="zoom:30%;" align="left"/>In questa soluzione il router accetta solo pacchetti **da e per il gateway** sulle porte ammesse, mentre il gateway controlla il traffico applicativo per i servizi.
+
+
+
+
+
+**SOLUZIONE MISTA 2: DMZ**
+<img src="./img/054.png" alt="054" style="zoom:30%;" align="left"/>In questa soluzione viene creata una *zona demilitarizzata* dove ci sono i servizi pubblicamente accessibili; la rete interna è invece protetta secondo un altro firewall di tipo NAT che assegna ai nodi interni degli indirizzi visibili solo internamente e non accessibili quindi dall'esterno.
+
+
+
+**PROTOCOLLI DI RETE CON CRITTOGRAFIA**
+Vedremo principalmente due protocolli di crittografia usati in rete: SSL *(che nella versione nuova si chiama TLS)* e IPSec, vedendo cosa protegge ognuno di essi e come operano.
+
+
+
+**SSL**
+Secure Socket Layer è un protocollo di sicurezza che implementa un livello intermedio tra lo **strato di trasporto** e quello **applicativo** in modo da aggiungere privacy ed integrità ai pacchetti in transito su una connessione TCP/IP.
+
+SSL modifica il pacchetto applicativo aggiungendo delle informazioni per permettere alla macchina di destinazione di riconoscere l'informazione; aggiunge quindi un **header SSL** al pacchetto.
+SSL si basa su due parti: **SSL Handshake** che permette di stabilire la connessione e negoziare il livello di sicurezza *(ad esempio stabilendo gli algoritmi crittografici da usare)* ed **SSL Record Protocol** che implementa lo scambio vero e proprio di pacchetti crittati.
+
+**Handshake**
+Il protocollo di handshake viene usato per stabilire la connessione sicura fra SSL client ed SSL server e precede quindi lo scambio di dati vero e proprio.
+Consiste nella negoziazione di protocolli utilizzati, nell'autenticazione di client e server e nella condivisione di una chiave di sessione *(scambiata attraverso crittografia a chiave pubblica)*.
+
+1. Hello Phase: Durante questa fase vengono decise le versioni dei protocolli utilizzati, la cypher suite *(i setting degli algoritmi crittografici)* e parametri di inizializzazione TCP *(vengono sincronizzati i numeri di sequenza dei pacchetti)*.
+2. Server Authentication: il server invia quindi al client il suo certificato, la sua chiave pubblica ed eventualmente richiede l'autenticazione del client.
+3. Client Authentication: il client invia eventualmente il suo certificato e invia una **session key** crittata con la chiave pubblica del server *(e con quella privata del client se la sua autenticazione è richiesta)*. Se il certificato del server è valido inoltre invia un messaggio di certificato validato.
+4. Finish: si confermano quindi le impostazioni di sicurezza settate e si termina l'handshake: ora si è pronti a trasmettere.
+
+Alcuni protocolli che implementano SSL sono ad esempio HTTPS che agisce sulla porta 443 *(invece di 80 come HTTP)*. Per poterlo utilizzare, sia il browser che i server web che eventuali proxy server devono implementare SSL.
+
+SSL permette anche di negoziare algoritmi di compressione in fase di handshaking e di riprendere delle sessioni aperte in precedenza.
+
+Tuttavia, SSL protegge la comunicazione fra applicazioni aggiungendo sicurezza sopra lo strato di trasporto, le informazioni sotto di esso sono ancora in chiaro il che permette di effettuare IP Spoofing o di analizzare il traffico di rete.
+
+<div style="page-break-after: always;"></div>
+
+**IPSEC**
+Per implementare privacy ed integrità a livello IP si utilizza IPSec che è trasparente alle applicazioni e agli utenti, agisce in modalità host-to-host e funziona anche con protocolli di trasporto connection-less.
+
+IPSec può funzionare in due modalità:
+
+- **Modalità di trasporto**: offre una protezione simile ad SSL ma protegge anche le infromazioni TCP, è host-to-host e funziona in maniera trasparente alle applicazioni *(non sono le applicazioni a dover effettuare la codifica, ma lo fa in automatico il software di rete, le applicazioni funzionano come se non ci fosse alcuna codifica)*. Mantiene l'header IP originale del pacchetto e protegge tutto ciò che è sopra di esso.
+  Uno svantaggio di IPSec è che esseno host-to-host, i dati vengono decrittati sulla macchina di destinazione **prima** di arrivare all'applicativo di destinazione.
+
+  <img src="./img/055.png" alt="055" style="zoom:60%;"/>
+
+- **Modalità tunnel**: IPSec incapsula i pacchetti per l'instradamento fra due host *(tunnel endpoints, solitamente due router)* e protegge le informazioni di rete originali; l'header IP originale viene quindi crittato e viene creato un nuovo header IP che protegga il traffico di dati.
+  In questo modo non si può sapere quale nodo di una sottorete è veramente il mittente e quale il destinatario, non si può sapere con quale applicativo si sta comunicando
+  C'è quindi una riduzione di sicurezza nelle sottoreti *(all'interno della sottorete i pacchetti sono in chiaro)*, ma c'è una sicurezza molto forte tra le due sottoreti. Tutto ciò che si può sapere è che c'è un flusso da una sottorete all'altra, ma non si può sapere effettivamente chi comunica con chi.
+
+  Questa modalità viene utilizzata per **Virtual Private Network (VPN)** che sono delle reti private attraverso connessioni insicure che permettono di cifrare tutto il traffico e vengono usate ad esempio per lavoro remoto e/o collegamento sicuro alla rete aziendale.
+
+  <img src="./img/056.png" alt="056" style="zoom:60%;"/>
+
+
+Può aver senso utilizzare IPSec assieme a SSL per proteggere i dati sia contro traffic analysis che IP Spoofing e per avere una crittografia end-to-end tra applicazioni, in modo da ovviare agli svantaggi di entrambi i protocolli.
