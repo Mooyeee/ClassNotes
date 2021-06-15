@@ -550,7 +550,7 @@ In questo modo si sfrutta l'efficienza di DES e la maggiore flessibilità di RSA
 
 **FIRME DIGITALI**
 Abbiamo detto che RSA permette di implementare il non ripudio, cifrando con la chiave privata, tuttavia cifrare grossi messaggi può richiedere molto tempo. Dunque, spesso viene *firmato* solo il **digest** del messaggio, che è molto più piccolo.
-In questo modo il destinatario riceve il messaggio in chiaro e il digest crittato con la chiave privata del mittente, in modo da poterlo verificare decrittando il digest con la sua chiave pubblica e confrontandolo con un digest generato da esso, in modo da assicurarsi che il messaggio sia integro.
+In questo modo il destinatario riceve il messaggio in chiaro e il digest crittato con la chiave privata del mittente, in modo da poterlo verificare decrittando il digest con la chiave pubblica del mittente e confrontandolo con un digest generato da esso, in modo da assicurarsi che il messaggio sia integro.
 
 
 
