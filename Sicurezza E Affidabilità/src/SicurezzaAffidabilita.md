@@ -1136,7 +1136,7 @@ Per un *attaccante* è utile eseguire lo shellcode in programmi eseguiti con pri
 **ATTACCO**
 Per portare a termine un *attacco*, bisogna '*riempire*' la memoria in un certo modo; occorre scrivere un indirizzo valido in BP per non causare *segmentation faults*; si potrebbe usare per esempio il BP del chiamante, ottenibile monitorando con un debugger un'esecuzione precedente del sistema *(gli indirizi di memoria sono virtuali e non variano tra le esecuzioni)*. Un altro approccio può essere provare l'attacco più volte con valori casuali di BP finché l'attacco non ha successo.
 
-A questo punto il buffer vero e proprio *(la porzione 'valida')* viene sovrascritta col codice malevolo e si sostituisce il **return address** con un indirizzo all'interno del buffer, che si trovi prima della parte di shellcode. Veranno eseguite quindi un po' di NOP fino ad arrivare allo shellcode.
+A questo punto il buffer vero e proprio *(la porzione 'valida')* viene sovrascritto col codice malevolo e si sostituisce il **return address** con un indirizzo all'interno del buffer, che si trovi prima della parte di shellcode. Veranno eseguite quindi un po' di NOP fino ad arrivare allo shellcode.
 
 È importante notare che i buffer overflow scrivono **tutta** la zona in overflow, non possono scrivere, ad esempio, solo il return address; è molto difficile che ci sia una *weakness* in grado di permettere ciò e, anche se fosse, a quel punto l'*attaccante* può già saltare al suo codice malevolo, senza necessità di iniettarlo tramite buffer overflow, implementando un altro tipo di attacco.
 
