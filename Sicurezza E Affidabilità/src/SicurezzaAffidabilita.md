@@ -754,7 +754,7 @@ Questo meccanismo è però **poco raffinato** e **poco usabile** poiché
 
 
 **BIT DI PROTEZIONE (UNIX)**
-<img src="./img/026.png" alt="026" style="zoom:50%;" align="right" />Una possibile implementazione delle ACL più semplificata può utilizzare un numero fisso di bit per ogni file che ne specifichi i diritti di accesso. In particolare, vengono usare delle ACL di 9 bit che rappresentino i diritti di *lettura*, *scrittura* ed *esecuzione* rispettivamente per il proprietario del file, per un certo gruppo di utenti *(che potrebbe essere per esempio il gruppo del proprietario)* e per il resto degli utenti.
+<img src="./img/026.png" alt="026" style="zoom:50%;" align="right" />Una possibile implementazione delle ACL più semplificata può utilizzare un numero fisso di bit per ogni file che ne specifichi i diritti di accesso. In particolare, vengono usate delle ACL di 9 bit che rappresentino i diritti di *lettura*, *scrittura* ed *esecuzione* rispettivamente per il proprietario del file, per un certo gruppo di utenti *(che potrebbe essere per esempio il gruppo del proprietario)* e per il resto degli utenti.
 Questa semplificazione, seppur meno granulare *(posso distinguere un solo gruppo a differenza di prima)* delle ACL *complete* richiede molta meno memoria ed è ancora più semplice da gestire.
 
 <div style="page-break-after: always;"></div>
