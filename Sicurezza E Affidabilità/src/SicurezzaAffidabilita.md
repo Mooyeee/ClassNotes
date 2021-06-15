@@ -368,7 +368,7 @@ Inoltre, spesso la sicurezza viene presa in considerazione solo dopo i primi inc
 Rischio: **possibilità **di **perdita** o danno.
 Nell'ambito della sicurezza il rischio è calcolabile come **Rischio = Vulnerabilità x Minacce x Valori** dove:
 
-- **VALORI**: solo le parti del sistema informativo importanti, sensibili, critiche, da proteggere.
+- **VALORI**: sono le parti del sistema informativo importanti, sensibili, critiche, da proteggere.
 - **VULNERABILITÀ**: debolezze del sistema, attacchi che possono essere sfruttati per comprometterlo.
 - **MINACCE**: circostanze o agenti che possono/vogliono arrecare danni.
 
