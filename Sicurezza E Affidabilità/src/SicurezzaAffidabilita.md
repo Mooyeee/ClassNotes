@@ -1102,7 +1102,7 @@ int main(int argc, char* argv[]) {
 
 
 
-Notiamo che il main chiama una funzione *f()* che dichiara un array di 8 posizioni e scrive sulla nona, quindi scrive in buffer overflow. Quando il main viene chiamato, sullo stack viene allocato il suo activation frame, che conterrò anche la sua variabile *x*. Quando il main chiama *f()*, verrà allocato un nuovo activation frame sullo stack, quello di *f()*, contenente anche la sua variabile *pass* e il suo buffer *buff*.
+Notiamo che il main chiama una funzione *f()* che dichiara un array di 8 posizioni e scrive sulla nona, quindi scrive in buffer overflow. Quando il main viene chiamato, sullo stack viene allocato il suo activation frame, che conterrà anche la sua variabile *x*. Quando il main chiama *f()*, verrà allocato un nuovo activation frame sullo stack, quello di *f()*, contenente anche la sua variabile *pass* e il suo buffer *buff*.
 
 Notiamo come quando *f()* scrive in buff[8], non sta facendo altro che sovrascrivere un area di memoria sopra il buffer stesso *(perché appunto i buffer crescono verso l'alto)*, in particolare sovrascrive la variabile *pass*.
 
