@@ -491,7 +491,7 @@ Un primo aspetto positivo di questo tipo di sistemi è che le chiavi necessarie 
 | Integrità                    |  Si   | Una volta crittato, il messaggio non è modificabile prima della decrittazione. |
 | Autenticazione e non ripudio |  Si   | Solo chi conosce la chiave segreta può essere mittente del messaggio crittato con chiave privata. |
 
-Un altro aspetto interessante è che, in questo caso, posso gestire confidenzialità ed autenticazione in modo separato; se critto con la chiave pubblica, ho la certezza che il messaggio sia **confidenziale** e solo chi possiede la chiave privata possa leggerlo, se critto con la chiave privata , nessun atro può modificare il messaggio e crittarlo nuovamente con la mia chiave privata, quindi ho **integrità** e **autenticazione**.
+Un altro aspetto interessante è che, in questo caso, posso gestire confidenzialità ed autenticazione in modo separato; se critto con la chiave pubblica, ho la certezza che il messaggio sia **confidenziale** e solo chi possiede la chiave privata possa leggerlo, se critto con la chiave privata, nessun atro può modificare il messaggio e crittarlo nuovamente con la mia chiave privata, quindi ho **integrità** e **autenticazione**.
 Se critto il messaggio con la mia chiave privata e successivamente con la chiave pubblica del destinatario, ottengo sia **confidenzialità** *(il destinatario deve usare la sua chiave privata per decrittare il primo livello)* sia **integrità/autenticazione** *(userà la mia chiave pubblica per il secondo livello)*.
 
 **RSA**
