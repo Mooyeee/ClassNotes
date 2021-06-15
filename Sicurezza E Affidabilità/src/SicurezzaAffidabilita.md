@@ -1305,7 +1305,7 @@ Vediamo alcune linee guida per il secure coding in Java raggruppate per linee gu
 
 Anche nelle reti gli obiettivi della sicurezza sono i classici **Confidenzialità**, **Integrità** e **Disponibilità** con particolare riguardo verso il *controllo degli accessi* e l'*autenticazione/non ripudio*, ma l'esposizione ad attacchi è maggiore; un computer in rete è accessibile da milioni di altri computer attraverso Internet, i messaggi scambiati attraverso la rete attraversano molti nodi intermedi non controllabili e la comunicazione è gestita via software, perciò è più semplice automatizzare gli attacchi.
 
-Ricordiamo che la trasmissione di dati in rete avviene tra **applicazioni** *(ad esempio un'applicazione client email comunica con un'applicazione server email)*; mettere in comunicazione queste applicazioni richiede la **commutazione di pacchetti**: i dati delle applicazioni vengono scomposti in pacchetti inviati individualmente nel nodo mittente e successivamente ricostruiti nel nodo destinatario. A questi pacchetti vengono corredati ulteriori dati per identificare l'applicazione di cui fanno parte, per l'instradamento ed il linking tra macchine.
+Ricordiamo che la trasmissione di dati in rete avviene tra **applicazioni** *(ad esempio un'applicazione client email comunica con un'applicazione server email)*; mettere in comunicazione queste applicazioni richiede la **commutazione di pacchetti**: i dati delle applicazioni vengono scomposti in pacchetti inviati individualmente dal nodo mittente e successivamente ricostruiti dal nodo destinatario. A questi pacchetti vengono corredati ulteriori dati per identificare l'applicazione di cui fanno parte, per l'instradamento ed il linking tra macchine.
 
 In particolare:
 
