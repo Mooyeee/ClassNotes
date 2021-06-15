@@ -819,7 +819,7 @@ Se pensiamo in un contesto di rete inoltre, un modello come quello di Bell La-Pa
 
 ## MODELLI MULTI-LATERAL
 
-Mentre i modelli multi livello controllava i flussi in di informazione in base al livello di criticità, i modelli multi laterali li controllano in base a raggruppamenti semantici dei dati e degli utenti *(Compartimenti, Progetti, Gruppi, Ruoli)*.
+Mentre i modelli multi livello controllano i flussi in di informazione in base al livello di criticità, i modelli multi laterali li controllano in base a raggruppamenti semantici dei dati e degli utenti *(Compartimenti, Progetti, Gruppi, Ruoli)*.
 
 La prima politica che vedremo è semplicemente un'estensione del modello di Bell La-Padula in cui oltre ai livelli ci sono anche dei *compartimenti*. A questo punto un utente può accedere ad una risorsa solo se **livello soggetto $\geq$ livello oggetto** AND **compartimenti oggetto $\subseteq$ compartimenti soggetto**.
 
