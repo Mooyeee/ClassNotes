@@ -716,7 +716,7 @@ Nel primo passaggio l'utente critta la propria identità e un nonce per il serve
 <img src="./img/020.png" alt="020" style="zoom:60%;" />
 
 Tuttavia, questo protocollo è vulnerabile, poiché il secondo e il terzo messaggio non includono identificativi del mittente.
-In particolare, questo protocollo è vulnerabile al reflection attack; un attaccante può far credere all'utente di essere il server e ottenere le utente dell'utente per poi identificarsi al server vero.
+In particolare, questo protocollo è vulnerabile al reflection attack; un attaccante può far credere all'utente di essere il server e ottenere le credenziali dell'utente per poi identificarsi al server vero.
 
 <img src="./img/021.png" alt="021" style="zoom:60%;" />
 
