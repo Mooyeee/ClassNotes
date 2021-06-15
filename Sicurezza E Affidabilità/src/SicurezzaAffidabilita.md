@@ -414,7 +414,7 @@ Un algoritmo crittografico è violabile se può essere violato da un crittoanali
 Gli algoritmi ***degni di fiducia*** solitamente sono basati sulla matematica, analizzati da esperti e in uso da diverso tempo senza essere violati.
 Ma devono anche essere **usabili**, ovvero il tempo necessario per crittare/decrittare i messaggi deve essere commisurato alla sicurezza necessaria, le chiavi non devono essere soggette a requisiti complessi e il processo crittografico non deve essere troppo complesso per l'utente.
 
-Ovviamente la prima cosa che pensiamo alla crittografia è la **confidenzialità** dei messaggi, ma gli algoritmi crittografici vengono usati anche per garantire **integrità** e **non ripudio**, similmente a quanto accade con i documenti fisici.
+Ovviamente la prima cosa a cui pensiamo legata alla crittografia è la **confidenzialità** dei messaggi, ma gli algoritmi crittografici vengono usati anche per garantire **integrità** e **non ripudio**, similmente a quanto accade con i documenti fisici.
 
 Gli algoritmi crittografici si dividono in 3 classi:
 
