@@ -1015,7 +1015,7 @@ Ovviamente, implementare un controllo lato server protegge da *Persistent* e *Re
 
 
 **ENCODING**
-La tecnica dell'encoding consiste nella trasformazione *(escaping)* degli input in modo che il browser non possa interpretarli come codice. Vengono tradotti ad esempio i caratteri `<` e `>` in `$lt;` e `&gt;`. Queste operazioni vengono effettuate da libreria apposite ed è fortemente sconsigliato implementarle da zero in quanto potrebbero essere molto complesse.
+La tecnica dell'encoding consiste nella trasformazione *(escaping)* degli input in modo che il browser non possa interpretarli come codice. Vengono tradotti ad esempio i caratteri `<` e `>` in `$lt;` e `&gt;`. Queste operazioni vengono effettuate da librerie apposite ed è fortemente sconsigliato implementarle da zero in quanto potrebbero essere molto complesse.
 JavaScript, per alcune funzioni fornite dal sistema, implementa l'encoding in maniera trasparente.
 
 <img src="./img/038.png" alt="038" style="zoom:50%;"/>
