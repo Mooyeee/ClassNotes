@@ -967,7 +967,7 @@ Esistono tre tipologie di attacchi di tipo XSS:
 
 - **DOM-Based XSS**: il codice malevolo risiede ancora nella richiesta HTTP della vittima come prima, ma la *vulnerabilità* questa volta risiede nello scripting lato client.
 
-  *Esempio*: ipotizziamo di avere un sito per scegliere il linguaggio preferito che si aspetta delle richieste del tipo [www.site.com/page?**default=French**]() per impostare una scelta di default; il server genera poi una pagina dinamica e la invia al client che la costruisce nel proprio browser. L'*attaccante* può a questo punto creare un URL malevolo impostando **default=\<script\> ... \<\\script\>**.
+  *Esempio*: ipotizziamo di avere un sito per scegliere il linguaggio preferito che si aspetta delle richieste del tipo [www.site.com/page?**default=French**](https://www.youtube.com/watch?v=GWNwwuoc4Ro) per impostare una scelta di default; il server genera poi una pagina dinamica e la invia al client che la costruisce nel proprio browser. L'*attaccante* può a questo punto creare un URL malevolo impostando **default=\<script\> ... \<\\script\>**.
   Il server invierà una pagina dinamica che estrae tale default dall'URL lato client, dunque **NON** invia lo script malevolo alla vittima, ma quest'ultima, eseguendo la pagina dinamica, lo estrarrà ed eseguirà dal URL stesso tramite il suo motore JavaScript.
 
 <div style="page-break-after: always;"></div>
