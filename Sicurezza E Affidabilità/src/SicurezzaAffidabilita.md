@@ -812,7 +812,7 @@ Un modello che si occupa di questo principio è il **Modello di Bell-LaPadula** 
 
 **PROBLEMI NOTI**
 I sistemi multi-livello sono complessi da amministrare poiché bisogna definire dei livelli per ogni oggetto e per ogni soggetto. Inoltre, spesso richiedono delle applicazioni dedicate.
-Un altro problema è che tendono a forzare una *over-classification* delle informazioni, richiedi cioè di classificare anche risorse che non ne avrebbero bisogno.
+Un altro problema è che tendono a forzare una *over-classification* delle informazioni, richiedono cioè di classificare anche risorse che non ne avrebbero bisogno.
 Se pensiamo in un contesto di rete inoltre, un modello come quello di Bell La-Padula, che non permettere di leggere a livello superiore, implica che le write-up siano *blind*, cioè senza acknowlegement.
 
 <div style="page-break-after: always;"></div>
