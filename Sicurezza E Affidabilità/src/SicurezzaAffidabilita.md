@@ -1454,4 +1454,4 @@ IPSec può funzionare in due modalità:
   <img src="./img/056.png" alt="056" style="zoom:60%;"/>
 
 
-Può aver senso utilizzare IPSec assieme a SSL per proteggere i dati sia contro traffic analysis che IP Spoofing e per avere una crittografia end-to-end tra applicazioni, in modo da ovviare agli svantaggi di entrambi i protocolli.
+Può aver senso utilizzare IPSec assieme a SSL per proteggere i dati sia contro traffic analysis e IP Spoofing che per avere una crittografia end-to-end tra applicazioni, in modo da ovviare agli svantaggi di entrambi i protocolli.
