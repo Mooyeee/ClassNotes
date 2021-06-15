@@ -1072,7 +1072,7 @@ Solitamente, un buffer overflow viene causato da un programma che copia un buffe
 
 
 **STACK & ACTIVATION RECORD**
-<img src="./img/042.png" alt="042" style="zoom:40%;" align="left"/>Quando viene evocata una funzione, viene allocata della memoria per i parametri della funzione, per le variabili locali della funzioni e per l'**indirizzo di ritorno** della funzione e il **previous frame pointer**, ovvero l'indirizzo delle variabili locali del chiamante.
+<img src="./img/042.png" alt="042" style="zoom:40%;" align="left"/>Quando viene evocata una funzione, viene allocata della memoria per i parametri della funzione, per le variabili locali della funzione, per l'**indirizzo di ritorno** della funzione e per il **previous frame pointer**, ovvero l'indirizzo delle variabili locali del chiamante.
 Questa struttura è detta **activation record** della chiamata di funzione.
 
 Ogni volta che un metodo viene invocato, nello stack viene allocato un nuovo activation frame. Il *previous frame pointer* è chiamato anche *Base Pointer (BP)*.
