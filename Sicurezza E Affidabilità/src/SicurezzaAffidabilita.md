@@ -1294,7 +1294,7 @@ Vediamo alcune linee guida per il secure coding in Java raggruppate per linee gu
 **DOMAIN INDEPENDENT**
 
 - **EI_EXPOSE_REP(EI)**: ritornare un riferimento di un oggetto mutabile memorizzato nei campi interni di un altro oggetto potrebbe esporre la struttura di questo secondo oggetto. Ritornare una copia nuova dell'oggetto è un approccio migliore.
-- **EI_EXPOSE_REP2 (EI2)**: memorizzare un riferimento ad un oggetto esterno mutabile internamente potrebbe esporre la rappresentazione interna. Modificando l'oggetto esterno modificherebbe anche quello interno. L'ideale sarebbe creare una copia dell'oggetto prima di memorizzarlo.
+- **EI_EXPOSE_REP2 (EI2)**: memorizzare un riferimento ad un oggetto esterno mutabile internamente potrebbe esporre la rappresentazione interna. Modificando l'oggetto esterno modificheremo anche quello interno. L'ideale sarebbe creare una copia dell'oggetto prima di memorizzarlo.
 - **DMI_EMPTY_DB_PASSWORD**: evitare di connettersi ad un database senza utilizzare una password.
 - **DMI_CONSTANT_DB_PASSWORD**: evitare di connettersi ad un database utilizzando una password hardcoded *(scritta nel codice)*. Chiunque abbia accesso al codice o al codice compilato può estrapolare facilmente la password e connettersi al database.
 - **MS_SHOULD_BE_FINAL**: se abbiamo un campo *statico* e *pubblico* ma non *final*, del codice esterno potrebbe cambiare il suo valore.
