@@ -1337,7 +1337,7 @@ In particolare:
   Qualche esempio riguarda la violazione dell'autenticazione *(confidenzialità)* per esempio indovinando la password per account ricorrenti *(admin, guest ecc)* o per account con password facili da indovinare.
   Si possono ancora, oltre a leggere le password trasmesse in chiaro, fornire delle password che facciano fallire il meccanismo di autenticazione che presenta *vulnerabilità*.
 
-  Si possono anche creare attacchi di *spoofing* nei quali viene falsificata l'identità di un nodo tramite *pharming*, dove un nodo che impersona un altro nodo, *phishing*, che è spesso passo preliminare di un attacco di pharming *(e che consiste nell'invogliare la vittima ad accedere al servizio camuffato tramite email)* e *IP Spoofing* che consiste nella creazione di traffico con un IP falso ad esempio perché magari certi IP potrebbero non aver bisogno di autenticazione in una certa rete.
+  Si possono anche creare attacchi di *spoofing* nei quali viene falsificata l'identità di un nodo tramite *pharming*, dove un nodo impersona un altro nodo, *phishing*, che è spesso passo preliminare di un attacco di pharming *(e che consiste nell'invogliare la vittima ad accedere al servizio camuffato tramite email)* e *IP Spoofing* che consiste nella creazione di traffico con un IP falso ad esempio perché magari certi IP potrebbero non aver bisogno di autenticazione in una certa rete.
   Il pharming generalmente viene eseguito emulando lo scenario applicativo originale e sfruttando confusione fra URL con nomi simili e/o alterando le table DNS in modo da reinderizzare il traffico verso un server malevolo.
 
 - **Denial Of Service**: prevede il blocco del flusso tra intermediari, in modo da minare la *disponibilità*. Un esempio è *synflood*.
