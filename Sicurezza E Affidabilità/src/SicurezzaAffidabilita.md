@@ -1165,7 +1165,7 @@ Generalmente il compilatore permette diversi layer di protezione:
 
 
 **ADDRESS SPACE LAYOUT RANDOMIZATION (ASLR)**
-Questa è la *contromisura* addotta nei moderni sistemi operativi; alcuni indirizzi di memoria del virtual address space cambiano da un esecuzione all'altra, rendendo più difficile la scrittura degli *exploit*; diventa difficile indovinare l'indirizzo da utilizzare per sovrascrivere il *return address* e il *Base Pointer*.
+Questa è la *contromisura* addottata nei moderni sistemi operativi; alcuni indirizzi di memoria del virtual address space cambiano da un esecuzione all'altra, rendendo più difficile la scrittura degli *exploit*; diventa difficile indovinare l'indirizzo da utilizzare per sovrascrivere il *return address* e il *Base Pointer*.
 
 
 
