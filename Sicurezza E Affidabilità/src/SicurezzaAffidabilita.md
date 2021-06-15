@@ -1213,7 +1213,7 @@ Quando una variabile puntatore non punta a niente, le viene assegnato il valore 
 **MEMORIA E PROCESSI**
 I sistemi operativi assegnano ad ogni processo un proprio spazio di indirizzi di memoria virtuale e ogni processo opera sul proprio spazio di indirizzi virtuale. Questi indirizzi vengono mappati su indirizzi fisici dalla **MMU** *(quindi l'indirizzo **x** del processo **A** corrisponde ad una cella di memoria che è diversa da quella a cui corrisponde l'indirizzo **x** del processo **B**)*.
 
-I processi possono accedere solo ad indirizzi di memoria a loro assegnati, provando ad accedere ad altri indirizzi non assegnati genera un'eccezione, ma possono chiedere al sistema operativo di mappare indirizzi virtuali su indirizzi fisici tramite la funzione di sistema **mmap**, che, preso come parametro l'indirizzo fisico da mappare e la regione da mappare *(potrebbe essere ad esempio un file)*, restituisce l'indirizzo della memoria mappata o MAP_FAILED se la chiamata fallisce.
+I processi possono accedere solo ad indirizzi di memoria a loro assegnati, provando ad accedere ad altri indirizzi non assegnati genereranno un'eccezione, ma possono chiedere al sistema operativo di mappare indirizzi virtuali su indirizzi fisici tramite la funzione di sistema **mmap**, che, preso come parametro l'indirizzo fisico da mappare e la regione da mappare *(potrebbe essere ad esempio un file)*, restituisce l'indirizzo della memoria mappata o MAP_FAILED se la chiamata fallisce.
 
 
 
