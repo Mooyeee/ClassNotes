@@ -669,7 +669,7 @@ Un sistema di autenticazione ben progettato
 
 ## ACCESSI DALLA RETE
 
-<img src="./img/015.png" alt="015" style="zoom:40%;" align="right"/>Attraverso la rete abbiano un problema in più da considerare; le informazioni trasmesse dall'utente e dal sistema possono essere intercettate *(man in the middle attack)* e quindi, inviando per esempio le password in chiaro, rende il nostro sistema vulnerabile.
+<img src="./img/015.png" alt="015" style="zoom:40%;" align="right"/>Attraverso la rete abbiano un problema in più da considerare; le informazioni trasmesse dall'utente e dal sistema possono essere intercettate *(man in the middle attack)* e quindi, inviare per esempio le password in chiaro, rende il nostro sistema vulnerabile.
 
 
 
