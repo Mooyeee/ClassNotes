@@ -385,7 +385,131 @@ x **:=** 5	*assegnamento*
 
 <div style="page-break-after: always;"></div>
 
-#### ESEMPI DI DERIVAZIONE
+### PROPRIETÀ GENERALI DELLA LOGICA DI HOARE
+
+La logica di Hoare è una logica ***corretta*** $\vdash \implies \vDash$; questo significa che tutte le triple che riusciamo a derivare sono sicuramente delle triple valide.
+È anche ***completa*** *(relativamente)* $\vDash \implies \vdash$; tutto ciò che è valido è derivabile. Tuttavia è una completezza relativa a causa dell'incompletezza dell'aritmetica: potrebbe succedere di dover dimostrare una proprietà aritmetica che però è indimostrabile *(caso molto remoto)*.
+
+La logica di Hoare può aiutarci anche a ragionare sui programmi: supponiamo di avere un comando $C$ e una formula $q$ e di voler trovare una formula $p$ tale che $\{p\}\ \ \ C\ \ \ \{q\}$
+
+Esempio: $x:=k;\ y:=2x;\ \ \ \{y >0\}$
+Soluzioni: $k=5$			$k=12$			$k>3$			$k>0$
+
+Esiste una precondizione *'migliore'*? Come possiamo definirla? Come possiamo calcolarla?
+Notiamo che tra le soluzioni proposte $k>0$ è quella che dà più libertà di scelta di uno stato iniziale per l'esecuzione del comando.
+Notiamo anche che se tale soluzione non fosse vera, cioè se $k \leq 0$, allora $y$ non potrebbe mai essere $>0$; possiamo quindi dire che quella sia la formula più inclusiva e cioè quella formula che se viene violata non permetterà di raggiungere la postcondizione.
+
+
+
+#### ALCUNE NOZIONI
+
+Fissiamo un programma $C$ e chiamiamo
+
+- $V$ l'insieme delle variabili di $C$
+- $\Sigma = \{\sigma\ |\ \sigma : V \to \Z  \}$ l'insieme degli stati della memoria
+- $\Pi$ l'insieme delle formule $p$ su $V$			*(come $x=3$, $>y$, ecc)*
+- $\vDash\ \subseteq\ \ \Sigma \times \Pi$ la relazione per dire se una formula è vera in un certo stato
+  $\sigma \vDash p$   *"$p$ è vera in $\sigma$"*
+- $t(\sigma) = \{p \in \Pi\ |\ \sigma \vDash p\}$   una funzione che associa ad uno stato $\sigma$ tutte le formule che sono vere in esso $\sigma \vDash p$. Questa funzione non può restituire un insieme vuoto; per ogni stato c'è almeno una formula che lo soddisfa *(ad esempio una formula che impone il valore di ogni variabile del programma)*.
+- $m(p) = \{\sigma \in \Sigma\ |\ \sigma \vDash p\}$   una funzione che associa ad una formula tutti gli stati che la soddisfano. Questa funzione può restituire un insieme vuoto; nessuno stato soddisfa una formula contradittoria.
+
+Possiamo estendere le ultime due funzioni dichiarate ai sottoinsiemi facendo uso di $S \subseteq \Sigma$ sottoinsieme di stati e $F \subseteq \Pi$ sottoinsieme di formule definendo:
+
+- $t(S) = \{p\in \Pi\ | \ \forall s \in S : s \vDash p \} = \bigcap\limits_{s \in S} t(s)$   è le formule comuni a *tutti gli stati* di $S$, ovvero l'intersezione delle immagini calcolate sui singoli stati $s$.
+- $m(F) = \{s \in \Sigma\ |\ \forall p \in F : s \vDash p\} = \bigcap\limits_{p \in F}$   è l'insieme degli stati tali per cui *tutte le formule* in $F$ sono valide, ovvero l'intersezione delle immagini calcolate sulle singole formule $f$.
+
+##### OSSERVAZIONI
+
+- $S \subseteq m(t(s))$			e			$F \subseteq t(m(s))$
+- Se $A \subseteq B$, allora $m(B) \subseteq m(A)$
+
+##### LOGICA PROPOSIZIONALE E INSIEMI DI STATI
+
+Sappiamo che c'è una relazione forte tra la logica proposizionale e la teoria degli insiemi, in particolare:
+
+- $m(\lnot p) = \Sigma \smallsetminus m(p)$
+- $m(p \lor q) = m(p) \cup m(q)$
+- $m(p \land q) = m(p) \cap m(q)$
+- $m(p \rightarrow q) = \Sigma - m(p) \cup m(q)$
+
+
+
+**IMPLICAZIONE**
+Notiamo che possiamo vedere l'implicazione in due ottiche diverse:
+
+- **CONNETTIVO LOGICO**: in questo caso non è che una abbreviazione di una formula più lunga, ovvero $p \rightarrow q \equiv \lnot p \lor q$, e quindi $m(p \rightarrow q) = m(\lnot p) \cup m(q)$.
+- **RELAZIONE TRA FORMULE**: in questo caso abbiamo che se $p$ implica $q$, allora $m(p) \subseteq m(q)$, che equivale a dire che $q$ è ***più debole*** di $p$, poiché $q$ coincide ad un maggior numero di stati e quindi ci dà meno informazioni su quale sia lo stato corrente. 
+
+
+
+#### CRITERIO DI SCELTA DELLA PRECONDIZIONE MIGLIORE
+
+Il criterio di scelta che andremo ad utilizzare è la **weakest precondition**, ovvero, fissati $p$ e $q$, cercheremo la precondizione più debole, che coincide al maggior numero di stati, tale che $\vDash \{p\}\ \ \ C\ \ \ \{q\}$.
+
+Questa precondizione più debole corrisponde al più grande insieme di stati dai quali l'esecuzione di $C$ porta ad uno stato in $m(q)$.
+
+È stato dimostrato che esiste sempre la precondizione più debole per un comando e una postcondizione. Essa può essere l'insieme di tutti gli stati o anche l'insieme vuoto.
+
+**NOTAZIONE**: $wp(C,\ q)$			precondizione più debole per $C\ \ \ \{q\}$
+
+***Teorema***: $\vDash \{p\}\ \ \ C\ \ \ \{q\}$			se e solo se			$p \rightarrow wp(C, q)$
+
+<div style="page-break-after: always;"></div>
+
+##### REGOLE DI CALCOLO DI WP
+
+Vediamo come calcolare le precondizioni più deboli. Lo vedremo separatamente per ogni tipo di istruzione.
+
+- **Assegnamento**: $wp(x:=E,\ q) = q[E/x]$   Nel caso dell'assegnamento la precondizione più debole coincide con la sostituzione effettuata dalla regola di derivazione.
+
+- **Sequenza**: $wp(C_1,\ C_2,\ q) = wp(C_1,\ wp(C_2,\ q))$   Per calcolare la precondizione più debole per una sequenza, calcoliamo prima la $wp$ del comando più interno e procediamo a ritroso.
+
+- **Scelta**: $C: \mathtt{if}\ B\ \mathtt{then}\ C_1\ \mathtt{else}\ C_2\ \mathtt{endif}$
+  $wp(C,\ q) = (B \land wp(C_1,\ q)) \lor (\lnot B \land (C_2,\ q))$
+  La precondizione più debole in questo caso sarà l'*unione* delle precondizioni più deboli dei due rami dell'$\mathtt{if}$, combinati con la relativa formula di scelta.
+
+  *Esempio concreto*:
+  Consideriamo il programma $P$: 
+
+  ```pascal
+  if y == 0 then
+  	x := 0;			//C
+  else
+  	x := x * y;		//D
+  end-if
+  ```
+
+  Vogliamo calcolare $wp(P,\ x=y)$.
+  Per farlo dobbiamo calcolare $wp(C,\ x=y)$ e $wp(D,\ x=y)$.
+
+  Notiamo che si tratta di due assegnamenti, quindi:
+  $wp(C,\ x=y) \implies 0 =y$
+  $wp(D,\ x=y) \implies xy =y \implies y = 0 \lor x = 1$
+
+  Possiamo ora calcolare $wp(P,\ x=y) \implies (y =0 \land y = 0) \lor (y \neq 0 \land y = 0 \lor x = 1)$
+  $(y =0 \land y = 0) \lor (y \neq 0 \land y = 0 \lor x = 1) \implies (y=0) \lor (y \neq 0 \land x=1)$
+
+- **Iterazione**: $wp(W,\ q) = (\lnot B \land q) \lor (B \land wp(C,\ W,\ q)) \equiv$
+                                                 $(\lnot B \land q) \lor (B \land wp(C,\ wp(W,\ q)))$
+
+  *Esempio concreto*:
+  Consideriamo il programma $P$:
+
+  ```pascal
+  while x > 0 do			//W
+  	x := x - 1		//C //W
+  end-while				//W
+  ```
+
+  Vogliamo calcolare $wp(W,\ x=0)$
+  Ragioniamo così: l'istruzione iterativa può:
+
+  - Non essere mai eseguita e quindi nello stato iniziale $B$ non vale. In questo caso la precondizione più debole equivale a $\lnot B \land q$, poiché è come se il ciclo fosse uno skip che non cambia la memoria; è necessario che $q$ sia valido all'inizio.
+  - Nello stato iniziale è vera $B$: il programma equivale all'esecuzione di $C$ una volta e alla replicazione di $W$: possiamo pensare di dare una definizione ricorsiva di $wp$. Non c'è quindi un algoritmo *meccanico* per trovare una precondizione più debole per un ciclo.
+
+<div style="page-break-after: always;"></div>
+
+### ESEMPI DI DERIVAZIONE
 
 ##### ASSEGNAMENTO
 Consideriamo l'istruzione $x:= -x$, fissando come postcondizione $\{x<0\}$.
@@ -916,3 +1040,162 @@ $\vdash_{_{ITER}}^{^{TOT}} \{z=\frac{x_0!}{x!} \land x \geq 0\}\ \ \ W\ \ \ \{z=
 
 Infine per terminare la dimostrazione dovremmo mostrare che la precondizione della tripla ottenuta è valida anche dopo il primo assegnamento e concatenare il tutto come fatto prima.
 
+  <div style="page-break-after: always;"></div>
+
+##### CORRETTEZZA TOTALE - ESEMPIO COMPLESSO: MOLTIPLICAZIONE RUSSA
+
+Consideriamo il programma $P$
+
+```pascal
+x := m; y := n; z := 0;		//A
+while x != 0 do						//W
+	if( x mod 2 = 0 ) then		//C	//W
+		x := x / 2;			//Y	//C	//W
+        y = y * 2;			//Y //C //W
+	else						//C //W
+		x := x - 1;			//N //C //W
+		z := z + y;			//N //C //W
+	end-if						//C //W
+end-while							//W
+```
+
+Vogliamo dimostrare $?\ \ \ \{m>0 \land n > 0\}\ \ \ P\ \ \ \{z=mn\}$
+
+Cerchiamo innanzitutto un invariante:
+Notiamo che nel primo ramo dell'$\mathtt{if}$ vale la relazione invariante $xy = k$.
+Nel secondo ramo invece abbiamo $k = (x-1)y \implies k -y$   e   $z = z + y$, dunque in questo ramo abbiamo una quantità invariante $xy + z$.
+
+A questo punto notiamo che nel primo ramo $z$ non cambia, dunque possiamo dire che $k = xy +z$ è un invariante per il ciclo.
+
+Ma cos'è $k$?
+Osserviamo che dopo gli assegnamenti iniziali $xy +z = mn$, quindi $k = mn$; l'invariante è dunque $mn = xy +z$.
+
+**1. DIMOSTRAZIONE INVARIANTE**
+Dobbiamo ora dimostrare l'invariante, ovvero $?\ \ \ \{mn = xy+z \land x \neq 0\}\ \ \ C\ \ \ \{mn = xy +z\}$
+
+Notiamo che $C$ corrisponde ad una scelta, dobbiamo quindi dimostrare le due premesse della regola della scelta prima, ovvero:
+$?\ \ \ \{mn = xy +z \land x \neq 0 \land x\mod2 = 0\}\ \ \ Y\ \ \ \{mn = xy +z\}$
+$?\ \ \ \{mn = xy +z \land x \neq 0 \land x \mod 2 \neq 0\}\ \ \ N\ \ \ \{mn = xy +z\}$
+
+ Partiamo dal primo ramo, notando che si tratta di due assegnamenti indipendenti:
+$\vdash_{_{ASS}} \{mn = (x/2)(2y) + z\}\ \ \ Y\ \ \ \{mn = xy + z\}$
+$\vdash \{mn = xy+z\}\ \ \ Y\ \ \ \{mn = xy +z\}$
+
+Notiamo che $mn = xy+z \land x\neq 0 \land x \mod 2 = 0 \rightarrow mn = xy +z$:
+$\vdash_{_{IMPL}} \{mn = xy + z \land x \neq 0 \land x \mod 2 = 0\}\ \ \ Y\ \ \ \{mn = xy +z\}$
+
+
+
+Passiamo al secondo ramo; anche qui abbiamo due assegnamenti indipendenti:
+$\vdash_{_{ASS}} \{mn = (x-1)y + z +y\}\ \ \ N\ \ \ \{mn = xy +z\}$
+$\vdash \{mn = xy -y +z +y\}\ \ \ N\ \ \ \{mn = xy +z\}$
+$\vdash \{mn = xy +z\}\ \ \ N\ \ \ \{mn = xy+z\}$
+
+Notiamo anche qui che $mn = xy +z \land x \neq 0 \land x \mod 2 \neq 0 \rightarrow mn = xy +z$:
+$\vdash_{_{IMPL}} \{mn = xy +z \land x \neq 0 \land x \mod 2 \neq 0\}\ \ \ N\ \ \ \{mn = xy +z\}$
+
+
+
+A questo punto possiamo usare la regola della scelta:
+$\vdash_{_{IF}} \{mn=xy+z \land x \neq 0\}\ \ \ C\ \ \ \{mn = xy +z\}$
+Dunque l'invariante è valido.
+
+Possiamo ora usare la regola dell'iterazione parziale:
+$\vdash_{_{ITER}}^{^{PART}} \{mn = xy +z\}\ \ \ W\ \ \ \{mn = xy +z \land x =0\}$
+
+Notiamo intanto che $mn = xy +z \land x = 0 \rightarrow mn = z$, per cui:
+$\vdash_{_{IMPL}}\{mn = xy+z\}\ \ \ W\ \ \ \{mn = z\}$
+
+
+
+**2. ASSEGNAMENTI INIZIALI**
+Dobbiamo ora dimostrare che la precondizione del ciclo vale dopo gli assegnamenti iniziali, cioè $?\ \ \ \{x > 0 \land y >0\}\ \ \ A\ \ \ \{mn = xy +z\}$
+
+Notiamo che si tratta di assegnamenti indipendenti, per cui:
+$\vdash_{_{ASS}} \{mn = mn +0\}\ \ \ A\ \ \ \{mn = xy +z\}$, ovvero
+$\vdash \{True\}\ \ \ A\ \ \ \{mn = xy +z\}$
+
+Sappiamo che $True$ è implicato da qualsiasi formula, quindi:
+$\vdash_{_{IMPL}} \{x > 0 \land y > 0\}\ \ \ A\ \ \ \{mn = xy +z\}$
+
+
+
+**3. DIMOSTRAZIONE FINALE**
+Possiamo ora usare la regola della sequenza per unire le triple degli assegnamenti iniziali e del ciclo e completare la dimostrazione parziale:
+$\vdash_{_{SEQ}}\ \ \ \{x > 0 \land y > 0\}\ \ \ P\ \ \ \{mn = z\}$
+
+
+
+**4. DIMOSTRAZIONE TOTALE**
+Per fare la dimostrazione totale ci serve un variante di ciclo $E$ il cui valore $\geq 0$ sia implicato da un invariante.
+Usiamo un altro invariante, ovvero $mn = xy + z \land x \geq 0$.
+
+Dimostriamo questo invariante, cioè $?\ \ \ \{mn = xy+z \land x \geq 0 \land x \neq 0\}\ \ \ C\ \ \ \{mn = xy +z \land x \geq 0\}$
+
+Deriviamo innanzitutto le premesse della regola della scelta
+$?\ \ \ \{mn = xy +z \land x \geq 0 \land x \neq 0 \land x \mod 2 = 0\}\ \ \ Y\ \ \ \{mn = xy +z \land x \geq 0\}$
+$?\ \ \ \{mn = xy +z \land x \geq 0 \land x \neq 0 \land x \mod 2 \neq 0\}\ \ \ N\ \ \ \{mn = xy +z \land x \geq 0\}$
+
+$\vdash_{_{ASS}} \{mn = (x/2)(2y)+z \land (x/2)\geq 0\}\ \ \ Y\ \ \ \{mn = xy +z \land x\geq 0\}$
+$\vdash \{mn = xy +z \land x \geq 0\}\ \ \ Y\ \ \ \{mn = xy +z \land x \geq 0\}$
+$\vdash_{_{IMPL}} \{mn = xy +z \land x \geq 0 \land x \neq 0 \land x \mod 2 = 0\}\ \ \ Y\ \ \ \{mn = xy +z \land x \geq 0\}$
+
+$\vdash_{_{ASS}} \{mn = (x-1)y +z+y \land x-1\geq0 \}\ \ \ N\ \ \ \{mn = xy+z \land x \geq 0\}$
+$\vdash \{mn = xy -y +z+y \land x \geq 1\}\ \ \ N\ \ \ \{mn = xy+z \land x \geq 0\}$
+$\vdash \{mn = xy +z \land x \geq 1\}\ \ \ N\ \ \ \{mn = xy +z \land x \geq 0\}$
+
+Notiamo che $x \geq 0 \land x \neq 0 \rightarrow x > 0 \rightarrow x \geq 1$, quindi:
+$\vdash_{_{IMPL}} \{mn = xy +z \land x \geq 0 \land x \neq 0 \land x \mod 2 \neq 0\}\ \ \ N\ \ \ \{mn = xy +z \land x \geq 0\}$
+
+$\vdash_{_{IF}} \{mn = xy +z \land x \geq 0 \land x \neq 0\}\ \ \ C\ \ \ \{mn = xy +z \land x \geq 0\}$
+Dunque anche questo invariante è valido.
+
+
+
+Notiamo che $mn = xy + z \land x \geq 0\rightarrow x \geq 0$, quindi proviamo ad impostare $E = x$.
+Per dimostrare che il variante è valido dobbiamo dimostrare $?\ \ \ \{ mn=xy+z \land x \geq 0 \land x \neq 0 \land x = k\}\ \ \ C\ \ \ \{mn=xy+z \land x \geq 0 \land x < k\}$
+
+Anche qui, dobbiamo dimostrare le precondizioni della regola di scelta:
+$?\ \ \ \{mn=xy+z \land x \geq 0 \land x \neq 0 \land x =k \land x \mod 2 = 0\}\ \ \ Y\ \ \ \{inv \land x <k\}$
+$?\ \ \ \{mn = xy +z \land x \geq 0 \land x \neq 0 \land x = k \land x \mod 2 \neq 0\}\ \ \ N\ \ \ \{inv \land x < k\}$
+
+
+
+$\vdash_{_{ASS}} \{mn = (x/2)(2y)+z \land (x/2)\geq 0 \land (x/2)<k\}\ \ \ Y\ \ \ \{mn = xy+z \land x \geq 0 \land x < k\}$
+$\vdash \{mn=xy+z \land x \geq 0 \land x < 2k\}\ \ \ Y\ \ \ \{mn=xy+z\land x \geq 0 \land x < k\}$
+Notiamo che $x = k \rightarrow x < 2k$, quindi
+$\vdash_{_{IMPL}} \{mn = xy+z \land x\geq 0 \land x \neq 0 \land x = k \land x \mod 2 = 0\}\ \ \ Y\ \ \ \{inv \land x < k\}$
+
+
+
+$\vdash_{_{ASS}} \{mn = (x-1)y+z+y \land x-1\geq0 \land x-1 <k\}\ \ \ N\ \ \ \{mn = xy+z \land x \geq 0 \land x <k\}$
+$\vdash \{mn = xy +z \land x\geq 1 \land x-1 < k\}\ \ \ N\ \ \ \{mn=xy+z \land x \geq 0 \land x <k\}$
+Notiamo che $x \geq 0 \land x \neq 0 \rightarrow x \geq 1$ e che $x = k \rightarrow x-1 < k$
+$\vdash_{_{IMPL}} \{mn = xy +z\land x \geq 0 \land x \neq 0 \land x = k \land x \mod 2 \neq 0\}\ \ \ N\ \ \ \{inv \land x <k\}$
+
+
+
+Possiamo ora usare la regola della scelta:
+$\vdash_{_{IF}} \{mn = xy+z \land x \geq 0 \land x = k\}\ \ \ C\ \ \ \{mn = xy+z \land x \geq 0 \land x <k\}$
+
+Notiamo ora che $x\geq 0 \land x \ne 0 \rightarrow x \geq 0$, quindi:
+$\vdash_{_{IMPL}} \{mn = xy +z \land x \geq 0 \land x \neq 0 \land x = k\}\ \ \ C\ \ \ \{mn = xy+z \land x \geq 0 \land x <k\}$
+
+Abbiamo dimostrato che il variante è valido. Possiamo ora usare la regola dell'iterazione totale:
+$\vdash_{_{ITER}}^{^{TOT}} \{mn = xy+z \land x \geq 0\}\ \ \ W\ \ \ \{mn = xy+z \land x \geq 0 \land x = 0\}$
+
+Notiamo che $x \geq 0 \land x = 0 \rightarrow x = 0$ e che $x = 0 \rightarrow mn = z$, quindi
+$\vdash_{_{IMPL}} \{mn = xy+z \land x \geq 0\}\ \ \ W\ \ \ \{mn = z\}$
+
+
+
+Ora dobbiamo dimostrare che la precondizione della tripla appena derivata valga anche dopo gli assegnamenti iniziali, cioè $?\ \ \ \{m > 0 \land n >0\}\ \ \ A\ \ \ \{mn=xy+z \land x \geq 0\}$
+
+$\vdash_{_{ASS}} \{mn = mn +0 \land m \geq0\}\ \ \ A\ \ \ \{mn = xy +z \land x \geq 0\}$
+$\vdash \{m \geq0\}\ \ \ A\ \ \ \{mn = xy +z \geq 0 \land x \geq 0\}$
+
+Notiamo che $m > 0 \land n > 0 \rightarrow m \geq 0$, quindi
+$\vdash_{_{IMPL}} \{m >0 \land n > 0\}\ \ \ A\ \ \ \{mn = xy+z \geq 0 \land x \geq 0\}$
+
+A questo punto possiamo terminare la dimostrazione usando la regola della sequenza:
+$\vdash_{_{SEQ}} \{m>0\land n>0\}\ \ \ P\ \ \ \{mn = z\}$
