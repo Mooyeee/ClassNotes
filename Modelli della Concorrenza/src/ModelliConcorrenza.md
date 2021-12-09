@@ -509,6 +509,92 @@ Vediamo come calcolare le precondizioni più deboli. Lo vedremo separatamente pe
 
 <div style="page-break-after: always;"></div>
 
+### CONTESTI DIVERSI
+
+Abbiamo visto che una tripla di Hoare possa garantire la correttezza di un programma ma anche come possa portarci a concetti come la precondizione più debole. Vediamo ora gli stessi concetti delle triple di Hoare in contesti diversi.
+
+
+
+#### DESIGN BY CONTRACT
+
+Il primo contesto che andiamo ad osservare appartiene all'ingegneria del software; le triple possono essere interpretate nell'ambito di una strategia di sviluppo di programmi chiamata *design by contract* o *programming by contract*.
+
+L'idea sottostante è che lo sviluppo di un programma corrisponde ad un contratto fra due contraenti *cliente* e *fornitore*; diciamo che il *fornitore* fornisce il programma e il *cliente* specifica cosa vorrebbe che facesse il programma.
+In questa visione una tripla è un contratto tra *fornitore* e *cliente*, ovvero un accordo nel quale ciascuna parte si assume delle obbligazioni e in cambio ha dei diritti.
+
+Interpretiamo le triple come: $\{p\}\ \ \ C\ \ \ \{q\}$, dove $p$ rappresenta l'obbligazione del cliente, $C$ la funzione *invocata* dal cliente e $q$ l'obbligazione del fornitore.
+
+Alcuni linguaggi incorporano nella propria sintassi l'idea di definire i termini del contratto, ad esempio ***Eiffel***.
+Esistono anche strumenti software, come ***Java Modelling Language*** che permettono di incorporare questa idea anche in linguaggi come Java usando delle speciali annotazioni.
+
+
+
+#### STORIA
+
+Le prime idee sulla correttezza dei programmi nacquero nei primi anni 70 dai lavori di **R. W. Floyd**, **C. A. R. Hoare** e **E. W. Dijkstra** *(che ha introdotto il concetto di precondizione più debole)*.
+
+Le idee di **Dijkstra** sono state usate anche per definire una semantica dei programmi, e dare quindi un *significato* ad un programma. Si possono dare diverse interpretazioni, una possibile è: il significato di un programma è una funzione che va dallo spazio dei possibili dati in ingresso allo spazio dei possibili valori in uscita. Si può anche dare un significato operazionale dove il significato di un programma è una sequenza di cambi dello stato della memoria provocati dall'esecuzione del programma.
+
+
+
+#### DIMOSTRAZIONI DI CORRETTEZZA
+
+Abbiamo visto dimostrazioni applicabili ad un linguaggio molto semplice che, seppur dal punto di vista teorico è completo, dal punto di vista pratico è molto limitato. Pensiamo alle estensioni pratiche di un linguaggio come *funzioni*, *ricorsione*, *tipi strutturati*, *classi e oggetti* e a come queste possano influire sulle dimostrazioni di correttezza.
+
+Un caso dove la dimostrazione di correttezza si fa decisamente più complicata è il caso dei programmi concorrenti; la logica di Hoare si basa sul fatto che i cambiamenti dello stato della memoria sono deterministici, ma questo non è più vero nel caso di programmi concorrenti. Inoltre, non sempre i programmi concorrenti hanno uno stato finale *(basti pensare ad un sistema operativo)* e si ritrovano ad interagire continuamente con l'ambiente: questi sono tutti aspetti da considerare per dimostrare la correttezza di un programma concorrente.
+
+
+
+#### LOGICA DI HOARE E SINTESI DI PROGRAMMI ITERATIVI
+
+Possiamo usare la logica di Hoare anche per sviluppare dei programmi invece che validarli.
+Supponiamo di voler calcolare un'approssimazione intera della radice quadrata di un numero $k$.
+
+1. La tripla obiettivo sarà dunque $\{k \geq 0\}\ \ \ P\ \ \ \{0 \leq x^2 \leq k < (x+1)^2\}$
+
+2. Ipotizziamo la struttura generale del programma: calcoliamo il valore per approssimazioni successive iterando finché il valore non soddisfa la postcondizione.
+
+   ```pascal
+   x := E(k);			//Il valore iniziale dipende da k
+   while B(x, k) do	//La condizione di ciclo dipende da x e k
+   	x := F(x, k)	//Il nuovo valore dipene dal vecchio valore e da k
+   end-while
+   ```
+
+3. Spezziamo la postcondizione per cercare un invariante di ciclo
+   $0 \leq x^2$                    $x^2\leq k$                    $k < (x+1)^2$
+
+   Notiamo che nel corso dell'iterazione vorremo che $x^2$ rimanga sempre $\leq k$, mentre $(x+1)^2 > k$ non può essere un invariante poiché è la caratteristica della soluzione cercata.
+
+   Dunque $0 \leq x^2 \land x^2 \leq k$ è un possibile invariante.
+   $x := E(k)$ deve stabilire l'invariante; poiché $k \geq 0$ *(precondizione generale)*, possiamo scegliere $0$ come valore iniziale di $x$.
+
+4. Se $inv = 0 \leq x^2 \leq k$, al termine dell'esecuzione varrà $inv \land \lnot B(x, k)$, quindi dobbiamo scegliere $B(x,k)$ in modo che $(inv \land \lnot B(x,k)) \rightarrow (inv \land k < (x+1)^2)$ *(ovvero che implichi la postcondizione generale)*.
+
+   Poniamo dunque $B(x,k) = (x+1)^2 \leq k$.
+
+5. Ora osserviamo che se nel corpo dell'iterazione incrementiamo $x$, prima o poi $(x+1)^2$ sarà maggiore di $k$. Il programma potrebbe quindi essere:
+
+   ```pascal
+   x := 0;
+   while (x+1)*(x+1) <= k do
+   	x := x + 1;
+   end-while
+   ```
+
+
+
+#### SCHEMA GENERALE DI DIMOSTRAZIONE
+
+Supponiamo di dover dimostrare $\{p\}\ \ \ V;W;Z\ \ \ \{q\}$, supponendo che $V$ e $W$ non contengano istruzioni iterative.
+Uno schema generale è:
+
+1. Ricaviamo da $Z\ \ \ \{q\}$ la $wp(Z, q) \equiv s$                                                   $\{s\}\ \ \ Z\ \ \ \{q\}$
+2. Cerchiamo un'invariante $i$ per $W$ tale che $(i \land \lnot B) \rightarrow s$                  $\{i\}\ \ \ W;Z\ \ \ \{q\}$
+3. Cerchiamo una formula $u$ tale che $\vdash\{p\}\ \ \  V\ \ \ \{u\}$ e $u \rightarrow i$             $\{p\}\ \ \ V;W;Z\ \ \ \{q\}$
+
+
+
 ### ESEMPI DI DERIVAZIONE
 
 ##### ASSEGNAMENTO
@@ -641,7 +727,7 @@ A questo punto abbiamo una tripla con la postcondizione che ci serviva ma con la
 Notiamo che $sx = x^{i+1}\  \implies\ sx = x^ix\ \implies\ s = x^i$
 Otteniamo quindi $\vdash\{s=x^i\} \ \ \ C\ \ \ \{s=x^i\}$.
 
-A noi però serve derivare la precondizione $s=x^i \land i<N$, ma osserviamo che $s=x^i \land i \rightarrow s=x^i$, quindi possiamo derivare, tramite la regola dell'implicazione
+A noi però serve derivare la precondizione $s=x^i \land i<N$, ma osserviamo che $s=x^i \land i <N \rightarrow s=x^i$, quindi possiamo derivare, tramite la regola dell'implicazione
 $\vdash_{_{IMPL}} \{s=x^i \land i < N\} \ \ \ C\ \ \ \{s=x^i\}$
 
 Abbiamo quindi dimostrato l'invariante e derivato la premessa per la regola dell'iterazione.
@@ -778,8 +864,8 @@ $?\ \ \ \{x\geq5 \land x >5\}\ \ \ C\ \ \ \{x \geq 5\}$
 Usiamo la regola dell'assegnamento:
 $\vdash_{_{ASS}} \{x \geq 6\}\ \ \ x:=x-1\ \ \ \{x \geq 5\}$
 
-Osserviamo che $x \geq 5 \land x >5  \rightarrow x \geq 6$:
-$\vdash_{_{IMPL}} \{x \geq 5 \land x > 5\} \ \ \ C\ \ \ \{x \geq 5\}$ dunque l'invariante è valido.
+Osserviamo che $x \geq 5 \land x >5  \equiv x \geq 6$:
+$\vdash \{x \geq 5 \land x > 5\} \ \ \ C\ \ \ \{x \geq 5\}$ dunque l'invariante è valido.
 
 
 
@@ -790,8 +876,7 @@ $\vdash_{_{ASS}} \{x-1\geq 5 \land x-1-5 < k\}\ \ \ x:=x-1\ \ \ \{x \geq 5 \land
 $\vdash \{x\geq 6 \land x-6 < k\}\ \ \ x:=x-1\ \ \ \{x \geq 5 \land x-5 < k\}$
 
 Notiamo che $x \geq 5 \land x > 5 \land x-5 = k \rightarrow x \geq 6 \land x-6 <k$, poiché se $x >5$, allora sicuramente $x >= 6$ visto che lavoriamo con interi e se $x-5 = k$ sicuramente $x-6 <k$.
-$\vdash_{_{IMPL}} \{x\geq 5 \land x> 5 \land x-5 <k\}\ \ \ x:=x-1\ \ \ \{x\geq5 \land x-5 < k\}$
-
+$\vdash_{_{IMPL}} \{x\geq 5 \land x> 5 \land x-5 =k\}\ \ \ x:=x-1\ \ \ \{x\geq5 \land x-5 < k\}$
 
 A questo punto possiamo usare la regola dell'iterazione totale
 $\vdash_{_{ITER}}^{^{TOT}} \{x \geq 5\}\ \ \ P\ \ \ \{x\geq5 \land x \leq 5\}$
@@ -805,8 +890,8 @@ Dovremmo quindi dimostrare $?\ \ \ \{x \geq 5 \land x \neq 5\}\ \ \ C\ \ \ \ \{x
 Usiamo sempre la regola dell'assegnamento
 $\vdash_{_{ASS}}\{x\geq6\}\ \ \ x:=x-1\ \ \ \{x \geq 5\}$
 
-Osserviamo che anche in questo caso $x \geq 5 \land x \neq 5 \rightarrow x \geq 6$, quindi
-$\vdash_{_{IMPL}} \{x\geq 5 \land x \neq5\}\ \ \ C\ \ \ \{x\geq 5\}$, quindi l'invariante è ancora valido.
+Osserviamo che anche in questo caso $x \geq 5 \land x \neq 5 \equiv x \geq 6$, quindi
+$\vdash \{x\geq 5 \land x \neq5\}\ \ \ C\ \ \ \{x\geq 5\}$, quindi l'invariante è ancora valido.
 
 Dimostriamo ora $?\ \ \ \{x\geq 5 \land x\neq 5 \land x-5 = k\}\ \ \ C\ \ \ \{inv \land x-5 < k\}$
 Applichiamo la regola dell'assegnamento:
@@ -838,27 +923,27 @@ $?\ \ \ \{x \leq 5 \land x <5\}\ \ \ x:=x+1\ \ \ \{x\leq 5\}$
 Usiamo la regola dell'assegnamento:
 $\vdash_{_{ASS}} \{x \leq 4\}\ \ \ x:=x+1\ \ \ \{x\leq 5\}$
 
-Notiamo che $x\leq 5 \land x <5 \rightarrow x \leq 4$, quindi
-$\vdash_{_{IMPL}} \{x\leq 5 \land x < 5\}\ \ \ C\ \ \ \{x\leq 5\}$, quindi l'invariante è valido.
+Notiamo che $x\leq 5 \land x <5 \equiv x \leq 4$, quindi
+$\vdash \{x\leq 5 \land x < 5\}\ \ \ C\ \ \ \{x\leq 5\}$, quindi l'invariante è valido.
 
 
 
 
-   Ora dobbiamo dimostrare la seconda premessa della regola dell'iterazione totale, ovvero $?\ \ \ \{x \leq 5 \land x < 5 \land 5-x = k\}\ \ \ x:=x+1\ \ \ \{x \leq 5 \land 5-x < k\}$
+Ora dobbiamo dimostrare la seconda premessa della regola dell'iterazione totale, ovvero $?\ \ \ \{x \leq 5 \land x < 5 \land 5-x = k\}\ \ \ x:=x+1\ \ \ \{x \leq 5 \land 5-x < k\}$
 
-   Usiamo la regola dell'assegnamento:
+Usiamo la regola dell'assegnamento:
    $\vdash_{_{ASS}} \{x\leq 4\land 4-x < k\}\ \ \ x:=x+1\ \ \ \{x\leq 5 \land 5-x < k\}$
 
-   Notiamo che $x\leq5 \land x <5 \land 5-x = k \rightarrow x\leq 4 \land 4-x< k$, poiché se $x <5$, allora sicuramente $x \leq 4$ perché lavoriamo con gli interi e se $5-x =k$ allora sicuramente $4-x < k$:
+Notiamo che $x\leq5 \land x <5 \land 5-x = k \rightarrow x\leq 4 \land 4-x< k$, poiché se $x <5$, allora sicuramente $x \leq 4$ perché lavoriamo con gli interi e se $5-x =k$ allora sicuramente $4-x < k$:
    $\vdash_{_{IMPL}} \{x \leq 5 \land x < 5 \land 5-x=k\}\ \ \ C\ \ \ \{x \leq5 \land 5 -x <k\}$
 
    
 
-   Possiamo ora usare la regola dell'iterazione totale:
+Possiamo ora usare la regola dell'iterazione totale:
    $\vdash_{_{ITER}}^{^{TOT}} \{x \leq 5\}\ \ \ P\ \ \ \{x\leq5 \land x \geq 5\}$
 
-   Notiamo che $x\leq 5 \land x \geq 5 \rightarrow x=5$, quindi
-   $\vdash_{_{IMPL}} \{x \leq 5\}\ \ \ P\ \ \ \{x =5\}$
+Notiamo che $x\leq 5 \land x \geq 5 \equiv x=5$, quindi
+   $\vdash \{x \leq 5\}\ \ \ P\ \ \ \{x =5\}$
 
   <div style="page-break-after: always;"></div>
 
@@ -894,14 +979,14 @@ Notiamo subito che $C$ consiste di due assegnamenti indipendenti, possiamo quind
    $\vdash_{_{ASS}}\{px=x^{b-(y-1)} \land y -1 \geq 0\}\ \ \ C \ \ \ \{p=x^{b-y} \land y \geq 0\}$
    $\vdash\{p = x^{b-y} \land y \geq 1\}\ \ \ C\ \ \ \{p=x^{b-y}\land y \geq 0\}$
 
-Notiamo che $p=x^{b-y} \land y \geq 0 \land y > 0 \rightarrow p=x^{b-y} \land y \geq 1$, poiché, lavorando con interi, se $y>0$ *(che è più forte rispetto a $y\geq 0$)* allora sicuramente $y \geq 1 $:
-   $\vdash_{_{IMPL}} \{p=x^{b-y} \land y\geq 0 \land y > 0\}\ \ \ C\ \ \ \{p=^{b-y} \land y \geq 0\}$, dunque l'invariante è valido.
+Notiamo che $p=x^{b-y} \land y \geq 0 \land y > 0 \equiv p=x^{b-y} \land y \geq 1$, poiché, lavorando con interi, se $y>0$ *(che è più forte rispetto a $y\geq 0$)* allora sicuramente $y \geq 1 $:
+   $\vdash \{p=x^{b-y} \land y\geq 0 \land y > 0\}\ \ \ C\ \ \ \{p=^{b-y} \land y \geq 0\}$, dunque l'invariante è valido.
 
 Possiamo ora applicare la regola dell'iterazione parziale:
    $\vdash_{_{ITER}}^{^{PART}} \{p=x^{b-y} \land y \geq 0\}\ \ \ W\ \ \ \{p=x^{b-y}\land y\geq 0 \land y \leq 0\}$
 
-Notiamo che $p=x^{b-y} \land y \geq 0 \land y \leq 0 \rightarrow p=x^{b-y} \land y = 0 \rightarrow p= x^b$, quindi possiamo derivare
-   $\vdash_{_{IMPL}} \{p=x^{b-y} \land y \geq 0\}\ \ \ W\ \ \ \{p=x^b\}$
+Notiamo che $p=x^{b-y} \land y \geq 0 \land y \leq 0 \equiv p=x^{b-y} \land y = 0 \equiv p= x^b$, quindi possiamo derivare
+   $\vdash \{p=x^{b-y} \land y \geq 0\}\ \ \ W\ \ \ \{p=x^b\}$
 
    
 
@@ -984,8 +1069,8 @@ Usiamo la regola dell'assegnamento, ma stiamo attenti: ora gli assegnamenti non 
 A questo punto usiamo la regola della sequenza per unire le due triple, notando che la precondizione della prima è la postcondizione della seconda:
 $\vdash_{_{SEQ}} \{z=\frac{x_0!}{x!} \land x-1 \geq 0\} \ \ \ C\ \ \ \{z=\frac{x_0!}{x!} \land x \geq 0\}$
 
-Notiamo che $z=\frac{x_0!}{x!} \land x \geq 0 \land x > 0 \rightarrow z=\frac{x_0!}{x!} \land x-1 \geq 0$, quindi:
-$\vdash_{_{IMPL}} \{z=\frac{x_0!}{x!} \land x\geq 0 \land x >0\}\ \ \ C\ \ \ \{z=\frac{x_0!}{x!} \land x\geq 0\}$
+Notiamo che $z=\frac{x_0!}{x!} \land x \geq 0 \land x > 0 \equiv z=\frac{x_0!}{x!} \land x-1 \geq 0$, quindi:
+$\vdash \{z=\frac{x_0!}{x!} \land x\geq 0 \land x >0\}\ \ \ C\ \ \ \{z=\frac{x_0!}{x!} \land x\geq 0\}$
 E quindi l'invariante proposto è valido.
 
 
@@ -993,8 +1078,8 @@ E quindi l'invariante proposto è valido.
 Possiamo ora usare la regola dell'iterazione parziale:
 $\vdash_{_{ITER}}^{^{PART}} \{z=\frac{x_0!}{x!} \land x \geq 0\}\ \ \ W\ \ \ \{z=\frac{x_0!}{x!} \land x \geq 0 \land x \leq 0\}$
 
-Notiamo adesso che $z=\frac{x_0!}{x!} \land x\geq 0 \land x \leq 0 \rightarrow z=\frac{x_0!}{x!} \land x = 0 \rightarrow z = x0!$:
-$\vdash_{_{IMPL}} \{z=\frac{x_0!}{x!} \land x \geq 0\}\ \ \ W\ \ \ \{z = x_0!\}$
+Notiamo adesso che $z=\frac{x_0!}{x!} \land x\geq 0 \land x \leq 0 \equiv z=\frac{x_0!}{x!} \land x = 0 \equiv z = x0!$:
+$\vdash \{z=\frac{x_0!}{x!} \land x \geq 0\}\ \ \ W\ \ \ \{z = x_0!\}$
 
 
 
@@ -1103,8 +1188,8 @@ Dunque l'invariante è valido.
 Possiamo ora usare la regola dell'iterazione parziale:
 $\vdash_{_{ITER}}^{^{PART}} \{mn = xy +z\}\ \ \ W\ \ \ \{mn = xy +z \land x =0\}$
 
-Notiamo intanto che $mn = xy +z \land x = 0 \rightarrow mn = z$, per cui:
-$\vdash_{_{IMPL}}\{mn = xy+z\}\ \ \ W\ \ \ \{mn = z\}$
+Notiamo intanto che $mn = xy +z \land x = 0 \equiv mn = z$, per cui:
+$\vdash \{mn = xy+z\}\ \ \ W\ \ \ \{mn = z\}$
 
 
 
@@ -1144,8 +1229,8 @@ $\vdash_{_{ASS}} \{mn = (x-1)y +z+y \land x-1\geq0 \}\ \ \ N\ \ \ \{mn = xy+z \l
 $\vdash \{mn = xy -y +z+y \land x \geq 1\}\ \ \ N\ \ \ \{mn = xy+z \land x \geq 0\}$
 $\vdash \{mn = xy +z \land x \geq 1\}\ \ \ N\ \ \ \{mn = xy +z \land x \geq 0\}$
 
-Notiamo che $x \geq 0 \land x \neq 0 \rightarrow x > 0 \rightarrow x \geq 1$, quindi:
-$\vdash_{_{IMPL}} \{mn = xy +z \land x \geq 0 \land x \neq 0 \land x \mod 2 \neq 0\}\ \ \ N\ \ \ \{mn = xy +z \land x \geq 0\}$
+Notiamo che $x \geq 0 \land x \neq 0 \equiv x > 0 \equiv x \geq 1$, quindi:
+$\vdash \{mn = xy +z \land x \geq 0 \land x \neq 0 \land x \mod 2 \neq 0\}\ \ \ N\ \ \ \{mn = xy +z \land x \geq 0\}$
 
 $\vdash_{_{IF}} \{mn = xy +z \land x \geq 0 \land x \neq 0\}\ \ \ C\ \ \ \{mn = xy +z \land x \geq 0\}$
 Dunque anche questo invariante è valido.
@@ -1170,7 +1255,7 @@ $\vdash_{_{IMPL}} \{mn = xy+z \land x\geq 0 \land x \neq 0 \land x = k \land x \
 
 $\vdash_{_{ASS}} \{mn = (x-1)y+z+y \land x-1\geq0 \land x-1 <k\}\ \ \ N\ \ \ \{mn = xy+z \land x \geq 0 \land x <k\}$
 $\vdash \{mn = xy +z \land x\geq 1 \land x-1 < k\}\ \ \ N\ \ \ \{mn=xy+z \land x \geq 0 \land x <k\}$
-Notiamo che $x \geq 0 \land x \neq 0 \rightarrow x \geq 1$ e che $x = k \rightarrow x-1 < k$
+Notiamo che $x \geq 0 \land x \neq 0 \equiv x \geq 1$ e che $x = k \rightarrow x-1 < k$
 $\vdash_{_{IMPL}} \{mn = xy +z\land x \geq 0 \land x \neq 0 \land x = k \land x \mod 2 \neq 0\}\ \ \ N\ \ \ \{inv \land x <k\}$
 
 
@@ -1199,3 +1284,110 @@ $\vdash_{_{IMPL}} \{m >0 \land n > 0\}\ \ \ A\ \ \ \{mn = xy+z \geq 0 \land x \g
 
 A questo punto possiamo terminare la dimostrazione usando la regola della sequenza:
 $\vdash_{_{SEQ}} \{m>0\land n>0\}\ \ \ P\ \ \ \{mn = z\}$
+
+<div style="page-break-after: always;"></div>
+
+##### CORRETTEZZA TOTALE - QUADRATO
+
+Consideriamo il programma $P$:
+
+```pascal
+n := 1; s := 0; k := 0;		//A
+while k < p do				//W
+	s := s + n;		//C1	//W
+	n := n + 2;		//C2	//W
+	k := k + 1;		//C3	//W
+end-while					//W
+```
+
+Vogliamo derivare $?\ \ \ \{p \geq 0\}\ \ \ P\ \ \ \{s = p^2\}$
+
+Il programma sfrutta una proprietà che dice che se sommiamo i primi $k$ numeri dispari, otteniamo $k^2$.
+
+Cerchiamo quindi un'invariante opportuno. Notiamo subito che $k \leq p$ è invariante per $W$.
+Simuliamo qualche iterazione:
+$s\ \ \ \ \ \ 0\ \ \ 1\ \ \ 4\ \ \ 9\ \ \ 16$
+$n\ \ \ \ \ \ 1\ \ \ 3\ \ \ 5\ \ \ 7\ \ \ 9$
+$k\ \ \ \ \ \ 0\ \ \ 1\ \ \ 2\ \ \ 3\ \ \ 4$
+
+Notiamo che un'altra relazione invariante è $s = k^2$, ma anche $n = 2k+1$.
+
+
+
+**1. DIMOSTRAZIONE INVARIANTE**
+Il candidato invariante dunque è $inv \implies s = k^2 \land n = 2k +1 \land k \leq p$; per dimostrarlo dobbiamo derivare la tripla $?\ \ \ \{inv \land k <p \}\ \ \ C\ \ \ \{inv\}$.
+
+Notiamo subito che $C$ è composto da assegnamenti non indipendenti, quindi dobbiamo trattare ogni assegnamento in disparte, partendo dal fondo *(poiché disponiamo di una precondizione)*.
+
+$\vdash_{_{ASS}} \{s=(k+1)^2\land n = 2(k+1)+1\land k+1 \leq p\}\ \ \ C_3\ \ \ \{inv\}$
+$\vdash_{_{ASS}} \{s = (k+1)^2 \land n+2 = 2(k+1) +1 \land k+1 \leq p\}\ \ \ C_2\ \ \ \{pre\ C_3\}$
+$\vdash_{_{ASS}} \{s+n = (k+1)^2 \land n+2=2(k+1)+1 \land k+1 \leq p\}\ \ \ C_1\ \ \ \{pre\ C_2\}$
+
+$\vdash \{s+n = k^2 +2k +1 \land n+2 = 2k + 2 +1 \land k+1 \leq p\}\ \ \ C_1\ \ \ \{pre\ C_2\}$
+$\vdash \{s+n = k^2 +n \land n = 2k +1 \land k+1 \leq p\}\ \ \ C_1\ \ \ \{pre\ C_2\}$
+$\vdash \{s = k^2 \land n = 2k +1 \land k+1 \leq p\}\ \ \ C_1\ \ \ \{pre\ C_2\}$
+
+Notiamo che $k+1 \leq p \rightarrow k < p$, quindi
+$\vdash_{_{IMPL}} \{s = k^2 \land n = 2k+1 \land k < p\}\ \ \ C_1 \ \ \ \{pre\ C_2\}$
+
+A questo punto osserviamo che $inv \land k <p \equiv s=k^2 \land n = 2k + 1 \land k < p$, poiché $k < p$ è più forte di $k \leq p$;
+$\vdash \{inv \land k <p\}\ \ \ C_1\ \ \ \{pre\ C_2\}$
+
+Usiamo adesso due volte la regola della sequenza:
+$\vdash_{_{SEQ}} \{inv \land k <p\}\ \ \ C_1;C_2\ \ \ \{pre\ C_3\}$
+$\vdash_{_{SEQ}} \{inv \land k <p \}\ \ \ C\ \ \ \{inv\}$
+
+Abbiamo dimostrato la validità dell'invariante.
+Ora possiamo usare la regola dell'iterazione parziale:
+$\vdash_{_{ITER}}^{^{PART}} \{inv\}\ \ \ W\ \ \ \{inv \land k \geq p\}$
+
+
+
+**2. ASSEGNAMENTI INIZIALI**
+Dobbiamo ora dimostrare che l'invariante è valido dopo gli assegnamenti iniziali, cioè $?\ \ \ \{p \geq 0\}\ \ \ A\ \ \ \{inv\}$
+
+$\vdash_{_{ASS}} \{s=0^2\land 1 = 2*0 +1 \land 0 \leq p\}\ \ \ A\ \ \ \{inv\}$
+$\vdash \{s=0 \land p \geq 0\}\ \ \ A\ \ \ \{inv\}$
+
+Notiamo che $s=0 \land p \geq 0 \rightarrow p \geq 0$, per cui
+$\vdash_{_{IMPL}} \{p \geq 0\}\ \ \ A\ \ \ \{inv\}$
+
+
+
+**3. DIMOSTRAZIONE FINALE**
+Possiamo ora unire le due regole derivate con la regola della sequenza
+$\vdash_{_{SEQ}} \{p \geq 0\}\ \ \ P\ \ \ \{s=k^2 \land n=2k+1 \land k < p\land k \geq p\}$
+
+Notiamo che $k < p \land k \geq p \equiv  k = p$
+$\vdash \{p \geq 0\}\ \ \ P\ \ \ \{s=p^2 \land n = 2p +1 \land k = p\}$
+
+Osserviamo che $s = p^2 \land n = 2p +1 \land k = p \rightarrow s = p^2$
+$\vdash_{_{IMPL}} \{p \geq 0\}\ \ \ P\ \ \ \{s = p^2\}$
+
+Abbiamo terminato la dimostrazione parziale del programma $P$.
+
+
+
+**3. CORRETTEZZA TOTALE**
+Per dimostrare la correttezza totale del programma abbiamo bisogno di un *variante* $E$ tale per cui $inv \rightarrow E \geq 0$ e che diminuisca ad ogni iterazione.
+
+Notiamo che ad ogni iterazione $k$ viene incrementato di $1$; proviamo ad impostare $E = p-k$, notando che l'invariante impone $k \leq p$, per cui $inv \rightarrow E \geq 0$.
+
+Per verificare l'invariante dobbiamo dimostrare $?\ \ \ \{inv \land k < p \land E = c\}\ \ \ C\ \ \ \{inv \land E <c\}$
+
+$\vdash_{_{ASS}}\{s=(k+1)^2 \land n=2(k+1)+1 \land k+1 \leq p \land p-(k+1) < c\}\ \ \ C_3\ \ \ \{inv \land p-k < c\}$
+$\vdash_{_{ASS}} \{s = (k+1)^2 \land n+2 = 2(k+1)+1 \land k +1 \leq p \land p-(k+1) <c\}\ \ \ C_2\ \ \ \{pre\ C_3\}$
+$\vdash_{_{ASS}} \{s+n = (k+1)^2\land n+2 = 2(k+1)+1 \land k+1 \leq p \land p-(k+1) <c\}\ \ \ C_1\ \ \ \{pre\ C_2\}$
+
+$\vdash \{s = k^2 \land n = 2k +1 \land k+1 \leq p \land p-(k+1) <c\}\ \ \ C_1\ \ \ \{pre\ C_2\}$
+
+$\vdash \{inv \land k < p \land p-(k+1) < c\} \ \ \ C_1\ \ \ \{pre\ C_2\}$
+$\vdash_{_{SEQ}} \{inv \land k < p \land p-(k+1) < c\}\ \ \ C\ \ \ \{inv \land p-k < c\}$
+
+Notiamo che $p-k = c \rightarrow p-k-1 < c$, dunque
+$\vdash_{_{IMPL}} \{inv \land k <p \land p-k = c\}\ \ \ C\ \ \ \{inv \land p-k < c\}$
+
+Abbiamo dimostrato la validità del variante, possiamo ora usare la regola dell'iterazione completa:
+$\vdash_{_{ITER}}^{^{TOT}} \{inv\}\ \ \ W\ \ \ \{inv \land k \geq p\}$
+
+Dobbiamo poi dimostrare che l'invariante è valido dopo l'assegnamento iniziale, come fatto prima, e abbiamo terminato la dimostrazione.
