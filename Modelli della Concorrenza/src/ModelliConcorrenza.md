@@ -1391,3 +1391,1538 @@ Abbiamo dimostrato la validità del variante, possiamo ora usare la regola dell'
 $\vdash_{_{ITER}}^{^{TOT}} \{inv\}\ \ \ W\ \ \ \{inv \land k \geq p\}$
 
 Dobbiamo poi dimostrare che l'invariante è valido dopo l'assegnamento iniziale, come fatto prima, e abbiamo terminato la dimostrazione.
+
+<div style="page-break-after: always;"></div>
+
+# MODELLI DI SISTEMI CONCORRENTI
+
+Abbiamo visto come funzionano le triple di Hoare e come è possibile sfruttarle per calcolare la correttezza dei programmi sequenziali.
+Inoltre, scrivere $\{p\}\ \ \ S\ \ \{q\}$ equivale anche di specificare il significato del programma $S$. Questo tipo di ragionamento che permette di specificare $S$ o di avere delle tecniche per provare la correttezza di $S$ viene detto ***semantica assiomatica***, ovvero un modo per dare semantica, significato al programma $S$ attraverso gli assiomi della logica di Hoare.
+
+Nel caso della programmazione sequenziale esistono anche altri modi per dare una semantica; possiamo ad esempio vedere il programma $S$ come una funzione che trasforma i dati in input in dati in output $F_S: I \rightarrow O$; questa prende il nome di ***semantica denotazionale***. A tal proposito esiste anche il **lambda calcolo** che permette di associare delle funzioni ai programmi ed è quindi un calcolo che permette di combinare funzioni e che è stato studiato quali sono le funzioni computabili e quali sono incomputabili.
+
+Un altro modo ancora per dare una semantica ai programmi sequenziale è la ***semantica operazionale*** che consiste nel prendere una macchina astratta facendo vedere come simulare un programma su di esse *(ad esempio la macchina di Turing)*.
+
+
+
+**PROGRAMMI CONCORRENTI**
+Tutto ciò appena detto è valido per i programmi sequenziali, ma cosa succede nel caso dei programmi concorrenti?
+Ci sono alcune diversità: ad esempio, nel caso della programmazione sequenziale, è fondamentale che il programma termini, mentre nel caso della programmazione concorrente spesso è necessario che i programmi non termino e siano sempre attivi.
+
+Ci sono però anche altre esigenze. Facciamo un esempio:
+Supponiamo di avere due programmi con le relative triple di Hoare:
+$S_1:\ \ \ x=2\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{x=v\}\ \ \ S_1\ \ \ \{x=2\}$
+$S_2:\ \ \ x = 3\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{x=v\}\ \ \ S_1\ \ \ \{x=3\}$
+
+Notiamo che possiamo eseguire i due programmi in sequenza $S_1;S_2$; in questo caso avremo $\{x=v\}\ \ \ S_1;S_2\ \ \ \{x = 3\}$.
+
+Se prendiamo $S_1' : \{x=v\}\ \ \ x=1;x=x+1\ \ \ \{x=2\}$; notiamo che $S_1$ e $S_1'$ soddisfano la stessa specifica, quindi se sostituiamo $S_1'$ ad $S_1$ otterremmo la stessa tripla $\{x = v\}\ \ \ S_1';S_2\ \ \ \{x = 3\}$. Si parla di **composizionalità**; se sostituiamo un programma con uno che calcola la stessa funzione in una composizione di programmi, la composizione non cambia.
+
+
+
+Vediamo ora però cosa succede se anziché comporre i programmi in sequenza li componiamo in parallelo $S_1 | S_2$; avremo $\{x=v\}\ \ \ S_1|S_2\ \ \ \{x=2 \lor x = 3\}$. Già qui abbiamo del **non determinismo**.
+
+Cosa succede in questo caso se sostituiamo $S_1'$ ad $S_1$?
+$\{x=v\}\ \ \ S_1'|S_2\ \ \ \{x=2\lor x=3 \lor x=4\}$ perché potrei ad esempio eseguire prima $x=1$, poi $x=3$ e infine $x= x+1$. Abbiamo quindi **perso** la composizionalità in questo caso. 
+
+<div style="page-break-after: always;"></div>
+
+## CALCULUS COMMUNICATING SYSTEMS
+
+Abbiamo visto i problemi riscontrati nel passaggio da programmi concorrenti a programmi sequenziali; due ricercatori stavano lavorando su questi problemi, ovvero **R. Milner** e **C.A.R. Hoare**.
+In questo periodo *(anni '70 - '80)* Milner introduce il **Calculus Communicating Systems *(CCS)*** mentre Hoare introduce i **Comunicating Sequential Processes *(CSP)***.
+
+Il CSP è un nucleo di linguaggi di programmazione pensato per la programmazione concorrente, mentre il CCS è un calcolo che vuole generalizzare il lambda calcolo al caso concorrente.
+L'idea sottostante è la stessa: un **sistema** è fatto di **processi** ciascuno con una memoria privata e un comportamento indipendente che interagiscono tra loro scambiandosi **messaggi** e con l'ambiente. Inoltre, se una variabile viene condivisa fra più processi, diventa essa stessa un processo.
+La sincronizzazione avviene a due a due: un processo esegue l'azione $a$ e un altro esegue la coazione $\overline{a}$.
+I sistemi di questo tipo vengono chiamati **sistemi reattivi** *(reagiscono all'ambiente)*.
+
+Milner cercò di reintrodurre la composizionalità definendo l'**equivalenza all'osservazione**: prima due programmi erano equivalenti se calcolavano la stessa funzione *(soddisfavano la stessa tripla di Hoare)*, ora due sistemi sono equivalenti quando, sostituendo un processo, né l'ambiente né gli altri processi si accorgono di tale sostituzione. Vedremo che a volte non basta nemmeno che due processi eseguano le stesse sequenze di operazioni per essere equivalenti all'osservazione.
+
+Noi vedremo la nozione di equivalenza all'osservazione che prende il nome di **bisimulazione** che è la più conosciuta e la più utilizzata, ma è anche molto restrittiva.
+
+
+
+### LABELLED TRANSITION SYSTEMS (LTS)
+
+Per dare la semantica del CCS ci sono vari modi; noi considereremo i **sistemi di transizione etichettati** che sono dei grafi di transizione dove i nodi rappresentano i processi che devono ancora essere eseguiti, la transizione rappresenta l'azione da eseguire *(con cui è anche etichettata)* e il nodo successivo rappresenta il nuovo processo da eseguire dopo l'esecuzione della transizione.
+
+Un altro modo per dare una semantica a questi sistemi sono le **strutture di Kripke** che sono sempre dei grafi dove però i nodi rappresentano gli stati e sono etichettati con le proprietà vere in quello stato mentre le transizioni fanno passare da uno stato all'altro *(li vedremo in seguito)*.
+
+Quindi un LTS non è altro che un automa a stati finiti ed è formato come segue:
+$LTS (S, Act, T, s_0)$ con
+
+- $S$: insieme di stati
+- $Act$: insieme di nomi di azioni elementari
+- $T = \{(s,a,s')\ |\ s,s' \in S,\ a \in Act\}$: insieme di transizioni
+  $T \subseteq S\times Act \times S$
+  In particolare, se $(s, a, s') \in T$, possiamo rappresentarlo come $s \to^as'$, oppure come due nodi $s$ ed $s'$ collegati da un arco etichettato con $a$.
+- $s_0$: stato iniziale *(non sempre presente)*
+
+<div style="page-break-after: always;"></div>
+
+Possiamo estendere le transizioni $s \to^a s'$ alle sequenze $w \in Act^*$:
+$s \to^w s'$ se e solo se:
+
+- se $|w| = 0$, ovvero se $w = \epsilon$ e in questo caso specifico $s = s'$
+- se  $|w| > 0$, possiamo scomporre $w$ in $a$ concatenato a $x$ $w = a \sdot x$ con $a \in Act$ e $x \in Act^*$
+  Inoltre se $s \to^a s_1 \to^xs'$, allora $s \to^{ax}s'$.
+
+
+
+#### NOTAZIONI
+
+- **RIPASSO CLASSI DI EQUIVALENZA**
+
+  Diciamo $R \subseteq X \times X$          $R$ relazione binaria su $X$
+  $R$ è riflessiva          $\forall x \in X\ :\ x\ R\ x$
+  $R$ è simmetrica          $\forall x,y \in X$   se $x\ R\ y$, allora $y\ R\ x$
+  $R$ è transitiva          $\forall x,y,z \in X$ se $x\ R\ y$ e $y\ R\ z$ allora $x\ R\ z$
+
+  Se $R$ è riflessiva, simmetrica e transitiva allora $R$ è una **relazione d'equivalenza**.
+  Questo significa che prendendo un elemento di $X$ possiamo costruire la sua classe di equivalenza $[x] = \{y \in X\ |\ x\ R\ y\}$.
+  Il concetto fondamentale è che se $R$ è una relazione di equivalenza, allora l'insieme $X$ viene ripartito in classi di equivalenza **disgiunte**.
+
+  Se prendiamo $[x_1]$ e $[x_2]$ due classi di equivalenza degli elementi $x_1$ e $x_2$ con $x_1 \neq x_2$, avremmo due possibili casi:
+
+  1. $[x_1] = [x_2]$ cioè $x_1$ e $x_2$ sono due rappresentanti diversi della stessa classe
+  2. $[x_1] \cap [x_2] = \empty$ e quindi sono classi diverse
+
+  Inoltre $\bigcup\limits_{x \in X}[x] = X$
+
+- **RIPASSO RELAZIONI**
+  Prendiamo $R,\ R',\ R'' \sube X \times X$
+  Diremo che $R'$ è la ***chiusura*** ***riflessiva***/***simmetrica***/***transitiva*** di $R$ sse $R \sube R'$, ovvero $R'$ è la più piccola relazione che contiene $R$ tale che $R'$ è ***riflessiva***/***simmetrica***/***transitiva***.
+
+- Useremo $s \to s'$ se $\exists \ a \in Act : s\to^as'$			$\to\ = \bigcup\limits_{a\in Act} \to^a$ e $\to \subseteq S \times S$
+- Useremo $s \to^* s'$ se $\exists\ w \in Act^* : s\to^w s'$			$\to^*\ =\ \bigcup\limits_{w \in Act^*} \to^w$ e $\to^* \subseteq S \times S$
+  $\to^*$ è la chiusura transitiva riflessiva di $\to$
+
+<div style="page-break-after: always;"></div>
+
+#### CCS PURO
+
+Diamo ora qualche definizione dei termini del sistema di transizione.
+
+- $K$ insieme di nomi di processi *(es. Buffer, Sender, p, q)*
+- $A$ insieme di nomi di azioni
+- $\overline{A}$ insieme di nomi di coazione          $\forall\ a \in A\ \ \ \exists\ \overline a \in \overline A$          $\overline{\overline a} = a\ \ \ \forall\ a \in A$
+- $Act = A \cup \overline A \cup \{\mathcal T\}$          $\mathcal T \notin A\ \ \ \ \ \ \ \ \mathcal T \notin \overline A$
+  Diremo che $A$ e $\overline A$ sono le **azioni osservabili**, ovvero sono sincronizzazioni con l'ambiente del processo considerato, mentre $\mathcal T$ sono il risultato di una sincronizzazione e quindi sono **azioni non osservabili** o ***sincronizzazioni interne*** *(è l'ambiente che osserva)*.
+
+Possiamo quindi dire che un processo CCS è un'espressione che utilizza i simboli di azione e che è composta con gli operatori del CCS.
+Un sistema CCS è un insieme di processi $p \in K$.
+
+Avremo quindi $p = $ espressione CCS.
+Avendo un insieme di processi, avremo un sistema di equazioni CCS.
+
+
+
+##### OPERATORI CCS
+
+- $Nil \in P_{_{CSS}}$ è il processo che non fa niente e viene rappresentato come uno stato $Nil$ che non ha transizioni uscenti.
+
+- Operatore *prefisso*: se $p\in P_{_{CCS}}$ e $\alpha \in Act$, allora $\alpha \sdot p \in P_{_{CCS}}$
+  Praticamente il processo $\alpha \sdot p$ può eseguire $\alpha$ e dopo si comporterà come $p$.
+
+  Regola di inferenza: $\frac{}{\alpha\sdot p \rightarrow^{\alpha} p}$
+
+- Operatore *selezione*: se $p_1,\ p_2 \in P_{_{CCS}}$ allora $p_1 + p_2$ è il processo che si comporta o come $p_1$ o come $p_2$.
+
+  Regola di inferenza: $\frac{p_1 \rightarrow^{\alpha} p_1'}{p1+p2 \ \rightarrow^{\alpha}\ p_1'}$	$\lor$	$\frac{p_2 \rightarrow^{\beta}p_2'}{p1+p2 \ \rightarrow^{\beta}\ p_2'}$
+
+- Operatore *composizione parallela*: se $p_1,\ p_2 \in P_{CCS}$ allora $p_1\ |\ p_2 \in P_{CCS}$.
+
+  Regola di inferenza: $\frac{p_1 \rightarrow^{\alpha} p_1'}{p1\ |\ p2 \rightarrow^{\alpha} p_1'}$		$\frac{p_2 \rightarrow^{\beta} p_2'}{p1\ |\ p2 \rightarrow^{\beta} p_2'}$		$\frac{p_1 \rightarrow^{\alpha} p_1' \land p_2 \rightarrow^{\overline{\alpha}} p_2'}{p1\ |\ p2 \rightarrow^{\mathcal T} p_1'\ |\ p_2'}$
+  Quindi può andare avanti un processo piuttosto che un altro oppure può esserci una sincronizzazione interna tra i processi in parallelo.
+
+- Operatore *restrizione*: se $L \sube A$ e $p \in P_{CCS}$ allora $P \smallsetminus L$ è il processo che non può eseguire le azioni dell'insieme $L \cup \overline L$ se non quando sono delle sincronizzazioni. Ovvero ci dice che le azioni $L$ sono locali e quindi il sistema non interagisce con l'ambiente con le azioni di $L$.
+
+  Senza la restrizione un processo potrebbe eseguire prima l'azione e poi la coazione o viceversa.
+
+  Regola di inferenza: $\frac{p \rightarrow^{\alpha} p'\ \land\ \alpha, \overline \alpha \notin L}{p\smallsetminus L \rightarrow^ \alpha p' \smallsetminus L}$
+
+- Operatore *rietichettatura*: abbiamo una funzione $f: Act \to Act$ tale che $f(\mathcal T) \to \mathcal T$ e $f(\overline a) \to \overline{f(a)}$
+  Ovvero la funzione non può rinominare le $\mathcal T$ e deve mantenere la relazione che c'è tra azioni e coazioni.
+
+  Regola di inferenza: $\frac{p \to^{\alpha}p'}{p[f] \to^{f(\alpha)} p'[f]}$
+
+  
+
+Gli operatori CCS rispettano la seguente precedenza: $\smallsetminus L,\ [f],\ \alpha \sdot p,\ |,\ +$
+
+**ESEMPIO CCS**
+$S = (P_1\ |\ B_1\ |\ C_1) \smallsetminus \{deposita,\ estrae\}$				e quindi
+$K = \{S,\ P_1,\ B_1,\ C_1,\ P_2,\ B_2,\ C_2\}$
+$A = \{deposita,\ estrae,\ produce,\ consuma\}$
+$\overline A = \{\overline{deposita},\ \overline{estrae},\ \overline{produce},\ \overline{consuma}\}$
+
+$\smallsetminus$ forza i processi $P_1$, $B_1$ e $C_1$ a sincronizzarsi internamente con le azioni dopo il simbolo, evitando quindi che quelle azioni si sincronizzino con l'ambiente.
+
+$P_1 = produce \sdot P_2$
+$P_2 = \overline{deposita} \sdot P_1$
+$B_1 = deposita \sdot B_2$			*sincronizzazione su deposita*
+$B_2 = \overline{estrae} \sdot B_1$
+$C_1 = estrae \sdot C_2$
+$C_2 = consuma \sdot C_1$
+
+Abbiamo un sistema formato dalla composizione parallela di un processo produttore, un buffer e un consumatore. Vogliamo che questi processi interagiscano tra loro e che l'operazione di deposito nel buffer del produttore e quella di estrazione del consumatore dal buffer siano azioni interne al sistema *(il produttore non può depositare da un'altra parte e il consumatore non può consumare da un'altra parte)*.
+
+Il sistema di transizioni associato a tale sistema è il seguente
+
+```mermaid
+graph RL
+    A("P1 | B1 | C1") -->|produce| B("P2 | B1 | C1")
+    B -->|"tau (deposita)"| C("P1 | B2 | C1")
+    C -->|"tau (estrae)"| D("P1 | B1 | C2")
+    D -->|"consuma"| A
+    D -->|"produce"| Y
+    C -->|"produce"| Z("P2 | B2 | C1")
+    Z -->|"tau (estrae)"| Y("P2 | B1 | C2")
+    Y -->|"consuma"| B
+    Y -->|"tau (deposita)"| 1("P1 | B2 | C2")
+    1 -->|"produce"| 2("P2 | B2 | C2")
+    1 -->|"consuma"| C
+    2 -->|"consuma"| Z
+    
+```
+
+Notiamo che la modellazione del sistema CCS viene fatta in maniera *sequenziale non deterministica*; cioè è come se ci fosse un unico processore che, in presenza di due processi paralleli indipendenti esegue prima uno e poi l'altro in ordine casuale.
+
+<div style="page-break-after: always;"></div>
+
+**NOTA**: le azioni/coazioni potevano solamente sincronizzarsi a causa della restrizione. Consideriamo il processo $P = b \sdot Nil\ |\ \overline{b} \sdot Nil$: il suo LTS è
+
+```mermaid
+graph TD
+a("b⋅Nil | co_b⋅Nil") -->|"b"| b("Nil | co_b⋅Nil")
+a -->|"co_b⋅Nil"| c("b⋅Nil | Nil")
+a -->|"tau (b)"| d("Nil")
+b -->|"co_b"| d
+c -->|"b"| d
+```
+
+Questo accade perché senza la restrizione il processo $P$ è libero di eseguire le azioni $b$ e $\overline b$ con chiunque, anche con l'ambiente. Se immaginiamo l'azione $b$ come la lettura da un buffer, applicare una restrizione su tale azione significa "forzare" il sistema a leggere **solo** dal buffer interno al sistema stesso e quindi a fare una sincronizzazione interna.
+
+Non applicare alcuna restrizione invece lascia la scelta del buffer libera al sistema che di conseguenza può leggere dal suo buffer interno *(ed eseguire una sincronizzazione interna tau)* ma può anche leggere da un buffer dell'ambiente eseguendo, in ordine casuale, azione e coazione. Qui è ancora più chiara la modellazione sequenziale non deterministica. Vedremo esempi di vera concorrenza più avanti con le reti di Petri.
+
+<div style="page-break-after: always;"></div>
+
+### SPECIFICHE E IMPLEMENTAZIONI
+
+Col CCS possiamo anche fornire delle specifiche e delle implementazioni, ma vogliamo vedere come è possibile stabilire se una certa implementazione rispetta una specifica $S$.
+
+Supponiamo $S = lez \sdot S$
+Una possibile implementazione è il processo $Lucia\ Pomello$ che fa una lezione, mette una monetina nella macchinetta del caffè e si prende un caffè per poi ricominciare.
+$LP = lez \sdot \overline{coin} \sdot \text{caffe} \sdot LP$
+
+Possiamo vedere ora una possibile implementazione di $S$ come $(LP\ |\ M) \smallsetminus \{coin, \text{caffe}\}$ dove $M$ è la macchinetta del caffè.
+
+Vediamo anche come è fatta la macchinetta:
+$M = coin \sdot \overline{\text{caffe}} \sdot M$
+
+Vediamo ora il LTS della specifica:
+
+```mermaid
+graph TD
+S(S) -->|"lez"| S(S)
+```
+
+In questo caso  il sistema eroga in continuazione lezioni con l'ambiente.
+
+E il LTS della specifica:
+
+```mermaid
+graph LR
+LPM("LP | M") -->|"lez"| ccLPM("co_coin⋅caffe⋅LP | M")
+ccLPM -->|"tau (coin)"| cLPcM("caffe⋅LP | co_caffe ⋅ M")
+cLPcM -->|"tau (caffe)"| LPM
+```
+
+Notiamo che viene erogata la lezione con l'ambiente e poi succede *qualcosa* che l'ambiente però non vede; è come se gli studenti non vedessero la professoressa che prende il caffè ma solo il continuo flusso di lezioni.
+
+
+
+#### EQUIVALENZA RISPETTO ALLE TRACCE
+
+Abbiamo bisogno di una nozione che ci permetta di dire se l'implementazione soddisfa la specifica o meno o se due implementazioni soddisfano la stessa specifica.
+Abbiamo bisogno di una **relazione di equivalenza** su $P_{CCS}$ che astragga dagli stati, ovvero che consideri solo le azioni. In particolare vorremmo che questa relazione consideri solo le azioni col sistema ed astragga quindi dalle tau $\mathcal T$. Vogliamo inoltre astrarre dal non determinismo.
+
+Vogliamo quindi che la nostra relazione sia:
+
+- D'equivalenza
+- Astragga dagli stati
+- Astragga dalle tau $\mathcal T$
+- Astragga dal non determinismo
+
+<div style="page-break-after: always;"></div>
+
+Una relazione $R \sube P_{CCS} \times P_{CCS}$ di equivalenza è una **congruenza** sse $\forall\ p,q \in P_{CCS} \land \forall\ C[\sdot]$ se $p\ R\ q$ allora $C[p]\ R\ C[q]$.
+
+Con $C[\sdot]$ contesto CCS, ovvero un processo in cui c'è una sorta di *variabile*.
+Ad esempio $(LP\ |\ \sdot) \smallsetminus \{coin,\ \text{caffe}\}$ è un contesto.
+
+La prima idea di una relazione di questo tipo è andare a osservare i LTS dei due sistemi indagati e osservare se siano o meno isomorfi. Questa però è una restrizione troppo forte.
+
+Un altro modo è osservare che vengano eseguite le stesse sequenze di interazione con l'ambiente. Questa nozione viene detta ***equivalenza rispetto alle tracce*** ed è definita come:
+$p \in P_{CCS}$	$Tracce(p) = \{w \in Act^*\ |\ \exists\ p' \in P_{CCS} \land p \to^w p'\}$
+
+Diremo quindi che $p_1$ è equivalente rispetto alle tracce a $p_2$, scritto come $p_1 \sim^T p_2$ sse $Tracce(p_1) = Tracce(p_2)$.
+
+Consideriamo ora il sistema $(LP\ |\ M) \smallsetminus \{coin, \text{caffe}\}$
+
+Implementiamo $M$ con $M_1 = coin(\overline{\text{caffe}} \sdot M_1 + coin \sdot \overline{tea} \sdot M_1)$
+Ovvero la macchinetta $M_1$ può erogare anche il tè, che però costa due monete.
+
+Prendiamo ora anche $M_2 = coin \sdot \overline{\text{caffe}} \sdot M_2 + coin \sdot coin \sdot \overline{tea} \sdot M_2$
+
+Ci domandiamo ora se $M_1 \sim^T\ ?\ M_2$
+
+```mermaid
+graph LR
+M1("M1") -->|"coin"| cm+ctm("co_caffe⋅M1 + coin⋅co_tea⋅M1")
+cm+ctm -->|"coin"| tm("co_tea⋅M1")
+cm+ctm -->|"co_caffe"| M1
+tm -->|"co_tea"| M1
+```
+
+```mermaid
+graph LR
+M2("M2") -->|"coin"| cm2("co_caffe⋅M2")
+M2 -->|"coin"| ctm("coin⋅co_tea⋅M2")
+cm2 -->|"co_caffe"| M2
+ctm -->|"coin"| tm("co_tea⋅M2")
+tm -->|"co_tea"| M2
+```
+
+Calcoliamo quindi le tracce della due macchinette:
+$Tracce(M_1)$ = $\{\epsilon,\ coin,\ coin \sdot \overline{\text{caffe}},\ coin \sdot coin,\ coin⋅coin⋅\overline{tea}\}$
+$Tracce(M_2) = \{\epsilon,\ coin,\ coin⋅\overline{\text{caffe}},\ coin⋅coin,\ coin⋅coin⋅\overline{tea}\}$
+
+Osserviamo che le due macchinette sono equivalenti rispetto alle tracce, ovvero $M_1 \sim^T M_2$.
+
+Notiamo però che se vogliamo il caffè con la macchinetta $M_1$ possiamo sempre farlo avendo una scelta, con la macchinetta $M_2$ invece c'è un non determinismo che non dipende da noi e quindi, se vogliamo il caffè, il sistema potrebbe andare in deadlock scegliendo lo stato relativo al tè. Quindi l'equivalenza rispetto alle tracce non è un equivalenza all'osservazione.
+
+#### BISIMULAZIONE FORTE
+
+Una delle equivalenze all'osservazione è la bisimulazione, che implica che due processi equivalenti devono *simularsi* a vicenda. Formalmente:
+$R \sube P_{CCS} \times P_{CCS}$ è una **bisimulazione *forte*** se $\forall p, q \in P_{CCS}\ :\ p\ R\ q$ vale che:
+
+- $\forall \alpha \in Act$ se $p \to^{\alpha} p'$ allora $\exists q' \in P_{CCS}\ :\ q \to^{\alpha} q' \land p'\ R\ q'$
+  Cioè se possiamo fare un'azione in un processo, dobbiamo poterla fare anche nell'altro, ottenendo sempre una coppia di processi bisimili.
+- $\forall \alpha \in Act$ se $q \to^{\alpha} q'$ allora $\exists p' \in P_{CCS}\ :\ p \to^{\alpha} p' \land p'\ R\ q'$
+
+Quindi due processi $p$ e $q$ sono fortemente bisimili $p \sim^{BIS} q$ sse $\exists R \sube P_{CCS} \times P_{CCS}$ che è una bisimulazione forte tale per cui $p\ R\ q$ *(ne basta una, possono essercene di più)*.
+
+Notiamo che $p \sim^{BIS} q \implies p \sim^{T} q$, ma non vale il viceversa.
+
+La bisimulazione forte è una **congruenza rispetto a tutti gli operatori CCS**, questo significa che, avendo $p, q \in P_{CCS}$ con $p \sim^{BIS} q$, allora $\forall \alpha \in Act \land \forall r \in P_{CCS}$
+
+- $\alpha \sdot p \sim^{BIS} \alpha \sdot q$
+- $p+r \sim^{BIS} q+r \land r+p \sim^{BIS} r+q$
+- $p\ |\ r \sim^{BIS} q\ |\ r \land r\ |\ p\ \sim^{BIS} r\ |\ q$
+- $p[f] \sim^{BIS} q[f]$ $\forall f  : Act \to Act $
+- $p \smallsetminus L \sim^{BIS} q \smallsetminus L$
+
+
+
+Possiamo anche dire che $p + Nil \sim^{BIS} p$ e che $p\ |\ Nil \sim^{BIS} p$.
+
+Queste regole ci garantiscono sostituendo un processo da un sistema complesso con uno bisimile, il sistema di partenza rimane bisimile al sistema modificato.
+
+<div style="page-break-after: always;"></div>
+
+##### ESEMPI
+
+Consideriamo i processi $P_1 = a \sdot b \sdot Nil + a \sdot c \sdot Nil$ e $P_2 = a \sdot (b \sdot Nil + c \sdot Nil)$.
+Costruiamo i loro LTS.
+
+```mermaid
+graph LR
+P1("P1") -->|"a"| bn("b⋅Nil")
+bn -->|"b"| Nil("Nil")
+P1 -->|"a"| cn("c⋅Nil")
+cn -->|"c"| Nil
+
+P2("P2") -->|"a"| bn+cn("b⋅Nil + c⋅Nil")
+bn+cn -->|"b"| n("Nil")
+bn+cn -->|"c"| n
+```
+
+Osserviamo subito che i due processi sono equivalenti rispetto alle tracce, difatti
+$Tracce(P_1) = \{\epsilon,\ a,\ a\sdot b,\ a \sdot c\}$
+$Tracce(P_2) = \{\epsilon,\ a,\ a \sdot b,\ a \sdot c\}$
+
+Vediamo se i due processi sono anche bisimili:
+Da $P_1$ possiamo fare $a$ e possiamo farlo anche da $P_2$; dobbiamo però chiederci se gli stati di arrivo sono in relazione di bisimulazione.
+Gli stati interessati sono $b \sdot Nil$ e $b \sdot Nil + c \sdot Nil$: dal primo possiamo fare $b$, che è fattibile anche dal secondo, ma dal secondo possiamo fare $c$, che non è fattibile dal primo  *(la bisimulazione richiede che entrambi gli stati siano simili tra loro)*, dunque i due processi ***non*** sono bisimili. Discorso analogo valeva se avessimo scelto come primo stato $c \sdot Nil$ che non può eseguire $b$.
+
+Formalmente:
+$p_1 \to^a b \sdot Nil$
+$p_2 \to^a b\sdot Nil + c \sdot Nil$
+
+E $b\sdot Nil \nsim^{BIS} b \sdot Nil + c \sdot Nil$
+
+Notiamo che vale anche $b\sdot Nil \nsim^{T} b \sdot Nil + c \sdot Nil$
+
+<div style="page-break-after: always;"></div>
+
+$P_1 = a \sdot b \sdot Nil + a \sdot Nil$						$P_2 = a \sdot b \sdot Nil$
+
+```mermaid
+graph LR
+P1("P1") -->|"a"| bn("b⋅Nil") -->|"b"| Nil("Nil")
+P1 -->|"a"| Nil
+
+P2("P2") -->|"a"| bn2("b⋅Nil") -->|"b"| n("Nil")
+```
+
+Anche questi due processi sono equivalenti rispetto alle tracce, difatti
+$Tracce(P_1) = \{\epsilon,\ a,\ a \sdot b\}$
+$Tracce(P_2) = \{\epsilon,\ a,\ a \sdot b\}$
+
+Tuttavia non sono bisimili, poiché $P_1$ può eseguire $a$ arrivando nello stato $Nil$ che non può più eseguire alcuna azione, che non è bisimile allo stato $b \sdot Nil$ nel quale arriva $P_2$ dopo aver eseguito $a$ poiché da quello stato si può eseguire $b$.
+
+
+
+
+
+
+
+
+
+
+$P_1 = a \sdot b \sdot P_1' + a \sdot P_1'$						$P_1' = b \sdot P_1'$
+$P_2 = a \sdot P_2'$												$P_2' = b \sdot P_2'$
+
+```mermaid
+graph LR
+P1("P1") -->|"a"| bp'("b⋅P1'") -->|"b"| P1'("P1'") -->|"b"| P1'
+P1 -->|"a"| P1'
+
+P2("P2") -->|"a"| P2'("P2'") -->|"b"| P2'
+```
+
+Notiamo che i due processi sono equivalenti rispetto alle tracce, entrambi possono fare $ab^*$.
+Si tratta inoltre di due processi bisimili:
+Lo stato $P_1$ è bisimile allo stato $P_2$, mentre gli stati $b \sdot P_1'$ e $P_1'$ sono entrambi bisimili allo stato $P_2'$ poiché tutti e tre possono eseguire un numero arbitrario di volte $b$.
+
+**NOTA**: osserviamo che nel processo $P_1$ abbiamo del non determinismo, mentre in $P_2$ no.
+
+
+
+
+$P_1 = a \sdot b \sdot Nil$						$P_2 = a \sdot \mathcal T \sdot b \sdot Nil$
+
+```mermaid
+graph LR
+P1("P1") -->|"a"| bn("b⋅Nil") -->|"b"| Nil("Nil")
+P2("P2") -->|"a"| tbn("tau⋅b⋅Nil") -->|"tau"| bn2("b⋅Nil") -->|"b"| n("Nil")
+```
+
+Osserviamo che questi due processi non sono nemmeno equivalenti rispetto alle tracce e quindi non sono nemmeno bisimili. Noi però vorremmo astrarre rispetto alle $\mathcal T$ e considerare solo le interazioni con l'ambiente indipendentemente dalle sincronizzazioni tra le componenti interne del sistema; non ci interessa com'è implementato il sistema, ma come esso interagisce col sistema.
+
+Questo esempio ci mostra come questa relazione sia troppo forte.
+
+
+
+
+
+Un buffer a capacità uno è fatto in questo modo:
+$B^1_0 = in \sdot B^1_1$						$B_1^1 = \overline{out} \sdot B_0^1$
+
+Quindi un buffer a capacità due sarà fatto come segue:
+$B_0^2 = in \sdot B_1^2$						$B_1^2 = \overline{out} \sdot B_0^2 + in \sdot B_2^2$						$B_2^2 = \overline{out} \sdot B_1^2$
+
+```mermaid
+graph LR
+B02("B₀²") -->|"in"| B12("B₁²") -->|"in"| B22("B₂²")
+B12 -->|"out"| B02
+B22 -->|"out"| B12
+```
+
+
+
+Implementiamo ora il buffer a capacità 2 usando due buffer a capacità uno in parallelo:
+$B_0^1\ |\ B_0^1$
+
+```mermaid
+graph LR
+B01B01("B₀¹ | B₀¹") -->|"in"| B11B01("B₁¹ | B₀¹") & B01B11("B₀¹ | B₁¹") -->|"out"| B01B01
+B11B01 -->|"in"| B11B11("B₁¹ | B₁¹")
+B01B11 -->|"in"| B11B11
+B11B11 -->|"out"| B11B01 & B01B11
+```
+
+Notiamo che gli stati $B_0^2$ e $B_0^1\ |\ B_0^1$ sono bisimili. Lo sono anche $B_1^2$ con $B_1^1\ |\ B_0^1$ e $B_0^1\ |\ B_1^1$. Infine, anche gli stati $B_2^2$ e $B_1^1\ |\ B_1^1$ sono bisimili.
+I due processi sono quindi bisimili.
+
+#### BISIMULAZIONE DEBOLE
+
+Consideriamo i processi $p_1 = a \sdot b \sdot Nil$ e $p_2 = a \sdot \mathcal T \sdot b \sdot Nil$
+
+```mermaid
+graph LR
+p1("P1") -->|"a"| b("b⋅Nil") -->|"b"| n("Nil")
+p2("P2") -->|"a"| tbn("tau⋅b⋅Nil") -->|"tau"| bn("b⋅Nil") -->|"b"| nil("Nil")
+```
+
+Osserviamo subito che $p_1 \nsim^T p_2$, quindi a maggior ragione $p_1 \nsim^{BIS} p_2$.
+
+Notiamo però che nel momento in cui un osservatore esterno osserva il comportamento dei due processi, non percepisce la sincronizzazione interna, ma solo le azioni con l'ambiente. Abbiamo quindi bisogno di una transizione debole $\Rightarrow^{\alpha}$ con $\alpha \in Act$, generalizzata alle sequenze come $\Rightarrow^w$ con $w \in Act^*$ che astragga dalle sincronizzazioni interne.
+Con questa transizione possiamo dire che i due processi sono equivalenti rispetto alle tracce debolmente $p_1 \approx^T p_2$.
+
+Con tale transizione debole potremmo anche definire la ***bisimulazione debole*** e dire che $p_1 \approx^{BIS} p_2$.
+
+
+
+##### TRANSIZIONE DEBOLE
+
+Siano $p,\ p' \in P_{CCS}$ e $\alpha \in Act = A \cup \overline A \cup \{\mathcal T\}$
+$p \approx^T p'$ sse
+
+- $p \to^{\mathcal T^*} \to^\alpha \to^{\mathcal T^*} p'$   se   $\alpha \neq \mathcal T$
+
+  Ovvero se $\alpha$ è un'azione diversa da una sincronizzazione interna, $p$ può eseguire un numero arbitrario di sincronizzazioni interne dopo le quali deve eseguire l'azione $\alpha$ e infine può ancora eseguire un numero arbitrario di sincronizzazioni interne e arrivare in $p'$.
+  
+- $p \to^{\mathcal T ^*} p'$   se   $\alpha = \mathcal T$
+
+  Ovvero se $\alpha$ è una sincronizzazione interna, $p$ può eseguire un numero arbitrario di sincronizzazioni interne per arrivare in $p'$, anche zero.
+
+<div style="page-break-after: always;"></div>
+
+Vediamo un esempio:
+$p_1 = a\sdot (b\sdot Nil + c \sdot Nil)$			$u_1 = a \sdot (\mathcal T \sdot b \sdot Nil + \mathcal T \sdot c \sdot Nil)$
+
+```mermaid
+graph LR
+p1("P1") -->|"a"| p2("P2") -->|"b"| n("Nil")
+p2 -->|"c"| n
+
+u1("U1") -->|"a"| u2("U2") -->|"tau"| u3("U3") -->|"b"| nil("Nil")
+u2 -->|"tau"| u4("U4") -->|"c"| nil
+```
+
+Notiamo che $p _1\nsim^T u_1$, quindi anche $p_1 \nsim^{BIS} u_1$.
+Dal punto delle tracce deboli però abbiamo che $p_1 \approx^T u_1$.
+
+Tuttavia, $p_1$ e $u_1$ hanno una '*diversa possibilità di generare deadlock*'. Se l'osservatore volesse fare $\overline a \sdot \overline b$, con $p_1$ può sempre farlo, mentre con $u_1$ può farlo solo se il processo sceglie la $\mathcal T$ verso $u_3$, mentre se sceglie quella verso $u_4$ si genera un deadlock. Vogliamo che la bisimulazione debole permetta di astrarre dalle $\mathcal T$, ma che continui a distinguere rispetto alla possibilità di generare deadlock.
+
+
+
+##### BISIMULAZIONE DEBOLE: DEFINIZIONE
+
+$R \sube P_{CCS} \times P_{CCS}$ è una bisimulazione debole sse
+$\forall p,\ q \in P_{CCS} : p\ R\ q$ vale che $\forall \alpha \in Act$
+
+- se $p \to^\alpha p_1$ allora esiste $q \approx^{\alpha} q_1$ tale che $p_1\ R\ q_1$
+
+  Ovvero se p può eseguire $\alpha$ fortemente, $q$ deve poter eseguire $\alpha$ debolmente.
+  
+- se $q \to^\alpha q_1$ allora esiste $p \approx^\alpha p_1$ tale che $p_1\ R\ q_1$
+
+  *(viceversa)*
+
+Anche in questo caso due processi sono debolmente bisimili $p \approx^{BIS} q$ se esiste una relazione *(ne basta una)* di bisimulazione debole tra loro $p\ R\ q$.
+
+<div style="page-break-after: always;"></div>
+
+##### PROPRIETÀ
+
+Prima di vedere le proprietà della bisimulazione debole, vediamo le proprietà di una relazione di equivalenza $\equiv$ tra processi
+
+Siano $p, q \in P_{CCS}$
+
+- se $LTS(p)$ è isomorfo a $LTS(q)$ allora $p \equiv q$
+- deve astrarre dagli stati *(considera solo le azioni)*
+- se $p \equiv q$ allora $Tracce(p) = Tracce(q)$
+- se $p \equiv q$ allora $p$ e $q$ devono avere la stessa possibilità di generare deadlock interagendo con l'ambiente
+- $\equiv$ deve essere una congruenza rispetto agli operatori CCS
+  Cioè deve essere possibile sostituire un sottoprocesso con un altro equivalente senza modificare il comportamento complessivo del sistema
+
+La prima equivalenza che abbiamo visto è l'equivalenza rispetto alle tracce forte; essa è una congruenza rispetto agli operatori ed astrae dagli stati, ma non garantisce la preservazione della possibilità di generare deadlock.
+
+Abbiamo poi visto la bisimulazione forte che permette di preservare la possibilità di generare deadlock, ma è una relazione troppo forte che non astrae dalle sincronizzazioni interne.
+
+Abbiamo introdotto anche le tracce deboli, da cui è possibile ottenere un'equivalenza rispetto alle tracce debole che astrae dagli stati, è una congruenza ma non riesce a preservare la stessa probabilità di deadlock.
+
+Siamo infine arrivati alla bisimulazione debole.
+
+
+
+###### BISIMULAZIONE DEBOLE
+
+La bisimulazione debole è un'equivalenza e preserva la possibilità di generare deadlock e astrae dalle azioni inosservabili, ma astrae anche dai **cicli inosservabili** *(cicli di tau)*, ovvero astrae dalla divergenza.
+Ad esempio i processi $Nil$ e $p = \mathcal T \sdot p$ sono bisimili debolmente.
+
+Questo a volte può essere un problema, ad esempio se prendiamo i processi $q = a \sdot b \sdot Nil$ e $s = a \sdot v$ con $v = \mathcal T \sdot v + b \sdot Nil$
+
+```mermaid
+graph LR
+q("q") -->|"a"| q2("b⋅Nil") -->|"b"| qn("Nil")
+
+s("s") -->|"a"| v("v") -->|"tau"| v
+v -->|"b"| sn("Nil")
+```
+
+I due processi risultano debolmente bisimili, tuttavia osserviamo che $s$  può eseguire un ciclo di sincronizzazioni interne anche potenzialmente infinito.
+
+
+
+Se prendiamo invece $r = a \sdot (\mathcal T \sdot p + b \sdot Nil)$ con $p = \mathcal T \sdot p$
+
+```mermaid
+graph LR
+r("r") -->|"a"| v("tau⋅p + b⋅Nil") -->|"tau"| p("p") -->|"tau"| p
+v -->|"b"| n("Nil")
+```
+
+Notiamo che $q \not\approx^{BIS} r$ e $s \not\approx^{BIS} r$ poiché se $r$ fa la $\mathcal T$ verso $p$ non potrà più eseguire $b$ a differenza di $q$ ed $s$.
+
+
+
+###### CONGRUENZA
+
+Ci domandiamo ora se la bisimulazione debole è una congruenza.
+Si può dimostrare che la bisimulazione debole è una congruenza rispetto alla concatenazione, all'esecuzione parallela, alla rietichettatura e alla restrizione.
+
+Tuttavia, sorgono dei problemi con l'operatore di scelta;
+$\mathcal T \sdot a \sdot Nil \approx^{BIS} a \sdot Nil$	ma	$\mathcal T \sdot a \sdot Nil + b\sdot Nil \not\approx^{BIS} a \sdot Nil + b \sdot Nil$
+
+```mermaid
+graph LR
+p("tau⋅a⋅Nil + b⋅Nil") -->|"tau"| p2("a⋅Nil") -->|"a"| pn("Nil")
+p -->|"b"| pn
+
+q("a⋅Nil + b⋅Nil") -->|"a"| qn("Nil")
+q -->|"b"| qn
+```
+
+Perché se il primo processo esegue la $\mathcal T$, non potrà più eseguire $b$ come il secondo.
+
+Quindi la bisimulazione debole **non** è una congruenza rispetto a tutti gli operatori CCS.
+Non è una congruenza nemmeno rispetto alla ricorsione, ma per ora ci concentriamo sulla scelta.
+
+Milner, osservando questo, cercò di introdurre una relazione di congruenza $\approx^C$ che fosse la più grande relazione contenuta nella bisimulazione debole. Vedremo dopo che questa relazione sarà definita per mezzo di alcuni assiomi che permetteranno di ottenere dei processi congruenti.
+
+<div style="page-break-after: always;"></div>
+
+##### GIOCO ATTACCANTE E DIFENSORE
+
+Possiamo confrontare due processi $p$ e $q$ usando un ***gioco*** $G(p, q)$ con due giocatori:
+
+- **Attaccante**: cerca di dimostrare $p \not\approx^{BIS} q$
+- **Difensore**: cerca di dimostrare $p \approx^{BIS} q$
+
+Il gioco ha **più partite**.
+Un partita di un gioco $G(p,q)$ è una sequenza finita o infinita di **configurazioni** $(p_0, q_0), (p_1, q_1)\ ...\ (p_i, q_i)$ con $(p, q) = (p_0, q_0)$. Una configurazione non è altro che una mossa eseguita su un processo che è poi eseguita anche sull'altro *(se possibile)*.
+
+In ogni ***mano*** si passa dalla configurazione corrente $(p_i, q_i)$ alla successiva $(p_{i+1}, q_{i+1})$ con le seguenti regole:
+
+- L'attaccante inizia e sceglie uno dei due processi della configurazione corrente $(p_i, q_i)$ e fa una mossa forte $\to^\alpha$ *(l'attaccante può scegliere un processo diverso ad ogni mano)*
+- Il difensore deve eseguire, sull'altro processo, la stessa mossa fatta dall'attaccante ma debole $\Rightarrow^\alpha$
+
+La coppia di processi così ottenuta $(p_{i+1}, q_{i+1})$ diventa la nuova configurazione.
+
+Se un giocatore non può muovere, l'altro vince. Se la partita è infinita vince il difensore.
+
+Diverse partite possono tuttavia concludersi con vincitori diversi:
+
+```mermaid
+graph LR
+p1("P1") -->|"a"| p2("P2") -->|"b"| n("Nil")
+p2 -->|"c"| n
+
+u1("U1") -->|"a"| u2("U2") -->|"tau"| u3("U3") -->|"b"| nil("Nil")
+u2 -->|"tau"| u4("U4") -->|"c"| nil
+```
+
+1. L'attaccante fa $p_1 \to^a p2$, il difensore risponde con $u_1 \Rightarrow^a u_2$.
+   L'attaccante fa $p_2 \to^b Nil$, il difensore risponde con $u_2 \Rightarrow^b Nil$ *(fa $tau \sdot b$)*
+   Il difensore vince.
+2. L'attaccante fa $p_1 \to^a p2$, il difensore risponde con $u_1 \Rightarrow^a u_2$.
+   L'attaccante fa $u_2 \to^{\mathcal T} u_3$, il difensore risponde con $p_2 \Rightarrow^{\mathcal T ^*} p_2$ *(sta fermo)*
+   L'attaccante fa $p_2 \to^c Nil$, il difensore non può rispondere.
+   L'attaccante vince.
+
+Tuttavia, per ogni gioco, solo uno dei de giocatori può vincere **ogni** partita usando una ***strategia vincente***, ovvero una sorta di insieme di regole che indicano di volta in volta la mossa da fare. Le regole dipendono dalla configurazione corrente.
+Diremo che $p_1 \not\approx^{BIS} u_1$ se l'attaccante ha una strategia vincente.
+Diremo che $p_1 \approx^{BIS} u_1$ se il difensore ha una strategia vincente.
+
+###### ESEMPI
+
+$r_1 = a\sdot (b\sdot Nil + \mathcal T \sdot c \sdot Nil)$			$k_1 = a \sdot (b \sdot Nil + \mathcal T \sdot c \sdot Nil)+ a \sdot c \sdot Nil$
+
+```mermaid
+graph LR
+r1("r1") -->|"a"| r2("r2") -->|"b"| rn("Nil")
+r2 -->|"tau"| r3("r3") -->|"c"| rn
+
+k1("k1") -->|"a"| k2("k2") -->|"b"| kn("Nil")
+k2 -->|"tau"| k3("k3") -->|"c"| kn
+k1 -->|"a"| k4("k4") -->|"c"| kn
+```
+
+Il difensore ha una strategia vincente, ma per dimostrarla dobbiamo far vedere che riesce ad applicarla per ogni mossa dell'attaccante.
+All'inizio l'attaccante può fare tre mosse:
+
+1. A $r_1 \to^a r2$
+   1. D $k_1 \Rightarrow^a k_2$
+      I sottoprocessi ottenuti sono isomorfi, quindi sicuramente bisimili e quindi il difensore vince.
+2. A $k_1 \to^a k_2$
+   1. D $r_1 \Rightarrow^a r_2$
+      Stesso caso di prima.
+3. A $k_1 \to^a k_4$
+   1. D $r_1 \Rightarrow^a r_3$
+      Troviamo ancora dei sottoprocessi isomorfi, quindi il difensore vince.
+
+Quindi $r_1 \approx^{BIS} k_1$
+
+<div style="page-break-after: always;"></div>
+
+$q_1 = a \sdot b \sdot Nil + a \sdot c \sdot Nil$			$u_1 = a \sdot (\mathcal T \sdot b \sdot Nil + \mathcal T \sdot c \sdot Nil)$
+
+```mermaid
+graph LR
+q1("q1") -->|"a"| q2("q2") & q3("q3")
+q2 -->|"b"| qn("Nil")
+q3 -->|"c"| qn
+
+u1("u1") -->|"a"| u2("u2") -->|"tau"| u3("u3") & u4("u4")
+u3 -->|"b"| un("Nil")
+u4 -->|"c"| un
+```
+
+L'attaccante ha una strategia vincente, ma per dimostrarla bisogna mostrare che è valida per ogni mossa del difensore.
+
+L'attaccante inizia con: A $u_1 \to^a u_2$
+Il difensore può fare:
+
+1. D $q_1 \Rightarrow^a q_2$
+   1. A $u_2 \to^{\mathcal T} u_4$          D $q_2 \Rightarrow^{\mathcal T^*} q_2$
+   2. A $u_4 \to^c Nil$          Il difensore non può rispondere.
+2. D $q_1 \Rightarrow^a q_3$
+   1. A $u_2 \to^{\mathcal T} u_3$          D $q_2 \Rightarrow^{\mathcal T^*} q_2$
+   2. A $u_3 \to^c Nil$          Il difensore non può rispondere.
+
+Quindi $q_1 \not\approx^{BIS} u_1$
+
+<div style="page-break-after: always;"></div>
+
+##### PROCESSI DETERMINISTICI ED EQUIVALENZE
+
+Un processo $p \in P_{CCS}$ è deterministico sse $\forall a \in Act$, se $p \to^a p' \land p\to^a p''$ allora $p' = p''$, cioè non può andare da uno stato ad altri stati diversi fra loro con la stessa azione.
+
+Se due processi $p$ e $q$ sono deterministici e $p \sim^T q$ *($p \approx^T q$)* allora $p\sim^{BIS} q$ *($p \approx^{BIS}$)*.
+
+
+
+$p = a \sdot b \sdot a \sdot b\sdot p$			$q = a \sdot b \sdot q$
+
+```mermaid
+graph LR
+P1("P1") -->|"a"| P2("P2") -->|"b"| P3("P3") -->|"a"| P4("P4") -->|"b"| P1
+Q1("Q1") -->|"a"| Q2("Q2") -->|"b"| Q1
+```
+
+Notiamo che i due processi sono deterministici e sono anche $p \sim^T q$ *(e quindi anche $p \approx^T q$)*, di conseguenza sono anche bisimili con relazione $R = \{(p_1, q_1),\ (p_3, q_1),\ (p_2, q_2),\ (p_4, q_2)\}$
+
+Se perdiamo il determinismo, l'equivalenza rispetto alle tracce non implica più la bisimulazione; osserviamo i processi $P = a\sdot \mathcal T \sdot b \sdot Nil$	e	$Q = a \sdot (\mathcal T \sdot b \sdot Nil + \mathcal T \sdot Nil)$
+
+```mermaid
+graph LR
+p("P1") -->|"a"| p2("P2") -->|"tau"| p3("P3") -->|"b"| pn("Nil")
+
+q("Q1") -->|"a"| q2("Q2") -->|"tau"| q3("Q3") -->|"b"| qn("Nil")
+q2 -->|"tau"| qn
+```
+
+Osserviamo che $Q$ non è deterministico, poiché da $Q_2$ può eseguire $\mathcal T$ si per andare in $Q_3$ che per andare in $Nil$.
+
+Notiamo che i due processi sono equivalenti rispetto alle tracce sia debolmente che fortemente *($p \sim^T q$ e $p \approx^T q$)*, ma non sono bisimili né debolmente né fortemente *(se il processo $q$ fa la $\mathcal T$ verso $Nil$ non può più eseguire $b$ a differenza di $p$)*.
+
+<div style="page-break-after: always;"></div>
+
+##### RELAZIONE DI CONGRUENZA ASSIOMATICA
+
+Per definire la relazione di congruenza costruita da Milner useremo un CCS puro, senza ricorsione e con un numero di agenti finiti *(ovvero con una scelta finita di passi successivi e quindi con LTS a stati finiti)*. La definizione di tale relazione sarà assiomatica, in particolare useremo degli assiomi come fossero delle regole di riscrittura per ottenere dei processi congruenti.
+
+L'insieme finito di Assiomi $Ax$ è:
+
+- $Ax$ **corretto** $Ax \vdash p = q \implies p \approx^C q$
+
+  Se deduciamo $p = q$ tramite gli assiomi, allora $p$ è congruente con $q$
+
+- $Ax$ **completo** $p \approx^C q \implies Ax \vdash p=q$
+
+  Se $p$ è congruente a $q$, dobbiamo essere in grado di trasformare $p$ in $q$ tramite gli assiomi
+
+
+
+**ASSIOMI**
+
+1. $p + (q + r) \approx^C (p+q) + r$			e			$p\ |\ (q\ |\ r) \approx^C (p\ |\ q)\ |\ r$
+
+   
+
+2. $p + q \approx^C q + p$			e			$p\ |\ q \approx^C q\ |\ p$
+
+   
+
+3. $p + p \approx^C p$			MA			$p\ |\ p \not\approx^C p$
+   Un processo che esegue $p + p$, ovvero può "scegliere" di eseguire $p$ o $p$ è congruente a $p$ stesso. Questo non vale però per l'esecuzione parallela.
+
+   
+
+4. $p + Nil \approx^C p$			e			$p\ |\ Nil \approx^C p$
+   Assorbimento di $Nil$; $p + Nil$ e $p\ |\ Nil$ sono congruenti a $p$ stesso poiché $Nil$ non fa nulla.
+
+   
+
+5. $p + \mathcal T \sdot p \approx^C \mathcal T \sdot p$
+   Se abbiamo delle $\mathcal T$ in testa, non possono essere assorbite.
+
+   
+
+6. $\mu \sdot \mathcal T \sdot p \approx^C \mu \sdot p$
+   Se le $\mathcal T$ sono in una sequenza, possono essere assorbite.
+
+   
+
+7. $\mu \sdot (p + \mathcal T \sdot q) \approx^C \mu \sdot (p + \mathcal T \sdot q) + \mu \sdot q$
+
+   
+
+8. Siano $p = \sum \alpha_i \sdot p_i$ e $q = \sum \beta_j \sdot q_j$ con $\alpha, \beta \in Act$
+
+   $p\ |\ q \approx^C \sum \alpha_i \sdot (p_i\ |\ q) + \sum \beta_j \sdot (p\ |\ q_j) + \sum_{\alpha_i = \beta_j} \mathcal T \sdot (p_i\ |\ q_j)$
+
+   Teorema di espansione di Milner
+
+   
+
+9. Sia $p = \sum \alpha_i \sdot p_i$
+   $p[f] \approx^C \sum f(\alpha_i) \sdot (p_i[f])$   $\forall f$ funzione di etichettatura
+
+   
+
+10. Sia $p = \sum \alpha_i \sdot p_i$
+    $p \smallsetminus L \approx^C \sum_{\alpha_i, \overline{\alpha_i} \notin L} \alpha_i \sdot (p_i \smallsetminus L)$   $\forall L \sube A$
+
+**ESEMPIO**
+$p = a \sdot c \sdot Nil\ |\ b \sdot Nil \approx^C\ ?$
+
+Applichiamo l'assioma 8:
+$a \sdot c \sdot Nil\ |\ b \sdot Nil \approx^C a \sdot (c \sdot Nil\ |\ b \sdot Nil) + b \sdot (a \sdot c \sdot Nil\ |\ Nil) \approx^C$
+$a \sdot(c \sdot (Nil\ |\ b\sdot Nil) + b \sdot (c \sdot Nil\ |\ Nil)) + b\sdot (a \sdot (c \sdot Nil\ | Nil)) \approx^C$
+$a \sdot (c \sdot b \sdot (Nil\ |\ Nil) + b \sdot c \sdot (Nil\ |\ Nil)) + b \sdot (a \sdot c \sdot (Nil\ |\ Nil))$
+
+Usiamo ora l'assioma 4
+$\approx^C a \sdot (c \sdot b \sdot Nil + b \sdot c \sdot Nil) + b \sdot (a \sdot c \sdot Nil)$
+
+Abbiamo così ottenuto un processo non solo bisimile, ma anche congruente a $p$.
+
+
+
+**ESEMPIO MUTUA ESCLUSIONE**
+$Spec = b_1 \sdot e_1 \sdot Spec + b_2 \sdot e_2 \sdot Spec$
+Solo un processo alla volta entra nella regione critica.
+
+Vogliamo implementare questa specifica con un semaforo $Sys = (A_1\ |\ S\ |\ A_2) \smallsetminus \{p, v\}$
+$S = p \sdot v \sdot S$			$A_1 = \overline p \sdot b_1 \sdot e_1 \sdot \overline v \sdot A_1$			$A_2 = \overline p \sdot b_2 \sdot e_2 \sdot \overline v \sdot A_2$
+
+```mermaid
+graph LR
+Spec("Spec") -->|"b1"| eS("e1⋅Spec") -->|"e1"| Spec
+Spec -->|"b2"| eS2("e2⋅Spec") -->|"e2"| Spec
+
+Sys("A1 | S | A2") -->|"tau (p)"| A1("b1⋅e1⋅co_v⋅A1 | v⋅S | A2")
+A1 -->|"b1"| evA1("e1⋅co_v⋅A1 | v⋅S | A2") -->|"e1"| vA1("co_v⋅A1 | v⋅S | A2") -->|"tau (v)"| Sys
+
+Sys -->|"tau (p)"| A2("A1 | v⋅S | b2⋅e2⋅co_v⋅A2") -->|"b2"| evA2("A1 | v⋅S | e2⋅co_v⋅A2") -->|"e2"| vA2("A1 | v⋅S | co_v⋅A2") -->|"tau (v)"| Sys
+```
+
+I processi $A_i$ si sincronizzano col semaforo $S$ per entrare ed uscire dalla regione critica.
+
+Ci chiediamo ora se $Spec \approx^{BIS}\ ?\  Sys$
+Notiamo che l'attaccante può fare $Sys \to^\mathcal T b_1 \sdot e_1 \sdot \overline v \sdot A_1\ |\ v \sdot S\ |\ A_2$, il difensore può rispondere solo con $Spec \Rightarrow^{\mathcal T^*} Spec$.
+
+A questo punto l'attaccante può fare $b_1 \sdot e_1 \sdot \overline v \sdot A_1\ |\ v \sdot S\ |\ A_2 \to^{b_1} e_1\sdot \overline v \sdot A_1\ |\ v \sdot S\ |\ A_2$ e il difensore non può più rispondere.
+
+<div style="page-break-after: always;"></div>
+
+##### AZIONI ATOMICHE
+
+Quando abbiamo definito le regole del CCS abbiamo assunto che tutte le azioni siano atomiche.
+
+Supponiamo di avere $p = a \sdot Nil\ |\ b \sdot Nil$   e   $q = a \sdot b \sdot Nil + b \sdot a \sdot Nil$
+
+```mermaid
+graph 
+p("P") -->|"a"| nb("Nil | b⋅Nil") -->|"b"| nn("Nil | Nil")
+p -->|"b"| na("a⋅Nil | Nil") -->|"a"| nn
+
+q("Q") -->|"a"| bn("b⋅Nil") -->|"b"| qn("Nil")
+q -->|"b"| an("a⋅Nil") -->|"a"| qn
+```
+
+Osserviamo subito che $p \sim^{BIS} q$, addirittura potremmo trascrivere l'uno nell'altro tramite gli assiomi.
+
+Supponiamo ora però che $a$ non sia un'azione atomica, ma che sia $a = a_1 \sdot a_2$
+
+```mermaid
+graph
+p("P") -->|"a1"| nb("a2⋅Nil | b⋅Nil") -->|"b"| a2n
+nb -->|"a2"| nbn("Nil | b⋅Nil") -->|"b"| nn
+p -->|"b"| na("a⋅Nil | Nil") -->|"a1"| a2n("a2⋅Nil | Nil") -->|"a2"| nn("Nil | Nil")
+
+
+q("Q") -->|"a1"| a2bn("a2⋅b⋅Nil") -->|"a2"| bn("b⋅Nil") -->|"b"| qn("Nil")
+q -->|"b"| an("a⋅Nil") -->|"a1"| a2nq("a2⋅Nil") -->|"a2"| qn
+```
+
+A questo punto i due processi non sono più bisimili e, anzi, non sono più nemmeno equivalenti rispetto alle tracce. Questo comportamento è dovuto al fatto che, nel CCS, il parallelismo è modelalto come simulazione sequenziale non deterministica.
+
+<div style="page-break-after: always;"></div>
+
+##### ESERCIZI BISIMULAZIONE DEBOLE
+
+$p_1 = a \sdot (b \sdot Nil + c \sdot Nil)$			$z_1 = \mathcal T \sdot (a \sdot b \sdot Nil + a \sdot (\mathcal T \sdot b \sdot Nil + c \sdot Nil))$
+
+```mermaid
+graph LR
+p1("P1") -->|"a"| p2("P2") -->|"b"| pn("Nil")
+p2 -->|"c"| pn
+
+z1("Z1") -->|"tau"| z2("Z2") -->|"a"| z3("Z4") -->|"b"| zn("Nil")
+z2 -->|"a"| z4("Z3") -->|"tau"| z3
+z4 -->|"c"| zn
+```
+
+L'attaccante ha *(almeno)* una strategia vincente;
+
+L'attaccante inizia con A $p_1 \to^a p_2$, siamo in $(p_2, z_1)$; vediamo le possibili mosse del difensore
+
+1. D $z_1 \Rightarrow^a z_4$ 			*(sia facendo $\mathcal T \sdot a$ che $\mathcal T \sdot a \sdot \mathcal T$)*			$(p_2, z_4)$
+   1. A $p_2 \to^c Nil$   Il difensore non può rispondere
+2. D $z_1 \Rightarrow^a z_3$         $(p_2, z_3)$
+   1. A $z_3 \to^{\mathcal T} z_4$         $(p_2, z_4)$
+   2. D $p_2 \Rightarrow^{\mathcal T} p_2$         $(p_2, z_4)$
+   3. A $p_2 \to^c Nil$   Il difensore non può rispondere
+
+
+
+<div style="page-break-after: always;"></div>
+
+Vediamo ora dei processi ciclici
+
+$p_1 = \mathcal T \sdot (b \sdot p_1 + \mathcal T \sdot c \sdot p_1)$			$q_1 = (\mathcal T \sdot (b \sdot q_1 + \mathcal T \sdot c \sdot q_1)) + (\mathcal T \sdot c \sdot q_1)$
+
+```mermaid
+graph 
+p1("P1") -->|"tau"| p2("P2") -->|"b"| p1
+p2 -->|"tau"| p3("P3") -->|"c"| p1
+
+q1("Q1") -->|"tau"| q2("Q2") -->|"b"| q1
+q2 -->|"tau"| q3("Q3") -->|"c"| q1
+q1 -->|"tau"| q4("Q4") -->|"c"| q1
+```
+
+Il difensore ha *(almeno)* una strategia vincente. Vediamo le possibili mosse d'inizio dell'attaccante:
+
+1. A $p_1 \to^{\mathcal T} p_2$         $(p_2, q_1)$
+   1. D $q_1 \Rightarrow^{\mathcal T^*} q_2$   I sottoprocessi $p_2$ e $q_2$ sono isomorfi, quindi bisimili, difensore vince
+2. A $q_1 \to^{\mathcal T} q_4$         $(p_1, q_4)$
+   1. D $p_1 \Rightarrow^{\mathcal T^*} p_3$         $p_3$ e $q_4$ sono isomorfi
+3. A $q_1 \to^{\mathcal T} q_2$         $(p_1, q_2)$
+   1. D $p_1 \Rightarrow^{\mathcal T^*} p_2$         $p_2$ e $q_2$ sono isomorfi
+
+Notiamo che le configurazioni di arrivo sono $(p_2, q_2)$ e $(p_3, q_4)$; analizziamo le mosse dell'attaccante da queste configurazioni.
+
+Se l'attaccate esegue $b$ da $p_2$ o da $q_2$, il difensore eseguirà la stessa mossa ma debole, arrivando in $(p_1, q_1)$ che è stato già trattato.
+Se esegue la tau verso $p_3$ o verso $q_3$, il difensore farà lo stesso, arrivando in $(p_3, q_3)$, una nuova configurazione.
+
+Se l'attaccante esegue $c$ verso $p_1$ o verso $q_1$ ritorniamo alla configurazione $(p_1, q_1)$.
+
+L'ultima configurazione rimasta scoperta è $(p_3, q_3)$; da qui si finirà sempre in $(p_1, q_1)$.
+
+Notiamo che, essendo i processi cilici, anche la dimostrazione assume questa forma, portandoci a configurazioni già analizzate. Non arriviamo mai ad una configurazione dove l'attaccante non ha mosse disponibili, ma il *gioco* risulta essere infinito e quindi vince il difensore.
+
+Quando i processi sono bisimili dobbiamo anche definire la relazione di bisimulazione:
+$R = \{(p_1,\ q_1), (p_2,\ q_2), (p_3,\ q_3), (p_3, q_4)\}$
+
+<div style="page-break-after: always;"></div>
+
+## RETI DI PETRI
+
+Create da **Carl Adam Petri** negli anni '60, le reti di Petri sono dei modelli di sistemi concorrenti sviluppati come una teoria matematica fondata sui principi della **fisica moderna** che sia una **teoria dei sistemi** in grado di descrivere il **flusso di informazione** e permetta di analizzare **sistemi con organizzazione complessa**. Inoltre Petri si concentrò sulla comunicazione, la sincronizzazione e la relazione di concorrenza *(parleremo di vera concorrenza)*.
+
+
+
+Alcune critiche di Petri in merito ai sistemi di transizione etichettati:
+
+- Nei sistemi distribuiti lo stato globale non è osservabile fisicamente parlando
+- Nella realtà fisica non esiste un sistema di riferimento temporale unico, quindi i cambi di stato dovrebbero essere localizzati e non globali
+- La simulazione sequenziale non deterministica è una forzatura, non rappresenta la vere caratteristiche di un sistema
+
+
+
+### SISTEMI ELEMENTARI
+
+Per creare dei sistemi elementari ci si concentra sulle condizioni, ovvero gli stati locali del sistema e quali sono gli eventi.
+
+Vediamo un esempio col sistema del produttore/consumatore; un produttore può essere o **pronto per produrre** o **pronto per depositare** e le sue azioni sono quindi **produce** e **deposita**.
+Chiaramente il produttore può depositare solo se il buffer non è pieno.
+Il consumatore può essere **pronto per prelevare** o **pronto per consumare**. Chiaramente può prelevare solo se il buffer non è vuoto.
+
+Rappresenteremo le condizioni locali *(rappresentabili come proposizioni logiche)* con dei cerchi che saranno pieni nel caso fossero condizioni vere e gli eventi con dei quadrati. Gli eventi hanno delle precondizioni e delle postcondizioni e un'azione può essere eseguita solo se ha tutte le precondizioni vere e tutte le postcondizioni false; nell'esempio presentato sotto l'unico evento abilitato è *produce*. L'occorrenza dell'evento rende le precondizioni false e le postcondizioni vere.
+
+Notiamo che il fatto di consumare è indipendente dallo stato del produttore, così come la produzione è indipendente dal consumatore.
+A differenza dei LTS, dove una transizione prende uno stato globale e lo trasforma in un altro stato globale, qui le transizioni sono delle transizioni locali.
+
+![produttore consumatore](./img/prodcons.png)
+
+
+
+Dopo produce avremmo:
+
+![produttore consumatore](./img/prodcons2.png)
+
+Ora è abilitato *deposita* e dopo la sua esecuzione avremmo
+
+![produttore consumatore](./img/prodcons3.png)
+
+A questo punto il consumatore può estrarre, mentre il produttore può continuare a produrre; nessuno dice in che ordine devono occorrere, sono eventi indipendenti e possono occorrere in maniera **concorrente**.
+
+Possiamo comunque ottenere un LTS a partire da una rete di Petri dove gli stati globali sono dati dall'insieme degli stati locali che sono veri in quella configurazione e le transizioni sono gli eventi.
+
+<img src="./img/Petri2LTS.png" alt="produttore consumatore" style="zoom:60%;" />
+
+#### RETI ELEMENTARI
+
+Un sistema è descritto da una rete elementare definita come $N = (B, E, F)$
+
+- $B$ insieme finito di **condizioni** *(**stati locali**, proposizioni vere o false)*
+
+- $E$ insieme finito di **eventi** *(trasdormazioni locali di stato, **transizioni locali**)*
+
+  Affinché $N$ sia una rete dobbiamo avere $B \cap E = \empty \land B \cup E \neq \empty$ , ovvero $B$ e $E$ devono essere disgunti e non vuoti.
+
+- $F \sube (B \times E) \cup (E \times B)$ **relazione di flusso**, rappresentata dalle frecce della rete tale che $dom(F) \cup img(F) = B \cup E$, ovvero non devono esserci elementi isolati: per Petri un evento isolato è un evento che non occorrerà mai, quindi non ha senso modellarlo. Una condizione isolata invece non cambia mai valore e quindi non è osservabile e non ha senso modellarla.
+
+Sia $x \in B \cup E = X$
+$^{\bullet}x = \{y \in X : (y,x) \in F\}$ sono i pre-elementi di $x$ *(precondizioni o pre-eventi)*
+$x^{\bullet} = \{y \in X : (x,y) \in F\}$ sono i post-elementi di $x$ *(postcondizioni o post-eventi)*
+
+Sia $A \sube B \cup E$, 	$^{\bullet}A = \bigcup\limits_{x \in A}^{} {}^{\bullet}x$	e	$A^{\bullet} = \bigcup\limits_{x \in A}^{} x^{\bullet}$
+
+
+
+La rete $N$ descrive la struttura del sistema, il comportamento è descritto attraverso le nozioni di *caso* e di *regola di scatto* *(o transizione)*.
+
+**CASO**
+Un caso è un insieme di condizioni $c \sube B$ che rappresentano le condizioni vere in una certa configurazione del sistema, un insieme di *stati locali* che individuano lo *stato globale*.
+
+
+
+**REGOLA DI SCATTO**
+Siano $N = (B, E, F)$ e $c \sube B$
+Un evento $e \in E$ è **abilitato** *(può ocorrere)* in $c$, denotato come $c[e>$ sse $^{\bullet}e \sube c \land e^{\bullet} \cap c = \empty$
+Ovvero solo se le sue precondizioni sono vere e le sue postcondizioni sono false.
+
+Sapendo $c[e >$, possiamo definite anche $c'$, ovvero lo stato globale ottenuto dall'esecuzione di $e$ in $c$ come $c' = c - ^{\bullet} e + e^{\bullet}$, ovvero il nuovo stato globale sarà uguale allo stato globale attuale al quale vengono tolte le precondizione dell'evento $e$ *(che diventeranno false)* e vengono aggiunte le postcondizioni di $e$ *(che diventeranno vere)*.
+
+
+
+**RETE SEMPLICE**
+Una rete è semplice sse $\forall x, y \in B \cup E,\ ^{\bullet}x = ^{\bullet}y \land x^{\bullet} = y^{\bullet} \implies x = y$
+Ovvero una rete è semplice quando ogni stato/evento ha pre e post-elementi disgiunti; se una condizione è comune a più eventi o se un evento è comune a più condizioni non è più una rete semplice.
+
+
+
+**RETE PURA**
+Una rete è pura sse $\forall e \in E :\ ^{\bullet}e \cap e^{\bullet} = \empty$
+Ovvero una rete è pura quando i pre-elementi di un evento non sono anche post-elementi dell'evento stesso. Notiamo che se la rete non è pura l'evento $e$ non potrà mai occorrere: se la precondizione che è anche postocondizione è vera, l'evento non ha tutte le post false, mentre se è falsa l'evento non ha tutte le pre vere.
+
+**EVENTI INDIPENDENTI E CONCORRENTI**
+Sia $N = (B, E, F)$ una rete elementare, $U \sube E$ e $c, c_1, c_2 \sube B$
+
+- $U$ è un insieme di **eventi indipendenti** sse $\forall e_1, e_2 \in U : e_1 \neq e_2 \implies (^{\bullet}e_1 \cup e_1^{\bullet}) \cap (^{\bullet}e_2 \cup e_2^{\bullet}) = \empty$
+- $U$ è un **passo abilitato *(o insieme di eventi concorrenti)*** in $c$, scritto come $c[U>$, sse $U$ è un insieme di eventi indipendenti e $\forall e \in U : c[e>$, ovvero se $U$ è un insieme di eventi indipendenti e ogni evento è abilitato in $c$
+- $U$ è un **passo da** $c_1$ **a** $c_2$, scritto come $c_1[U>c_2$, sse $c_1[U>\ \land\ c_2 = (c_1 - ^{\bullet}U) \cup U^{\bullet}$
+
+
+
+*Esempio*
+
+<img src="./img/ind.png" alt="eventi indipendenti" style="zoom:100%;" />
+
+In questo esempio $\{p, e\},\ \{p, c\},\ \{d, c\}$ sono degli insiemi di eventi indipendenti, mentre $\{d, e\}$ non lo è, poiché $d$ e $e$ hanno la condizione $B$ in comune.
+$\{p, e\}$ invece è un passo abilitato nello stato globale $\{P_1, B, P_2\}$, in particolare $\{P_1, B, C_1\}\ [\{p, e\} > \{P_2, C_2\}$
+
+
+
+**SISTEMA ELEMENTARE**
+Quindi un sistema elementare è definito da una rete elementare $N = (B, E, F)$ e da $c_{in} \sube B$ un *caso iniziale*.
+
+<div style="page-break-after: always;"></div>
+
+### CASI RAGGIUNGIBILI
+
+L'insieme dei casi raggiungibili $C_{\Sigma}$ di un sistema elementare $\Sigma = (B, E, F, c_{in})$ è il più piccolo sottoinsieme di $2^B$ *(cardinalità dell'insieme delle parti di $B$)* tale che:
+
+- $c_{in} \in C_\Sigma$
+- se $c \in \Sigma$ e abbiamo
+  $U \sube E$ insieme di eventi abilitati in un passo in $c$
+  $c' \sube B$ caso d'arrivo tali che
+  $c[U>c'$, cioè con l'esecuzione di $U$ arriviamo in $c'$, allora $c' \in C_\Sigma$
+
+Chiameremo anche $U_\Sigma$ l'**insieme dei passi** di $\Sigma$: $U_\Sigma = \{U \sube E\ |\ \exists c, c' \in C_\Sigma : c[U>c'\}$
+
+
+
+#### COMPORTAMENTO SISTEMI ELEMENTARI
+
+Sia $\Sigma = (B, E, F, c_{in})$ un sistema elementare, $c_i \in C_\Sigma$, $e_i \in E$, $U_i \sube E$
+
+Possiamo descrivere il comportamento di un sistema elementare in vari modi:
+
+1. **COMPORTAMENTO SEQUENZIALE**: abbiamo delle sequenze di occorrenze/eventi, rappresenta una simulazione sequenziale non deterministica
+   $c_{in}[e_1 > c_1[e_2 >\ ...\ [e_n>c_n$   oppure   $c_{in}[e_1e_2\ ...\ e_n > c_n$
+
+   
+
+2. **COMPORTAMENTO NON SEQUENZIALE - SEQUENZE DI PASSI**: abbiamo delle sequenze di passi *(step semantics)*
+   $c_{in}[U_1 > c_1[U_2 >\ ...\ [U_n > c_n$   oppure   $c_{in}[U_1U_2\ ...\ U_n > c_n$
+
+   
+
+3. **COMPORTAMENTO NON SEQUENZIALE - PROCESSI NON SEQUENZIALI**: abbiamo una semantica a ordini parziali o semantica della *vera concorrenza* che è quella su cui ci concentreremo. In questo caso registriamo il comportamento senza forzare la simulazione sequenziale non deterministica, ma tenendo conto dell'ordine parziale tra gli eventi e della relazione di dipendenza/indipendenza causale tra gli eventi.
+   Per rappresentare questi processi non sequenziali creeremo un'altra rete che però espliciti la validità delle condizioni e l'occorrere degli eventi.
+
+<div style="page-break-after: always;"></div>
+
+*Esempio*
+Dato il sistema elementare $\Sigma$
+
+<img src="./img/sisel.png" alt="eventi indipendenti" style="zoom:100%;" />
+
+Una possibile sequenza di occorrenze degli eventi è
+$\{1,2\}[a > \{3, 2\}[b > \{3, 4\}[c > \{1,2\}[b>\{1,4\}[d > \{5\}$
+
+Una possibile sequenza di passi è
+$\{1,2\}[\{a,b\}>\{3,4\}[\{c\}>\{1,2\}[\{b\} > \{1,4\}$
+
+Un possibile processo non sequenziale di $\Sigma$ è
+
+<img src="./img/procnonseq.png" alt="eventi indipendenti" style="zoom:100%;" />
+
+
+
+#### GRAFO DEI CASI RAGGIUNGIBILI
+
+Possiamo rappresentare il comportamento di un sistema elementare anche col suo grafo dei casi raggiungibili, dove il **grafo dei casi raggiungibili** è un *sistema di transizioni etichettato (LTS)* $CG_\Sigma = (C_\Sigma, U_\Sigma, A, c_{in})$ dove:
+
+- $C_\Sigma$ è l'insieme dei casi ragiungibili di $\Sigma$, saranno i nodi del grafo
+- $U_\Sigma$ è l'insieme dei passi di $\Sigma$, sarà l'alfabeto del grafo
+- $A$ è l'insieme delle transizioni
+  $A = \{(c, U, c')\ |\ c,c' \in C_\Sigma,\ U \in U_\Sigma,\ c[U > c'\}$
+
+<img src="./img/grafocasi.png" alt="eventi indipendenti" style="zoom:100%;" />
+
+<div style="page-break-after: always;"></div>
+
+##### DIAMOND PROPERTY
+
+Sia $\Sigma = (B, E, F, c_{in})$ un sistema elementare, $CG_\Sigma = (C_\Sigma, U_\Sigma, A, c_{in})$ il suo grafo dei casi, $U_1, U_2 \in U_\Sigma : U_1 \cap U_2 = \empty$, $U_1 \neq \empty$, $U_2 \neq \empty$ e $c_1, c_2, c_3, c_4 \in C_\Sigma$, allora vale
+
+<img src="./img/diamond.png" alt="diamond" style="zoom:100%;" />
+
+Essendo $U_1 \cap U_2 = \empty$, sono sicuramente tra loro indipendenti e quindi la loro unione $U_1 \cup U_2$ è un passo abilitato. Allo stesso modo se abbiamo il passo $U_1 \cup U_2$ e i due passi sono indipendenti, sicuramente possiamo dividerli nei singoli passi.
+
+In particolare, nel primo caso abbiamo che $c_1$ abilita sia $U_1$ che $U_2$, cioé $c[U_1 >\ \land\ c_1[U_2>$. Questo significa che
+
+1. $^{\bullet}U_1 \sube c_1$			2. $^{\bullet}U_2 \sube c_1$			3. $U_1^{\bullet} \cap c_1 = \empty$			4. $U_2^{\bullet} \cap c_1 = \empty$
+
+Possiamo ora derivare dalla 1 e dalla 4 $^{\bullet}U_1\cap U_2^{\bullet} = \empty$ e dalla 2 e dalla 3 $U_1^{\bullet} \cap ^{\bullet}U_2 = \empty$.
+
+Osserviamo ora che $c_1[U_1 > c_2[U_2 >$ possiamo dire che in $c_2$ $^{\bullet}U_1 \ False$ e $^{\bullet}U_2\ True$; questo vuol dire che $^{\bullet} U_1 \cap\ ^{\bullet} U_2 = \empty$
+Abbiamo però, sempre in $c_2$, che $U_1^{\bullet}\ True$ e $U_2^{\bullet}\ False$ e quindi $U_1^{\bullet} \cap U_2^{\bullet} = \empty$
+
+Possiamo ora dire che $(^{\bullet}U_1 \cup U_1^{\bullet}) \cap (^{\bullet}U_2 \cup U_2^{\bullet}) = \empty$,ovvero che i due passi sono indipendenti.
+
+<div style="page-break-after: always;"></div>
+
+##### GRAFO DEI CASI SEQUENZIALE
+
+Possiamo descrivere il comportamento di un sistema anche con un grafo dei casi sequenziale che, a differenza del grafo dei casi che considera come transizioni i passi, utilizza i singoli eventi come transizioni.
+
+Quindi il **grafo dei casi sequenziale** di $\Sigma = (B,E,F, c_{in})$ è $SCG_{\Sigma} = (C_{\Sigma}, E, A, c_{in})$ dove:
+$A = \{(c,e,c')\ |\ c,c' \in C_{\Sigma}, e \in E : c[e>c'\}$
+
+<img src="./img/SCG.png" alt="scg" style="zoom:100%;" />
+
+
+
+Nel caso dei sistemi elementari dove gli eventi sono azioni atomiche e gli stati locali sono delle proposizioni vere o false, per via della **diamond property** possiamo, a partire dal *grafo dei casi sequenziale*, ricostruire il *grafo dei casi*; applicando la *diamond property* a tutti i *diamanti (come quello nella figura sopra)* del grafo dei casi sequenziale, otterremo il grafo dei casi.
+
+Allo stesso modo possiamo passare dal grafo dei casi al grafo dei casi sequenziale mantenendo solo gli archi etichettati con i singoli eventi *(e quindi mantenendo solo gli archi etichettati da insiemi di un singolo elemento)*.
+
+Si dice quindi che, grazie alla diamond property, nei sistemi elementari il grafo dei casi ed il grafo dei casi sequenziale sono ***sintatticamente equivalenti*** *(possono essere ricavati l'uno dall'altro)*.
+Questo implica che se due sistemi elementari hanno i grafi dei casi isomorfi, hanno anche i grafi dei casi sequenziali isomorfi.
+
+Questo passaggio da grafo dei casi a grafo dei casi sequenziale è valido solo nei sistemi elementari.
+
+
+
+###### ISOMORFISMO TRA SISTEMI DI TRANSIZIONI ETICHETTATI
+
+Formalmente, siano $A_1 = (S_1, E_1, T_1, s_{0_1})$ e $A_2 = (S_2, E_2, T_2, s_{0_2})$ due sistemi di transizioni etichettati, definiamo $\alpha : S_1 \to S_2$ e $\beta : E_1 \to E_2$ due **mappe biunivoche** che mappano gli stati dell'uno negli stati dell'altro e le etichette dell'uno nelle etichette dell'altro, allora $<\alpha, \beta>\ :\ A_1 \to A_2$ è un **isomorfismo** sse:
+
+- $\alpha(s_{0_1}) = s_{0_2}$   Lo stato iniziale dell'uno è mappato nello stato iniziale dell'altro
+- $\forall s, s' \in S_1, \forall e \in E_1 : (s,e,s') \in T_1 \Longleftrightarrow (\alpha(s),\ \beta(e),\ \alpha(s')) \in T_2$
+  Per ogni transizione tra due stati $s, s'$ deve essercene anche una, contenuta nella mappa $\beta$, per le immagini dei due stati nella mappa $\alpha$.
+
+
+
+Possiamo dire che una prima nozione di equivalenza tra sistemi elementari è basata sull'isomorfismo dei grafi dei casi *(e dei casi sequenziale)*; diremo cioè che due sistemi elementari sono **equivalenti** sse hanno grafi dei casi *(e grafi dei casi sequenziali)* **isomorfi**.
+
+**ESERCIZIO**
+Dati i due sistemi elementari, verificare se hanno grafo dei casi isomorfi
+
+<img src="./img/isomof.png" alt="scg" style="zoom:100%;" />
+
+Costruiamo i grafi dei casi sequenziali, che in questo caso sono uguali ai grafi dei casi e osserivamo che sono effettivamente isomorfi.
+
+```mermaid
+graph LR
+15("{1, 5}") -->|"a"| 26("{2, 6}") -->|"b"| 36("{3, 6}") -->|"c"| 45("{4, 5}") -->|"d"| 15
+
+7("{7}") -->|"x"| 8("{8}") -->|"y"| 9("{9}") -->|"z"| 10("{10}") -->|"v"| 7
+```
+
+In particolare $\alpha(1,5) = 7$, $\alpha(2,6) = 8$, $\alpha(3,6) = 9$, $\alpha(4,5) = 10$
+$\beta(a) = x$, $\beta(b) = y$, $\beta(c) = y$, $\beta(d) = v$
+
+<div style="page-break-after: always;"></div>
+
+##### IL PROBLEMA DELLA SINTESI
+
+Dato un sistema di transizioni etichettato $A = (S, E, T, s_0)$, ci chiediamo se esiste un sistema elementare $\Sigma = (B, E, F, c_{in})$ tale che il suo grafo dei casi sequenziale $SCG_\Sigma$ sia **isomorfo** ad $A$ e in caso affermativo costruire $\Sigma$.
+
+In generale non esiste sempre un sistema elementare con un certo comportamento dato da un qualsiasi sistema di transizioni. Questo problema è stato risolto caratterizzando quali sistemi di transizioni tali per cui il problema della sintesi è risolvibile usando la **teoria delle regioni** che stabilisce degli assiomi che questi sistemi di transizioni devono rispettare *(tra i quali si richiede anche la soddisfacibilità  della diamond property)*.
+
+
+
+##### CONTATTO
+
+Sia $\Sigma = (B, E, F,c_{in})$ un sistema elementare, $e \in E$, $c \in C_{\Sigma}$
+$(e, c)$ è un **contatto** sse $^{\bullet}e \sube c \land e^{\bullet} \cap c \neq \empty$
+
+Ovvero, un contatto è un evento che ha tutte le precondizioni vere, ma non ha tutte le postcondizioni false.
+
+*Esempio*
+
+<img src="./img/contatto.png" alt="scg" style="zoom:50%;" />
+
+In questo caso il produttore è pronto per depositare, ma non può farlo poiché il buffer è pieno.
+
+Ci si domanda come si possono eliminare i contatti: questo è possibile e per farlo aggiungiamo delle condizioni che non cambino il comportamento del sistema ma che aggiungano delle specifiche che sono implicite. Ad esempio nel nostro caso possiamo dire che il produttore può depositare se è pronto per depositare **E** se il buffer non è pieno. Possiamo quindi aggiungere la condizione **buffer-vuoto** che sia il contrario di **buffer-pieno** che abbia come pre-evento *estrae* e come post-evento *deposita*.
+
+In generale, diremo che un sistema è senza contatti sse $\forall e \in E, \forall c \in C_\Sigma\ \ \ ^{\bullet}e \sube c \implies e^{\bullet} \cap c = \empty$.
+Possiamo trasformare un sistema con contatti in uno senza contatti senza modificarne il comportamento aggiungendo il **complemento di *alcune* condizioni** con ***pre e post inverse*** *(si può aggiungere il complemento di tutte le condizioni, ma generalmente solo alcune creano contatti)* ottenendo un sistema $\Sigma'$ con grafo dei casi isomorfo al sistema originale.
+
+<img src="./img/nocontatti.png" alt="scg" style="zoom:50%;" />
+
+In un sistema senza contatti per dire che un evento è abilitato ci basta verificare che le precondizioni siano vere, poiché questo implica che le post siano false $^{\bullet}e \sube c \implies e^{\bullet} \cap c = \empty$.
+
+##### SITUAZIONI FONDAMENTALI: SEQUENZA
+
+Sia $\Sigma = (B, E, F, c_{in})$ un sistema elementare, $c \in C_\Sigma$, $e_1, e_2 \in E$
+Diremo che $e_1$ ed $e_2$ sono in **sequenza** in $c$ sse $c[e_1> \land \lnot c[e_2> \land c[e_1e_2>$
+Ovvero se il primo evento è abilitato in $c$ mentre il secondo no, ma dopo l'occorrenza del primo raggiungiamo un caso che abilita il secondo evento. Solitamente c'è anche una ***dipendenza causale*** tra $e_1$ ed $e_2$
+
+<img src="./img/seq.png" alt="scg" style="zoom:50%;" />
+
+
+
+##### SITUAZIONI FONDAMENTALI: CONCORRENZA
+
+Sia $\Sigma = (B, E, F, c_{in})$ un sistema elementare, $c \in C_\Sigma$, $e_1, e_2 \in E$
+Diremo che $e_1$ ed $e_2$ sono **concorrenti** in $c$ sse $c[\{e_1, e_2\}>$
+Ovvero se sono entrambi abilitati in un passo in $c$ e quindi $e_1$ ed $e_2$ sono indipendenti.
+
+<img src="./img/paral.png" alt="scg" style="zoom:50%;" />
+
+
+
+##### SITUAZIONI FONDAMENTALI: CONFLITTO
+
+Sia $\Sigma = (B, E, F, c_{in})$ un sistema elementare, $c \in C_{\Sigma}$, $e_1, e_2 \in E$
+Diremo che $e_1$ ed $e_2$ sono in **conflitto** in $c$ sse $c[e_1> \land c[e_2> \land \lnot c[\{e_1, e_2\}>$
+Ovvero se sono entrambi abilitati in $c$ ma l'occorrenza di uno disabilita l'altro, e quindi i due eventi nono sono indipendenti.
+
+Se gli eventi hanno una precondizione in comune c'è un conflitto **in avanti/forward**, mentre se hanno una postcondizione in comune c'è un conflitto **all'indietro/backward**.
+
+<img src="./img/confitti.png" alt="scg" style="zoom:60%;" />
+
+Osserviamo ora un passo successivo:
+
+<img src="./img/conflitti2.png" alt="scg" style="zoom:60%;" />
+
+Osserviamo che il conflitto in avanti ci dà delle informazioni sul passato del sistema; siamo in grado di dire che è occorso $e_1$, mentre il conflitto all'indietro non ci fornisce alcuna informazione sul passato del sistema.
+
+
+
+##### SITUAZIONI FONDAMENTALI: CONFUSIONE ASSIMMETRICA
+
+La confusione assimmetrica è una *mistura* di concorrenza e conflitto
+
+<img src="./img/conf1.png" alt="scg" style="zoom:60%;" />
+
+Ci chiediamo se nell'esecuzione di $c[\{e_1, e_2\}> c'$ è stato risolto un conflitto? Cioè, è stata effettuata una scelta o no? Abbiamo due possibilità:
+
+1. Se occorre prima $e_1$ non abbiamo conflitti e quindi nessuna scelta
+2. Se occorre prima $e_2$ abbiamo un conflitto tra $e_1$ ed $e_3$ che viene risolto a favore di $e_1$
+
+Questa è una situazione di confusione.
+
+
+
+##### SITUAZIONI FONDAMENTALI: CONFUSIONE SIMMETRICA
+
+Un altro esempio di confusione
+
+<img src="./img/conf2.png" alt="scg" style="zoom:60%;" />
+
+Nell'esecuzione di $c[\{e_1, e_3\}> c'$ non possibile stabilire se sia stato risolto un conflitto tra $e_1$ ed $e_2$ piuttosto che tra $e_2$ ed $e_3$.
+
+Petri sosteneva inizialmente che i modelli dei sistemi, se contengono tutte le informazioni necessarie, non possono contenere confusione. È stato in seguito però dimostrato che in molti casi, ad esempio nella mutua esclusione, la confusione è inevitabile.
+
+
+
+##### SOTTORETI
+
+Siano $N = (B, E, F)$ e $N_1 = (B_1, E_1, F_1)$ due reti elementari
+$N_1$ è sottorete di $N$ sse $B_1 \sube B$, $E_1 \sube E$ e $F_1 = F \cap [(B_1 \times E_1) \cup (E_1 \times B_1)]$
+
+$N_1$ è la **sottorete generata da $B_1$** sse $N_1$ è sottorete di $N$ ma $E_1 =\ ^{\bullet} B_1 \cup B_1^{\bullet}$, ovvero se gli unici eventi della sottorete sono quelli che toccano le condizioni contenute in $B_1$
+
+$N_1$ è la **sottorete generata da $E_1$** sse $N_1$ è sottorete di $N$ ma $B_1 =\ ^{\bullet}E_1 \cup E_1^{\bullet}$, ovvero se le condizioni della sottorete sono quelle che toccano gli eventi contenuti in $E_1$
+
+<div style="page-break-after: always;"></div>
+
+##### ESERCIZIO MUTUA ESCLUSIONE
+
+Data la seguente rete
+
+<img src="./img/mutuaesc.png" alt="scg" style="zoom:60%;" />
+
+1. **Calcolare il grafo dei casi raggiungibili**
+   Costruiamo il grafo dei casi sequenziale $SCG_\Sigma$, da cui possiamo poi ricavare il grafo dei casi $CG_\Sigma$ applicando la *diamond property*
+
+   <img src="./img/grafocasimutua.png" alt="scg" style="zoom:60%;" />
+
+2. **Mostrare esempi di eventi in *sequenza***
+   Basta osservare il grafo dei casi sequenziale e percorrerlo; ad esempio $e_1$ ed $e_2$ sono eventi in sequenza, così come lo sono anche $e_4$, $e_5$, $e_6$
+   Alcuni eventi possono essere eseguiti in sequenza pur non essendo indipendenti casualmente, come ad esempio $\{b_1, b_7\} [e_5, e_1 > \{b_2, b_8\}$; in $\{b_1, b_7\}$ $e_1$ è già abilitato, non è l'esecuzione di $e_5$ ad abilitarlo.
+3. **Mostrare esempi di eventi concorrenti**
+   Osserviamo che, per esempio, in $\{b_1, b_4, b_8\}$ possono occorrere sia $e_6$ che $e_1$ che sono effettivamente indipendenti. Allo stesso modo in $\{b_3, b_4, b_6\}$ possono occorrere sia $e_4$ che $e_3$.
+4. **Mostrare esempi di eventi in conflitto**
+   Abbiamo, in $\{b_1, b_4, b_6\}$ gli eventi $e_1$ ed $e_4$ in conflitto in avanti *(hanno in comune $b_4$)*.
+5. **Mostrare esempi di confusione**
+   In $\{b_3, b_4, b_6\}$ possiamo eseguire $e_3$ ed $e_4$ in un unico passo; se eseguiamo prima $e_4$ e poi $e_3$ ci ritroviamo in $\{b_1, b_7\}$ senza risolvere alcun conflitto.
+   Se eseguiamo però prima $e_3$, per arrivare in $\{b_1, b_7\}$ bisogna risolvere un conflitto in favore di $e_4$.
+
+### PROCESSI NON SEQUENZIALI
+
+Abbiamo visto come il comportamento di un sistema elementare possa essere descritto con un comportamento sequenziale, con una sequenza di passi o con dei processi non sequenziali che esplicitano le dipendenze/indipendenze causali tra gli eventi.
+
+<img src="./img/antiinc.png" alt="scg" style="zoom:60%;" />
+
+Osserviamo nell'immagine un sistema rappresentante 4 vigili del fuoco che si scambiano dei secchi per spegnere un incendio; il primo riempe i secchi e l'ultimo li versa su fuoco.
+Osservando sotto il processo non sequenziale del sistema, notiamo che possiamo osservare le diverse interazioni del sistema: in azzurro possiamo vedere la storia del primo secchio pieno che viene trasportato verso il fuoco fino ad essere versato, in giallo la storia del secchio vuoto che torna indietro per essere riempito. Possiamo osservare anche la storia di un vigile del fuoco, in rosso, che va avanti e indietro scambiando il proprio secchio con gli altri.
+
+
+
+#### RETI CAUSALI
+
+Diremo che $N = (B, E, F)$ è una rete causale sse
+
+- $\forall b \in B : |^{\bullet}b| \leq 1 \land |b^{\bullet}| \leq 1$
+  Ogni condizione ha solo un pre-evento ed un post-evento, **non ci possono quindi essere conflitti**
+- $\forall x, y \in B \cup E : (x,y) \in F^+ \implies (y,x) \notin F^+$
+  $F^+$ è la chiusura transitiva di $F$
+  **Non ci sono cicli**; quando costruiamo un processo non sequenziale se un evento si ripete viene registrato un'altra volta, '*srotolando*' così i cicli.
+- $\forall e \in E : \{x \in B \cup E\ |\ xF^*e\}$ è finito
+  Sostanzialmente stiamo dicendo che preso un elemento della rete, il suo passato è finito.
+  La rete può comunque essere infinita.
+
+A questo tipo di reti si può associare un **ordine parziale** $(X,\ \leq) = (B \cup E,\ F^*)$
+Se prendiamo due elementi della rete, se c'è un cammino dall'uno all'altro, quello da cui partiamo è minore rispetto a quello in cui arriviamo, se non c'è il cammino i due elementi non sono ordinati.
+
+##### RETI CAUSALI E ORDINI PARZIALI: RELAZIONI
+
+Sia $N = (B, E, F)$ una **rete causale** e $(X, \leq)$ l'**ordine parziale** associato, allora
+
+- $x, y \in X : x, y$ elementi che occorrono nella storia di $X$
+- $x \leq y: $ $x$ ***causa*** $y$, ovvero l'occorrenza di $y$ dipende da $x$
+- $x$ **li** $y : x \leq y \lor y \leq x$
+  Due elementi sono quindi in relazione **li** se sono **causalmente dipendenti**
+- $x$ **co** $y : not (x < y) \land not(y < x)$
+  Due elementi sono in relazione **co** se non sono ordinati, cioè se sono **causalmente indipendenti**
+
+<img src="./img/ordineparz.png" alt="scg" style="zoom:60%;" align="left" />Osserviamo l'ordine parziale a sinistra:
+Abbiamo $b$ **co** $c$, $c$ **co** $d$ ma $not(b$ **co** $d)$; la relazione **co** *NON* è transitiva.
+Abbiamo $c$ **li** $a$, $a$ **li** $b$ ma $not(c$ **li** $b)$; nemmeno **li** è transitiva.
+
+Tuttavia, sia **co** che **li** sono simmetriche e riflessive.
+
+
+
+**TAGLI**
+Possiamo definire un sottoinsieme di elementi $C \sube X\ |\ \forall x,y \in C: x$ **co** $y$. Chiameremo $C$ un ***co-set***.
+In un co-set possiamo dire che la relazione **co** è transitiva.
+Chiameremo inoltre il co-set massimale *(cioè se prendo un qualsiasi altro elemento di $X$, questo non sarà in relazione **co** con almeno qualche altro elemento nel co-set)* un **taglio**.
+
+Formalmente
+$C \sube X$ è un ***co-set*** sse $\forall x, y \in C : x$ **co** $y$
+$C \sube X$ è un ***taglio*** sse $\forall z \in X \smallsetminus C\ \exists v \in C : z$ **li** $v$
+
+A volte saremmo interessati ad avere tagli costituiti solo da condizioni: chiameremo questi **B-tagli**.
+Un taglio $C \sube X$ è detto B-taglio se $C \sube B$
+
+
+
+**LINEE**
+Allo stesso modo possiamo definire dei ***li-set***, che sono insiemi di elementi in relazione **li** tra loro. Un li-set massimale è detto **linea**.
+
+Formalmente
+$L \sube X$ è un ***li-set*** sse $\forall x, y \in L : x$ **li** $y$
+$L \sube X$ è un ***taglio*** sse $\forall z \in X \smallsetminus L\ \exists v \in L : z$ **co** $v$
+
+
+
+<img src="./img/esempitaglilinee.png" alt="scg" style="zoom:60%;" align="left" /> Nell'immagine affianco, le linee tratteggiate verde, rosa e lilla rappresentano dei tagli; tutti gli elementi sono in relazione **co** tra loro. In particolare, si tratta di B-tagli, poiché sono tagli costituiti solo da condizioni.
+
+La linea tratteggiata rossa invece rappresenta un taglio poiché contiene anche un evento.
+
+Le linee azzurra e gialla invece rappresentano delle linee; tutti gli elementi sono in relazione **li** tra loro.
+
+##### K-DENSITÀ
+
+Siano $N = (B, E, F)$ una rete causale e $(X= (B\cup E),\ \leq)$ un ordine parziale
+Diremo che $N$ è **K-densa** sse $\forall h \in Linee(N), \forall c \in Tagli(N): |h \cap c| = 1$
+Ovvero se per ogni coppia <taglio, linea>, con la la linea rappresentate un sottoprocesso e il taglio una *fotografia* dello stato del sistema, il taglio e la linea si incontrano.
+
+**NOTA**: se $N$ è finita, è sicuramente K-densa. 
+
+<img src="./img/kdens.png" alt="scg" style="zoom:60%;" align="center" />
+
+Notiamo che nella rete di sinsitra, che è infinita, abbiamo un taglio e una linea paralleli; se la rete fosse finita, come nel caso della rete di destra, il taglio e la linea prima o poi si incontrerebbero *(dovrei aggiungere al taglio l'ultimo elemento della linea)*.
+
+
+
+##### PROCESSI NON SEQUENZIALI DI SISTEMI FINITI
+
+Sia $\Sigma = (S, T, F, c_{in})$ un sistema elementare **senza contatti** e **finito**, ovvero tale che $S \cup T$ è finito. 
+
+$<N = (B,E,F);\ \phi>$ è un **processo non sequenziale** di $\Sigma$ sse 
+
+- $(B,E,F)$ è una **rete causale** *(si ammettono condizioni isolate)*
+- $\phi : B \cup E \to S \cup T$ è una mappa:
+  1. $\phi(B) \sube S$,   $\phi(E) \sube T$
+     Mappa le condizioni e gli eventi della rete causale nelle condizioni e gli eventi del sistema.
+  2. $\forall x_1, x_2 \in B \cup E : \phi(x_1) = \phi(x_2) \implies (x_1 \leq x_2) \lor (x_2 \leq x_1)$
+     Se due elementi della rete causale sono mappati sullo stesso elemento del sistema, i due elementi devono per forza essere ordinati.
+  3. $\forall e \in E : \phi(^{\bullet}e) =\ ^{\bullet}\phi(e) \land \phi(e^{\bullet}) = \phi(e)^{\bullet}$
+     Se registriamo un evento, dobbiamo registrare tutte le sue pre e tutte le sue post. In particolare, l'immagine delle pre deve essere uguale all'immagine delle pre di $e$ e stessa cosa per le post. 
+  4. $\phi(Min(N)) = c_{in}$
+     $Min(N) = \{x \in B \cup E\ |\ \not\exists y: (y,x) \in F \}$ *(sono stati iniziali)*
+
+
+
+Se $<N = (B,E,F);\ \phi>$ è un **processo non sequenziale** di $\Sigma = (S,T,F, c_{in})$ sistema elementare **finito** e senza contatti, allora $N$ è sicuramente **K-densa** e $\forall K \sube B, K$ B-taglio di $N$ è tale che $K$ è finito e $\exists c \in C_\Sigma : \phi(K) = c$, ovvero i **B-tagli corrispondono a dei casi raggiungibili**.
+
+#### RETI DI OCCORRENZE
+
+Dato un sistema con conflitti come quello della mutua esclusione, possiamo avere diverse registrazioni a seconda di come vengono risolti i conflitti. Vogliamo però avere un'unica rete che tenga conto di tutti i possibili comportamenti: a tal scopo sono stati introdotti i **processi ramificati** in cui viene descritto cos'è sucesso descrivendo anche tutti i possibili futuri. Possiamo osservare un processo ramificato del sistema della mutua esclusione sotto.
+
+<img src="./img/procramif.png" alt="scg" style="zoom:60%;" align="center" />
+
+$N = (B,E,F)$ è una **rete di occorrenze** sse
+
+- $\forall b \in B : |^{\bullet}b| \leq 1$   **Conflitti solo in avanti**
+- $\forall x, y \in B \cup E : (x,y) \in F^+ \implies (y,x) \notin F^+$   **niente cicli**
+- $\forall e \in E : \{x \in B \cup E\ |\ xF^*e\}$   è **finito**
+- La **relazione di *conflitto*** $\#$ **non** è riflessiva
+  Un elemento non può dipendere dalla scelta di due condizioni in contemporanea; modellando un comportamento viene fatta una sola scelta ad ogni run.
+
+Dove $\# \sube X \cp X$ *($X = B \cup E$)* è definita come
+$x \# y$ sse $\exists e_1, e_2 \in E :e_1 \neq e_2 \land \ ^{\bullet}e_1 \cap\ ^{\bullet}e_2 \neq \empty \land e_1 \leq x \land e_2 \leq y$
+**NOTA**: se due elementi sono in relazione di conflitto $\#$, allora **NON** sono in relazione **co**
+
+<img src="./img/relazioneconflitto.png" alt="scg" style="zoom:60%;" align="center" />
+
+È ancora possibile associare ad $N$ un **ordine parziale** $(X, \leq) = (B\cup E, F^*)$
+
+
+
+Vediamo un esempio di rete di occorrenze
+
+<img src="./img/esempioreteocc.png" alt="scg" style="zoom:60%;" align="center" />
+
+In questo esempio abbiamo $e_1\#e_2$, $b\#e_1$, $c\#e_4$, $e_3\#e_4$, $c\#h$ ...
+Notiamo che $e_3\#e_4$ e $e_4\#c$, ma $e_3 \not\#c$, quindi $\#$ è simmetrica, ma non è transitiva.
+Abbiamo anche $e_8$ **co** $e_5$, $e_6$ **co** $e_5$, $e_6$ **co** $f$ ...   e   $e_1$ **li** $e_7$, $e_1$ **li** i, $a$ **li** $e_3$ ...
+
+##### PROCESSI RAMIFICATI
+
+Sia $\Sigma = (S,T,F, c_{in})$ un sistema elementare **senza contatti** e **finito**.
+
+$<N = (B,E,F);\ \phi>$ è un **processo ramificato** di $\Sigma$ sse
+
+- $(B,E,F)$ è una **rete di occorrenze** *(si ammettono condizioni isolate)*
+- $\phi : B \cup E \to S \cup T$ è una mappa :
+  1. $\phi(B) \sube S$,   $\phi(E) \sube T$
+     Mappa le condizioni e gli eventi della rete causale nelle condizioni e gli eventi del sistema.
+  2. $\forall e_1, e_2 \in E : (^{\bullet}e_1 =\ ^{\bullet}e_2 \land \phi(e_1) = \phi(e_2)) \implies e_1 = e_2$
+     Se modelliamo un evento più volte è perché è stato scelto un conflitto in tempi diversi a favore dello stesso evento e avranno quindi nella rete di occorrenze almeno una qualche pre diversa.
+  3. $\forall e \in E : \phi(^{\bullet}e) =\ ^{\bullet}\phi(e) \land \phi(e^{\bullet}) = \phi(e)^{\bullet}$
+     Se registriamo un evento, dobbiamo registrare tutte le sue pre e tutte le sue post. In particolare, l'immagine delle pre deve essere uguale all'immagine delle pre di $e$ e stessa cosa per le post.
+  4. $\phi(Min(N)) = c_{in}$
+     $Min(N) = \{x \in B \cup E\ |\ \not\exists y: (y,x) \in F \}$ *(sono stati iniziali)*
+
+
+
+###### PREFISSO
+
+Sia $\Sigma = (S,T,F,c_{in})$ un sistema elementare finito e senza contatti e $\Pi_1 = <N_1, \phi_1>$ e $\Pi_2=<N_2, \phi_2>$ processi ramificati di $\Sigma$.
+$\Pi_1$ è un **prefisso** di$\Pi_2$ se $\Pi_2$ registra tutto ciò che registra $\Pi_1$ e qualcos'altro in più.
+Formalmente $\Pi_1$ è un **prefisso** di $\Pi_2$ sse $N_1$ è una sottorete di $N_2$ e $\phi_2|N_1 = \phi_1$ *($\phi_2$ ristretto a $N_1$ è uguale a $\phi_1$)*
+
+
+
+###### UNFOLDING
+
+$\Sigma$ ammette un *unico* processo ramificato che è *massimale* rispetto alla relazione di prefisso tra processi. Tale processo massimale è chiamato ***unfolding*** di $\Sigma$, denotato come $Unf(\Sigma)$.
+
+Un **processo non sequenziale** è un processo ramificato $\Pi = <N, \phi>$ tale che $N$ è una rete causale *(e quindi senza conflitti)* e che è prefisso di $Unf(\Sigma)$ ed è chiamato anche ***corsa*** **(run)**.
+
+<div style="page-break-after: always;"></div>
+
+### SISTEMI ELEMENTARI - RETI P/T - RETI AD ALTO LIVELLO
+
+Vediamo ora un accenno di cosa non riusciamo a trattare in questo corso.
+
+Se dovessimo usare le reti elementari per modellare sistemi veri, avremmo un'esplosione di condizioni ed eventi; una rappresentazione più compatta è data dalle reti Posti e Transizioni che utilizzano, invece delle condizioni booleane dei sistemi elementari, dei contatori; pensiamo ad un buffer a due posizioni, nei sistemi elementari avremmo due condizioni con due eventi deposita e preleva. Nei sistemi P/T possiamo usare un contatore come fosse un'unica condizione. Chiaramente si perde dell'informazione: non sappiamo più in quale posizione del buffer il produttore deposita e da quale posizione il consumatore consuma.
+
+<img src="./img/retiPT.png" alt="scg" style="zoom:60%;" align="center" />
+
+Le reti P/T permettono anche di definire degli archi pesati che abilitino o meno le transizioni.
+
+<img src="./img/retiPT2.png" alt="scg" style="zoom:60%;" align="center" />
+
+Nell'esempio sopra la transizione è abilitata se in $P_{i1}$ c'è almeno una marca e in $P_{i2}$ ce ne sono almeno 5; dopo la transizione verranno assegnate una marca al primo contatore, due al secondo e una al terzo.
+
+Le reti ad alto livello, anche dette reti colorate, permettono di ristabilire l'informazione persa con le reti P/T assegnando una struttura dati alle marche. Addirittura una marca potrebbe rappresentare un processo a sé stante.
