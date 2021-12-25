@@ -2844,7 +2844,7 @@ $<N = (B,E,F);\ \phi>$ è un **processo non sequenziale** di $\Sigma$ sse
 
 Se $<N = (B,E,F);\ \phi>$ è un **processo non sequenziale** di $\Sigma = (S,T,F, c_{in})$ sistema elementare **finito** e senza contatti, allora $N$ è sicuramente **K-densa** e $\forall K \sube B, K$ B-taglio di $N$ è tale che $K$ è finito e $\exists c \in C_\Sigma : \phi(K) = c$, ovvero i **B-tagli corrispondono a dei casi raggiungibili**.
 
-#### RETI DI OCCORRENZE
+### RETI DI OCCORRENZE
 
 Dato un sistema con conflitti come quello della mutua esclusione, possiamo avere diverse registrazioni a seconda di come vengono risolti i conflitti. Vogliamo però avere un'unica rete che tenga conto di tutti i possibili comportamenti: a tal scopo sono stati introdotti i **processi ramificati** in cui viene descritto cos'è sucesso descrivendo anche tutti i possibili futuri. Possiamo osservare un processo ramificato del sistema della mutua esclusione sotto.
 
@@ -2876,7 +2876,7 @@ In questo esempio abbiamo $e_1\#e_2$, $b\#e_1$, $c\#e_4$, $e_3\#e_4$, $c\#h$ ...
 Notiamo che $e_3\#e_4$ e $e_4\#c$, ma $e_3 \not\#c$, quindi $\#$ è simmetrica, ma non è transitiva.
 Abbiamo anche $e_8$ **co** $e_5$, $e_6$ **co** $e_5$, $e_6$ **co** $f$ ...   e   $e_1$ **li** $e_7$, $e_1$ **li** i, $a$ **li** $e_3$ ...
 
-##### PROCESSI RAMIFICATI
+#### PROCESSI RAMIFICATI
 
 Sia $\Sigma = (S,T,F, c_{in})$ un sistema elementare **senza contatti** e **finito**.
 
@@ -2885,17 +2885,19 @@ $<N = (B,E,F);\ \phi>$ è un **processo ramificato** di $\Sigma$ sse
 - $(B,E,F)$ è una **rete di occorrenze** *(si ammettono condizioni isolate)*
 - $\phi : B \cup E \to S \cup T$ è una mappa :
   1. $\phi(B) \sube S$,   $\phi(E) \sube T$
-     Mappa le condizioni e gli eventi della rete causale nelle condizioni e gli eventi del sistema.
   2. $\forall e_1, e_2 \in E : (^{\bullet}e_1 =\ ^{\bullet}e_2 \land \phi(e_1) = \phi(e_2)) \implies e_1 = e_2$
-     Se modelliamo un evento più volte è perché è stato scelto un conflitto in tempi diversi a favore dello stesso evento e avranno quindi nella rete di occorrenze almeno una qualche pre diversa.
-  3. $\forall e \in E : \phi(^{\bullet}e) =\ ^{\bullet}\phi(e) \land \phi(e^{\bullet}) = \phi(e)^{\bullet}$
+     Se modelliamo un evento più volte è perché è occorso più volte *(in linea)* o perché è stato scelto un conflitto in tempi diversi a favore dello stesso evento e avranno quindi nella rete di occorrenze almeno una qualche pre diversa.
+  3. $\forall e \in E :$ la restrizione di $\phi$ a $^{\bullet}e$ è una biiezione tra $^{\bullet} e$ e $^{\bullet}\phi(e)$
+     la restrizione di $\phi$ a $e^{\bullet}$ è una biiezione tra $e^{\bullet}$ e $\phi(e)^{\bullet}$
      Se registriamo un evento, dobbiamo registrare tutte le sue pre e tutte le sue post. In particolare, l'immagine delle pre deve essere uguale all'immagine delle pre di $e$ e stessa cosa per le post.
-  4. $\phi(Min(N)) = c_{in}$
+  4. La restrizione di $\phi$ a $Min(N)$ è una biiezione tra $Min(N)$ e $c_{in}$
      $Min(N) = \{x \in B \cup E\ |\ \not\exists y: (y,x) \in F \}$ *(sono stati iniziali)*
 
+Possiamo vedere un processo non sequenziale come un caso *particolare* di processo ramificato in cui la rete sia senza conflitti, ovvero una rete causale piuttosto che di occorrenze.
 
 
-###### PREFISSO
+
+##### PREFISSO
 
 Sia $\Sigma = (S,T,F,c_{in})$ un sistema elementare finito e senza contatti e $\Pi_1 = <N_1, \phi_1>$ e $\Pi_2=<N_2, \phi_2>$ processi ramificati di $\Sigma$.
 $\Pi_1$ è un **prefisso** di$\Pi_2$ se $\Pi_2$ registra tutto ciò che registra $\Pi_1$ e qualcos'altro in più.
@@ -2903,11 +2905,33 @@ Formalmente $\Pi_1$ è un **prefisso** di $\Pi_2$ sse $N_1$ è una sottorete di 
 
 
 
-###### UNFOLDING
+##### UNFOLDING
 
 $\Sigma$ ammette un *unico* processo ramificato che è *massimale* rispetto alla relazione di prefisso tra processi. Tale processo massimale è chiamato ***unfolding*** di $\Sigma$, denotato come $Unf(\Sigma)$.
 
 Un **processo non sequenziale** è un processo ramificato $\Pi = <N, \phi>$ tale che $N$ è una rete causale *(e quindi senza conflitti)* e che è prefisso di $Unf(\Sigma)$ ed è chiamato anche ***corsa*** **(run)**.
+
+<div style="page-break-after: always;"></div>
+
+#### ESEMPIO
+
+Dato il sistema
+
+<img src="./img/esercizioProcRam.png" alt="scg" style="zoom:60%;" align="center" />
+
+1. Disegnare un processo non sequenziale del sistema che contenga almeno due occorrenze dell'evento $b$ e una dell'evento $d$. Indicare poi una linea e un taglio contenenti entrambi un'occorrenza dell'evento $b$
+
+   Possiamo, ad esempio, eseguire $a$, $b$, $c$, $b$, $d$.
+   Ricordiamo che dobbiamo registrare tutte le marche iniziali, ovvero $1$, $2$ e $6$
+   <img src="./img/sol1.png" alt="scg" style="zoom:60%;" align="center" />
+   Osserviamo in blu una possibile linea e in rosso un possibile taglio.
+   Sarebbe stata una linea valida anche $2 \to b\to4 \to c \to 1 \to d \to 5$
+   Un altro tagli valido sarebbe stato $b$, $a$, $6$ *(ricordiamo che un taglio è un co-set massimale)*
+
+2. Disegnare un processo ramificato che contenga due occorrenze dell'evento $d$
+
+   Osserviamo l'unfolding e *(in rosso)* un processo ramificato con due occorrenze di $d$
+   <img src="./img/sol2.png" alt="scg" style="zoom:40%;" align="center" />
 
 <div style="page-break-after: always;"></div>
 
@@ -2926,3 +2950,401 @@ Le reti P/T permettono anche di definire degli archi pesati che abilitino o meno
 Nell'esempio sopra la transizione è abilitata se in $P_{i1}$ c'è almeno una marca e in $P_{i2}$ ce ne sono almeno 5; dopo la transizione verranno assegnate una marca al primo contatore, due al secondo e una al terzo.
 
 Le reti ad alto livello, anche dette reti colorate, permettono di ristabilire l'informazione persa con le reti P/T assegnando una struttura dati alle marche. Addirittura una marca potrebbe rappresentare un processo a sé stante.
+
+<div style="page-break-after: always;"></div>
+
+#### DEFINIZIONE FORMALE
+
+Formalmente un Sistema Posti e Transizioni è $\Sigma = (S, T, F, K, W, M_0)$ dove
+
+-  $(S,T,F)$ è una rete
+- $K : S \to \N^+ \cup \{\infty\}$ è la funzione che assegna ai posti le **capacità**
+- $W: F \to \N$ è la funzione **peso degli archi**
+- $M_0 : S \to \N : \forall s \in S\ \ \ M_0 (s) \leq K(s)$ è la **marcatura iniziale**; il numero di marche è sempre minore o uguale alla capacità del posto.
+
+
+
+**REGOLA DI SCATTO**
+$M[t>$ sse $\forall s \in S$ $M(s) \geq W(s,t) \land M(s) + W(t,s) \leq K(s)$
+$M[t>M'$ sse $M[t > \land\ \forall s \in S\ \ \ M'(s) = M(s) - W(s,t) + W(t,s)$
+
+Anche qui, come nei sistemi elementari si può costruire l'insieme delle marcature raggiungibili e il relativo grafo di raggiungibilità. Generalmente in queste reti la diamond property non è più valida.
+
+
+
+**RETI MARCATE**
+Un sistema P/T è una **rete marcata** se non ha vincoli sulla capacità dei posti e ha tutti gli archi di peso unitario. Una rete marcata è **safe** se comunque evolva il comportamento avremmo in ogni posto sempre al più una marca; i posti hanno quindi 0 o 1 marca e possiamo interpretarli di nuovo come condizioni booleane. L'unica differenza con le reti elementari è che nelle reti safe i cappi sono abilitati, mentre nelle reti elementari questo non succede.
+
+Se eliminiamo i cappi dalle reti marcate safe, otteniamo il corrispettivo di un sistema elementare puro.
+
+<div style="page-break-after: always;"></div>
+
+# LOGICHE TEMPORALI E MODEL CHECKING
+
+In questa parte ci occuperemo di stabilire la correttezza dei sistemi concorrenti, dove un sistema concorrente può essere un programma concorrente, un circuito elettronico, un protocollo di comunicazione ecc... Abbiamo visto come possiamo modellare tramite dei modelli matematici questi sistemi, ora vedremo come verificarne la correttezza.
+
+Anche qui, prima di stabilire se un sistema è corretto, dobbiamo prima stabilire cosa significa corretto e lo faremo sempre usando la logica ma vedremo che non basterà più la logica usata con le triple di hoare e quindi introdurremmo la logica temporale.
+
+
+
+### SISTEMI REATTIVI
+
+Un sistema reattivo è un sistema concorrente, distribuito e asincrono. Di conseguenza, non obbedisce al paradigma *input - computazione - output*. Si chiamano reattivi perché il loro comportamento è determinato dalle interazione con l'ambiente in cui si trovano. Non possiamo usare la logica di Hoare per analizzare questi sistemi, non del tutto almeno.
+Generalmente viene usata una logica che fa riferimento al tempo *(prima o poi varrà x, y vale finché vale z)* per analizzare la correttezza di questi sistemi.
+
+Per analizzare questi sistemi dobbiamo esprimere il criterio di correttezza come formula logica: per fare ciò useremo la **logica temporale**.
+Dobbiamo poi rappresentare il sistema tramite un formalismo che ci permetta di fare delle affermazioni precise: a tal scopo useremo i **modelli di Kripke** *(che sono dei sistemi di transizioni)*.
+
+
+
+#### MODELLI DI KRIPKE
+
+Useremo dei sistemi di transizioni molto basilari definiti come $A = (Q, T)$ con $Q$ insieme degli stati e $T$ insieme delle transizioni. Possiamo rappresentare tali sistemi come dei grafi.
+
+Sarà utile anche la definizione di **cammino** $\pi = (q_0,q_1)\ ...\ (q_i, q_{i+1}) \in T$
+Definiamo anche il **cammino massimale** come un cammino che non può più essere esteso; ci possono essere due tipi di cammini massimali:
+
+1. Quando il cammino arriva in uno stato che non ha archi uscenti
+   Chiameremo questi stati *stati di deadlock* anche se non corrispondono necessariamente ad una situazione di deadlock.
+2. Un cammino infinito *(cicli)* non può essere ulteriormente esteso.
+
+
+
+Un **modello di Kripke** è un sistema di transizioni al quale viene aggiunta una componente di tipo logico data da un insieme di proposizioni atomiche $AP = \{z_1, z_2,\ ...\}$ associate agli stati del sistema.
+Dato un sistema di transizioni quindi associamo ad ogni stato $q \in Q$ l'insieme delle proposizioni atomiche che sono vere in quello stato tramite una funzione di *interpretazione* $I:Q \to 2^{AP}$.
+
+
+
+
+
+## LOGICA TEMPORALE LINEARE
+
+Esistono vari tipi di logiche temporali, la prima che vedremo è la **logica temporale lineare *(LTL)***.
+
+### SINTASSI
+
+Abbiamo, come nel caso delle logiche classiche, un insieme di proposizione atomiche $AP = \{p_1, p_2,\ ..., \ p_i,\ ...\}$
+Anche qui abbiamo delle formule ben formate $FBF_{LTL}$, dove ogni proposizione atomica è una formula ben formata, così come le costanti logiche e le formule ben formate combinate con gli operatori logici.
+
+**OPERATORI TEMPORALI**
+Abbiamo anche degli operatori che agiscono sul tempo. Siano $\alpha$ e $\beta$ due formule ben formate:
+
+- $X\alpha$:   nel prossimo stato varrà $\alpha$
+  Quindi $\pi \vDash X\alpha$ sse $\pi^{(1)} \vDash \alpha$
+- $F\alpha$:   prima o poi varrà $\alpha$ *(eventually)*
+  Quindi $\pi \vDash F \alpha$ sse $\exists i \in \N : \pi^{(i)} \vDash \alpha$
+- $G\alpha$:   $\alpha$ vale sempre
+  Quindi $\pi \vDash G\alpha$ sse $\forall i \in \N : \pi^{(i)} \vDash \alpha$
+- $\alpha\ U\ \beta$:   $\alpha$ vale fino a quando vale $\beta$ *(until)*
+  Quindi $\pi \vDash \alpha\ U\ \beta$ sse
+  1. $\exists i \in \N : \pi^{(i)} \vDash \beta$						*(ovvero se $\pi \vDash F\beta$)*
+  2. $\forall h,\ 0 \leq h < i\ \ \ \pi^{(h)} \vDash \alpha$
+     $\alpha$ deve essere vera fino all'istante prima che diventi vera $\beta$. Dopo che $\beta$ diventa vera non ci interessa più il valore di $\alpha$.
+- $\alpha\ W\ \beta \equiv G \alpha \lor (\alpha\ U\ \beta)$: ***until debole***
+- $\alpha\ R\ \beta \equiv \beta\ W\ (\alpha \land \beta)$: ***release***
+  $\pi \vDash \alpha\ R\ \beta$ sse $\forall k \geq 0 : (\pi^{(k)} \vDash \beta \lor \exists h<k:\pi^{(h)} \vDash \alpha)$
+  $\beta$ deve essere sempre vera a meno che in un certo istante non siano vere sia $\alpha$ che $\beta$, dopo quell'istante $\beta$ può essere falsa.
+
+Anche gli operatori temporali applicati a delle FBF sono delle FBF, quindi possiamo combinare i vari operatori.
+
+**ALCUNI ESEMPI**
+
+- $FG\alpha$: prima o poi, $\alpha$ sarà sempre vera. Cioèd $\alpha$ sarà invariante da un certo istante in poi.
+- $GF\alpha$: è sempre vero che prima o poi $\alpha$ è vera. Cioè $\alpha$ è vera in un numero infinito di stati, se così non fosse ci sarebbe uno stato da dove non sarebbe più valida $F\alpha$.
+- $G \lnot(cs_1 \land cs_2)$: è sempre vero che $cs_1$ e $cs_2$ non sono vere simultaneamente. Immaginiamo $cs$ come sezione critica, questa formula fornisce la definizione di mutua esclusione.
+- $G (req \to XFack)$; è sempre vero che se c'è una richiesta pendente, allora in futuro ci sarà una risposta.
+- $G(req \to (req\ U\ ack))$: è sempre vero che se c'è una richiesta pendente, allora questa sarà pendente fino a che non ci sarà una risposta.  Rispetto alla prima formula, qui la richiesta deve rimanere pendente fino a quando non ci sarà una risposta.
+- $G(req \to ((req \land \lnot ack)\ U\ (ack \land \lnot req)))$: è sempre vero che se c'è una richiesta pendente, allora la richiesta rimane pendente e senza risposta fino a quando non c'è una risposta. Quando c'è una risposta, la richiesta non è più pendente.
+
+
+
+### SEMANTICA
+
+Interpretiamo le formule LTL su un modello di Kripke.
+Procederemo in due fasi:
+
+1. Definiamo un criterio per stabilire se una formula $\alpha$ è vera in un cammino massimale $\pi$
+2. Diremo che la formula è vera rispetto ad uno stato $q$ del modello di Kripke se è vera in **tutti** i cammini massimali che partono da $q$
+
+
+
+Vediamo un esempio *(rappresenteremo gli stati come nome | formule vere in quello stato)*
+
+```mermaid
+graph LR
+q1("q1 | p") --> q2("q2 | p, s") --> q4("q4 | r, s") --> q1 & q4
+q1 --> q3("q3 | r") --> q1
+```
+
+Elenchiamo alcuni cammini massimali
+$\pi_1 = q_1\ q_3\ q_1\ q_3\ q_1\ ...$
+$\pi_2 = q_1\ q_2\ q_4\ q_4\ q_4\ ...$
+$\pi_3 = q_1\ q_2\ q_4\ q_4\ q_1\ q_3\ q_1\ q_3\ ...$
+$\pi_4 = q_1\ q_3\ q_1\ q_2\ ...$
+
+E consideriamo le formule $\alpha = Fs$, $\beta = Fr$, $\gamma = G(p \lor r)$, $\delta = F\ p\ U\ s$
+
+Notiamo che $\pi_1 \not\vDash \alpha$, infatti $s$ non è vera né in $q_1$ né in $q_3$. Quindi la formula $\alpha$ è falsa nello stato $q_1$ *(stato di partenza del cammino)*.
+
+Notiamo invece che $\pi_1 \vDash \beta$ poiché $r$ è vera in $q_3$. $\pi_1 \vDash \gamma$ poiché $p$ è vera in $q_1$ ed $r$ è vera in $q_3$.
+$\pi_1 \not\vDash \delta$ poiché non si raggiunge mai un cammino dove è vera $s$.
+
+Notiamo che $pi_2 \vDash \delta$ poiché prima o poi si raggiunge uno stato in cui vale $s$ ed in tutti gli stati precedenti ad esso è vera $p$. Anche il cammino $q_3 \pi_2 \vDash \delta$, per via dell'operatore $F$.
+
+In futuro useremo una sintassi simile a quella delle espressioni regolari per rappresentare i cammini, in particolare diremo $(q_1\ q_3)^{\omega}$ per rappresentare il cammino infinito che ripete $q_1$ e $q_3$.
+
+<div style="page-break-after: always;"></div>
+
+### ESEMPIO COMPLETO
+
+Consideriamo il seguente modello rappresentate due processi ciclici che accedono ad una richiesta condivisa.
+
+<img src="./img/eserciziocompl.png" alt="scg" style="zoom:30%;" align="center" />
+
+Per poter applicare il model checking dobbiamo trasformare questa rete di Petri in un modello di Kripke; per farlo basta calcolare il grafo dei casi ed assegnare ad ogni stato l'insieme di proposizioni atomiche vere in quello stato. La scelta più immediata nel caso dei grafi dei casi raggiungibili è dato dall'insieme delle condizioni che compongono il caso.
+Nel nostro caso specifico avremo quindi *(a sinistra il grafo dei casi, a destra le condizioni vere in ogni caso)* :
+
+<img src="./img/grafocasiesc.png" alt="scg" style="zoom:40%;" align="center" />
+
+A questo punto possiamo scrivere delle formule che vorremmo fossero vere nel nostro modello.
+Ad esempio $G \lnot(sc_1 \land sc_2)$ e $G(req_1 \to Fsc_1)$.
+
+Per verificare le formule dovremmo considerare tutti i cammini massimali che partono dallo stato $1$ e verificare che le formule siano valide in tutti i cammini. Tuttavia, questo caso è complesso e i possibili cammini massimali sono potenzialmente infiniti.
+Una via più facile è, osservando che dallo stato $1$ si possono raggiungere tutti gli altri stati, scorrere la tabella delle formule vere in ciascun stato e osservare che in nessun stato è vera $sc_1 \land sc_2$.
+
+Per la seconda formula non possiamo più applicare questa strategia, ma possiamo cercare di confutare la formula: basta trovare un cammino massimale che non soddisfi la formula. Notiamo il cammino $1\ (2\ 4\ 8)^{\omega}$: in questo cammino la sezione critica viene richiesta da entrambi i processi ma viene assegnata sempre al secondo, quindi $G(req \to Fsc_1)$ non è valida in questo modello.
+
+<div style="page-break-after: always;"></div>
+
+Proviamo a rimediare a questo problema modificando il modello "*sdoppiando*" il processo $4$ in modo che se siamo nello stato $4$ diamo la precedenza al processo 2, mentre nello stato $9$ diamo la precedenza al processo 1. È facile osservare che ora la formula di prima è verificata.
+
+<img src="./img/modellomod.png" alt="scg" style="zoom:40%;" align="center" />
+
+
+
+### FORMULE EQUIVALENTI
+
+Definizione: $\alpha \equiv \beta$ sse $\forall \pi : (\pi \vDash \alpha \longleftrightarrow \pi\vDash\beta)$
+
+Alcuni esempi:
+
+- $F\alpha \equiv \alpha \lor XF\alpha$   Se prima o poi $\alpha$, allora o è vera $\alpha$ o dal prossimo stato sarà vero che prima o poi sarà vera $\alpha$
+- $G\alpha \equiv \alpha \land XG \alpha$   Se $\alpha$ vale sempre, allora vale nello stato corrente e dal successivo vale $G\alpha$
+- $\alpha\ U\ \beta \equiv \beta \lor (\alpha \land X(\alpha\ U\ \beta))$   Se $\alpha\ U\ \beta$, allora o è già vero $\beta$ e non ci interessa più $\alpha$, o è vero $\alpha$ e dal prossimo stato vale $\alpha\ U\ \beta$ 
+- $FGF\alpha \equiv GF \alpha$   Se è sempre vero che prima o poi varrà $\alpha$, il prima o poi davanti è ridondante
+- $GFG\alpha \equiv FG\alpha$   Se prima o poi $\alpha$ sarà sempre vera, il sempre davanti è ridondante
+
+
+
+
+
+### INSIEMI MINIMALI DI OPERATORI
+
+Abbiamo visto che alcuni operatori possono essere derivati da altri. Cerchiamo ora l'insieme più piccolo di operatori.
+Ad esempio potremmo eliminare dalla lista di operatori indispensabili $F$ notando che $T\ U\ \alpha \equiv F \alpha$
+Consideriamo ora $\lnot F \lnot \alpha \equiv G \alpha$, quindi anche $G$ non è un operatore indispensabile.
+
+L'insieme minimale di operatori temporale dai quali possiamo ottenere tutti gli altri è $\{X, U\}$
+
+
+
+### LA NEGAZIONE IN LTL
+
+Che cosa significa "Non è vero che $F\alpha$"?
+Significa che non è vero che in ogni cammino massimale prima o poi $\alpha$ è vera, ovvero c'è almeno un cammino nel quale $\alpha$ è sempre falsa.
+
+Che cosa significa $\lnot F \alpha$?
+Significa che in ogni cammino massimale non è vero che prima o poi $\alpha$ è vera, cioè $G\lnot \alpha$
+
+Dunque LTL non è in grado di esprimere proprietà del tipo *esiste un cammino in cui vale $\alpha$*.
+
+
+
+### DA LINGUAGGIO NATURALE A LTL
+
+Abbiamo visto precedentemente un modello rappresentante due processi in mutua esclusione. Generalmente la mutua esclusione deve rispettare tre requisiti:
+
+1. I due processi non sono mai contemporaneamente nella sezione critica
+2. Se un processo richiede la risorsa, prima o poi entrerà nella sezione critica
+3. Se un solo processo richiede la risorsa, deve poter accedere alla sezione critica
+
+Proviamo a tradurre in LTL i requisiti:
+
+1. $G\lnot(sc_1 \land sc_2)$
+2. $G(req \to F sc)$
+3. Dovremmo dire che se $(req_1 \land sc_2)$ esiste almeno un cammino in cui $sc_1$ *(deve poter accedere, non sicuramente accederà)*, tuttavia sappiamo che in LTL non possiamo esprimere ciò.
+
+
+
+### ALBERI DI COMPUTAZIONE
+
+Per andare verso una logica temporale che risolva questo limite espressivo ci servirà un nuovo concetto: gli alberi di computazione. L'idea è che un albero di computazione descriva tutte le possibili esecuzioni e quindi tutti i possibili cammini di un sistema di transizioni. Si parte da uno stato iniziale che sarà la radice dell'albero; osserviamo poi nel sistema di transizioni quello stato e i suoi archi uscenti e aggiungiamo all'albero un ramo per ogni stato uscente e aggiungiamo un nodo all'albero con una copia dello stato d'arrivo. Se il sistema ha un comportamento infinito, l'albero sarà infinito.
+
+<img src="./img/sistemaperalbero.png" alt="scg" style="zoom:30%;" align="center" />
+
+<img src="./img/albero.png" alt="scg" style="zoom:30%;" align="center" />
+
+## COMPUTATION TREE LOGIC
+
+Vediamo ora una nuova logica temporale. Anche qui abbiamo delle proposizioni atomiche $AP$ e delle formule ben formate $FBF_{CTL}$.
+Gli operatori temporali del CTL sono gli stessi del LTL. La novità è che possiamo utilizzare i quantificatori $\forall$ e $\exists$, rappresentati da $A$ ed $E$ e che dovranno essere interpretati sui cammini: $A$ significa ***per ogni cammino***, $E$ significa ***esiste un cammino***. Ogni quantificatore dovrà essere preceduto da un quantificatore.
+
+
+
+**UN ESEMPIO**
+"Dopo l'accensione della spia, sarà sempre possibile riportare il sistema allo stato iniziale"
+$AG(spia \to AXEFinit)$ ovvero è sempre vero all'interno del sistema che se la spia è accesa, per ogni cammino, a partire dal prossimo stato esiste almeno un cammino in cui il sistema torna allo stato iniziale.
+
+
+
+### SEMANTICA
+
+Sia $M = (Q,T,I)$ un modello di Kripke, $\alpha$ una formula CTL, $q$ uno stato di $M$
+$M, q \vDash \alpha$ significa che $\alpha$ è vera nello stato $q$ del modello $M$
+
+Siano $\alpha$ e $\beta$ due formule, $p$ una proposizione atomica
+$M, q \vDash p$ sse $p \in I(q)$
+$M, q \vDash \lnot \alpha$ sse $M, q \not\vDash \alpha$
+$M,q \vDash \alpha \lor \beta$ sse $M, q \vDash \alpha$ o $M, q \vDash \beta$  
+
+$M,q \vDash AX\alpha$ sse $\forall q' : q \to q',\ \ \ M,q' \vDash \alpha$
+$M, q \vDash EX\alpha$ sse $\exists q' : q \to q',\ \ \ M,q' \vDash \alpha$
+$M,q \vDash A \alpha\ U\ \beta$ sse per ogni cammino $q = q_0, q_1,\ ...$ esiste $k\ \leq 0$ tale che $M, q_k \vDash \beta$ e per ogni $i$ con $0 \leq i < k$ $M, q_i \vDash \alpha$
+...
+
+<div style="page-break-after: always;"></div>
+
+### ESERCIZI
+
+Consideriamo il seguente modello di Kripke
+
+<img src="./img/esLTL1.png" alt="scg" style="zoom:60%;" align="center" />
+
+Vogliamo analizzare le seguente formule
+
+1. $AFq$: vediamo in quali stati è vera
+   - $S_0$: in questo stato è banalmente vera la formula poiché $q \in I(S_0)$
+   - $S_1$: come in $S_0$
+   - $S_2$: in questo stato la formula è falsa, prendiamo come contro esempio il cammino $S_2^\omega$
+   - $S_3$: in questo stato la formula è vera, tutti i cammini che partono da $S_3$ passano per $S_1$ o $S_0$, dove $q$ è vera
+2. $AG(EF(p \lor q))$
+   - $S_0$: qui sia $p$ che $q$ sono vere, quindi è sempre vero per ogni cammino da $S_0$ che esiste un cammino in cui prima o poi è vera $p \lor q$
+   - $S_1$:  come in $S_0$
+   - $S_2$: qui esiste almeno un cammino in cui prima o poi è vera $p \lor q$, ovvero i cammini che iniziano con la transizione $S_2, S_3$
+   - $S_3$: come in $S_0$
+3. $GF(p \lor q)$
+   Notiamo che questa formula non vale in nessuno dei 4 stati: in $S_2$ banalmente per via del cammino $S_2^\omega$. Ma possiamo arrivare in $S_2$ da tutti gli altri stati, quindi non è valida la formula per via del $G$ davanti.
+4. $EX(EXr)$:
+   - $S_0$: è vera, prendiamo il cammino $S_0\ S_2^\omega$
+   - $S_1$: è vera, prendiamo il cammino $S_1\ (S_0\ S_1)^\omega$
+   - $S_2$: è vera, prendiamo il cammino $S_2^\omega$
+   - $S_3$: è vera, prendiamo il cammino $S_3\ (S_0\ S_1)^\omega$
+5. $XXr$:
+   Questa formula è valida solo in $S_1$: tutti i cammini che partono da $S_1$ arrivano, al secondo passo, in uno stato in cui vale $r$ *($S_1$ stesso o $S_2$)*. In tutti gli altri stati esiste almeno un cammino che invalida la formula.
+
+<div style="page-break-after: always;"></div>
+
+Tradurre in LTL i seguenti enunciati
+
+1. "Chi ruba, presto o tardi finirà in galera"
+   *presto o tardi* suggerisce l'utilizzo di $F$. Inoltre usiamo $G$ perché altrimenti se nel primo stato non vale $rubato$ la formula risulta vera, anche se magari nei prossimi stati $rubato$ diventa vera.
+   $G(rubato \to XFin\_galera)$
+
+2. "Solo chi ruba finirà in galera"
+   Notiamo che è equivalente a "Chi non ruba non finirà mai in galera", abbiamo interpretato il senso debole della frase, ovvero chi ruba *potrebbe* finire in galera
+   $\lnot in\_galera\ W\ rubato$
+
+3. "Chi ruba finirà in carcere, ma solo dopo aver parlato con un avvocato"
+   L'operatore $U$ garantisce che finché non si sarà parlato con un avvocato, $in\_galera$ non può essere vera.
+   $G(rubato \to (XFin\_galera \land (\lnot in\_galera\ U\ parlato\_con\_avvocato)))$
+
+4. "Se la cabina è in movimento verso l’alto, si trova all’altezza del secondo piano, ed è stato premuto il pulsante interno di richiesta del quinto piano, allora la cabina non cambierà direzione fino a quando avrà raggiunto il quinto piano"
+   Definiamo le proposizioni atomiche:
+
+   - $su$: la cabina sta salendo
+   - $pi$: cabina ad altezza del piano $i$
+   - $ri$: premuto pulsante piano $i$
+
+   $G((su \land p2 \land r2) \to (su\ U\ p5))$
+
+   Ricordiamo che until significa che fino al momento prima che sia vera $p5$ deve essere vera $su$
+
+<div style="page-break-after: always;"></div>
+
+### CONFRONTO TRA LTL E CTL
+
+Molte proprietà interessanti si possono esprimere sia in LTL che in CTL
+
+- **INVARIANTI**: $AG \lnot p$         $G \lnot p$
+  Queste formule descrivono delle proprietà invarianti
+- **REATTIVITÀ**: $AG(p \to AFq)$         $G(p \to Fq)$
+  Queste formule descrivono un evento che accadrà se accade qualcos'altro prima
+
+Alcune formule però non possono essere espresse in LTL, come ad esempio
+$AGEFp$ *(reset property)*: "da ogni stato raggiungibile in ogni cammino è sempre possibile raggiungere uno stato nel quale vale $p$"
+Questa formula non è esprimibile in LTL perché deve essere vera anche se c'è un cammino in cui non si raggiunge mai uno stato nel quale vale $p$, purché in ogni stato di questo cammino si possa scegliere una strada alternativa dove invece $p$ è valido.
+
+Osserviamo ora la formula LTL $FGp$: "in ogni cammino si raggiungerà uno stato a partire dal quale $p$ rimane sempre vera"
+Questa proprietà non è esprimibile in CTL.
+
+Consideriamo il seguente modello di Kripke
+
+<img src="./img/controesfgp.png" alt="scg" style="zoom:60%;" align="center" />
+
+Verrebbe naturale provare a tradurre $FGp$ con $AFAGp$: "per ogni cammino prima o poi si raggiunge uno stato a partire dal quale per ogni cammino è sempre vera $p$"
+Tuttavia questa formula è falsa in questo modello poiché considerando il cammino massimale $S_0^\omega$ è sempre possibile andare in $S_1$ e quindi $p$ non è sempre vera.
+
+In questo modello vale tuttavia $AFEG p$, ovvero "per ogni cammino prima o poi esiste un cammino in cui è vera sempre $p$", E, in questo modello, la formula $AFEGp$ corrisponde alla formula $FGp$.
+
+Consideriamo però ora il modello 
+
+<img src="./img/controesfgp2.png" alt="scg" style="zoom:60%;" align="center" />
+
+Notiamo che questo nuovo modello soddisfa $AFEGp$, ma non $FGp$, quindi $AFEGp \not\equiv FGp$
+
+<div style="page-break-after: always;"></div>
+
+## CTL*
+
+La logica CTL* estende sia LTL che CTL mantenendo i due quantificatori sui cammini, ma eliminando il vincolo di CTL.
+
+Sarà utile il concetto di **equivalenza di modelli rispetto ad una logica**
+Due modelli di Kripke $M_1$ ed $M_2$ con stati iniziali $q_0$ ed $s_0$ si dicono equivalenti rispetto ad una logica $L$ se, per ogni formula $\alpha \in FBF_L$ $M_1, q_0 \vDash \alpha \Longleftrightarrow M_2, s_0 \vDash \alpha$
+
+
+
+### RIPASSO: INSIEMI PARZIALMENTE ORDINATI
+
+Una relazione d'ordine parziale su $A\ :\ \leq\ \sube A \cp A$ è tale se è
+
+1. **RIFLESSIVA** $x \leq x\ \ \ \forall x \in A$
+2. **ANTISIMMETRICA** $(x \leq y \land y \leq x) \to x = y$   $\forall x,y \in A$
+3. **TRANSITIVA** $(x \leq y \land y \leq z) \to x \leq z$   $\forall x,y,z \in A$
+
+La più piccola relazione d'ordine su un insieme $A$ è la relazione identità.
+
+
+
+Sia $(A, \leq)$ un insieme parzialmente ordinato e $B \sube A$
+
+- $x \in A$ è un ***maggiorante*** di $B$ se $y \leq x$   $\forall y \in B$
+  Indichiamo con $B^*$ l'insieme dei maggioranti di $B$
+- $x \in A$ è un ***minorante*** di $B$ se $x \leq y$   $\forall y \in B$
+  Indichiamo con $B_*$ l'insieme dei minoranti di $B$
+- $B$ si dice ***limitato superiormente*** se $B^* \neq \empty$
+- $B$ si dice ***limitato inferiormente*** se $B_* \neq \empty$
+- $x\in B$ è il ***minimo*** di $B$ se $x\leq y$   $\forall y \in B$
+- $x\in B$ è il ***massimo*** di $B$ se $y \leq x$   $\forall y \in B$
+- $x \in B$ è il ***minimale*** in $B$ se $y \leq x \to y = x$
+- $x \in B$ è il ***massimale*** in $B$ se $x \leq y \to y=x$
+
+
+
+Se $x$ è il minimo di $B^*$, diciamo che $x$ è l'**estremo superiore *(join)*** di $B$, $x = sup\ B$ o anche $x = \lor B$.
+Se $x$ è il massimo di $B_*$, diciamo che $x$ è l'**estremo inferiore *(meet)*** di $B$, $x = inf\ B$ o anche $x = \land B$.
+Se $B = \{x,y\}$ scriveremo $x \lor y$ per indicare $\lor B$ se esiste e $x \land y$ per $\land B$ se esiste.
+
+
+
+**DIAGRAMMI DI HASSE**
+A volte è utile rappresentare graficamente gli insiemi parzialmente ordinati. Se dovessimo però disegnare tutto l'insieme, disegnando un punto per ogni elemento dell'insieme e un arco per indicare che un elemento è più piccolo di un altro, otterremmo dei grafi estremamente complicati. Un modo per rappresentare un ordine parziale in modo più chiaro sono i diagrammi di Hasse in cui vengono omessi gli archi di simmetria e di transitività, ovvero tracciamo il grafo della relazione di successore immediato.
