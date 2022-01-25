@@ -1397,9 +1397,9 @@ Dobbiamo poi dimostrare che l'invariante è valido dopo l'assegnamento iniziale,
 # MODELLI DI SISTEMI CONCORRENTI
 
 Abbiamo visto come funzionano le triple di Hoare e come è possibile sfruttarle per calcolare la correttezza dei programmi sequenziali.
-Inoltre, scrivere $\{p\}\ \ \ S\ \ \{q\}$ equivale anche di specificare il significato del programma $S$. Questo tipo di ragionamento che permette di specificare $S$ o di avere delle tecniche per provare la correttezza di $S$ viene detto ***semantica assiomatica***, ovvero un modo per dare semantica, significato al programma $S$ attraverso gli assiomi della logica di Hoare.
+Inoltre, scrivere $\{p\}\ \ \ S\ \ \{q\}$ equivale anche a specificare il significato del programma $S$. Questo tipo di ragionamento che permette di specificare $S$ o di avere delle tecniche per provare la correttezza di $S$ viene detto ***semantica assiomatica***, ovvero un modo per dare semantica, significato al programma $S$ attraverso gli assiomi della logica di Hoare.
 
-Nel caso della programmazione sequenziale esistono anche altri modi per dare una semantica; possiamo ad esempio vedere il programma $S$ come una funzione che trasforma i dati in input in dati in output $F_S: I \rightarrow O$; questa prende il nome di ***semantica denotazionale***. A tal proposito esiste anche il **lambda calcolo** che permette di associare delle funzioni ai programmi ed è quindi un calcolo che permette di combinare funzioni e che è stato studiato quali sono le funzioni computabili e quali sono incomputabili.
+Nel caso della programmazione sequenziale esistono anche altri modi per dare una semantica; possiamo ad esempio vedere il programma $S$ come una funzione che trasforma i dati in input in dati in output $F_S: I \rightarrow O$; questa prende il nome di ***semantica denotazionale***. A tal proposito esiste anche il **lambda calcolo** che permette di associare delle funzioni ai programmi ed è quindi un calcolo che permette di combinare funzioni e che è stato studiato per stabilire quali sono le funzioni computabili e quali sono incomputabili.
 
 Un altro modo ancora per dare una semantica ai programmi sequenziale è la ***semantica operazionale*** che consiste nel prendere una macchina astratta facendo vedere come simulare un programma su di esse *(ad esempio la macchina di Turing)*.
 
@@ -1412,7 +1412,7 @@ Ci sono alcune diversità: ad esempio, nel caso della programmazione sequenziale
 Ci sono però anche altre esigenze. Facciamo un esempio:
 Supponiamo di avere due programmi con le relative triple di Hoare:
 $S_1:\ \ \ x=2\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{x=v\}\ \ \ S_1\ \ \ \{x=2\}$
-$S_2:\ \ \ x = 3\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{x=v\}\ \ \ S_1\ \ \ \{x=3\}$
+$S_2:\ \ \ x = 3\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{x=v\}\ \ \ S_2\ \ \ \{x=3\}$
 
 Notiamo che possiamo eseguire i due programmi in sequenza $S_1;S_2$; in questo caso avremo $\{x=v\}\ \ \ S_1;S_2\ \ \ \{x = 3\}$.
 
@@ -1630,7 +1630,7 @@ S(S) -->|"lez"| S(S)
 
 In questo caso  il sistema eroga in continuazione lezioni con l'ambiente.
 
-E il LTS della specifica:
+E il LTS dell'implementazione:
 
 ```mermaid
 graph LR
@@ -1915,11 +1915,11 @@ Tuttavia, $p_1$ e $u_1$ hanno una '*diversa possibilità di generare deadlock*'.
 $R \sube P_{CCS} \times P_{CCS}$ è una bisimulazione debole sse
 $\forall p,\ q \in P_{CCS} : p\ R\ q$ vale che $\forall \alpha \in Act$
 
-- se $p \to^\alpha p_1$ allora esiste $q \approx^{\alpha} q_1$ tale che $p_1\ R\ q_1$
+- se $p \to^\alpha p_1$ allora esiste $q \Rightarrow^{\alpha} q_1$ tale che $p_1\ R\ q_1$
 
   Ovvero se p può eseguire $\alpha$ fortemente, $q$ deve poter eseguire $\alpha$ debolmente.
   
-- se $q \to^\alpha q_1$ allora esiste $p \approx^\alpha p_1$ tale che $p_1\ R\ q_1$
+- se $q \to^\alpha q_1$ allora esiste $p \Rightarrow^\alpha p_1$ tale che $p_1\ R\ q_1$
 
   *(viceversa)*
 
@@ -2404,7 +2404,7 @@ Un sistema è descritto da una rete elementare definita come $N = (B, E, F)$
 
 - $B$ insieme finito di **condizioni** *(**stati locali**, proposizioni vere o false)*
 
-- $E$ insieme finito di **eventi** *(trasdormazioni locali di stato, **transizioni locali**)*
+- $E$ insieme finito di **eventi** *(trasformazioni locali di stato, **transizioni locali**)*
 
   Affinché $N$ sia una rete dobbiamo avere $B \cap E = \empty \land B \cup E \neq \empty$ , ovvero $B$ e $E$ devono essere disgunti e non vuoti.
 
@@ -2610,7 +2610,7 @@ $\beta(a) = x$, $\beta(b) = y$, $\beta(c) = y$, $\beta(d) = v$
 
 Dato un sistema di transizioni etichettato $A = (S, E, T, s_0)$, ci chiediamo se esiste un sistema elementare $\Sigma = (B, E, F, c_{in})$ tale che il suo grafo dei casi sequenziale $SCG_\Sigma$ sia **isomorfo** ad $A$ e in caso affermativo costruire $\Sigma$.
 
-In generale non esiste sempre un sistema elementare con un certo comportamento dato da un qualsiasi sistema di transizioni. Questo problema è stato risolto caratterizzando quali sistemi di transizioni tali per cui il problema della sintesi è risolvibile usando la **teoria delle regioni** che stabilisce degli assiomi che questi sistemi di transizioni devono rispettare *(tra i quali si richiede anche la soddisfacibilità  della diamond property)*.
+In generale non esiste sempre un sistema elementare con un certo comportamento dato da un qualsiasi sistema di transizioni. Questo problema è stato risolto caratterizzando quali sono i sistemi di transizioni tali per cui il problema della sintesi è risolvibile usando la **teoria delle regioni** che stabilisce degli assiomi che questi sistemi di transizioni devono rispettare *(tra i quali si richiede anche la soddisfacibilità  della diamond property)*.
 
 
 
@@ -2660,7 +2660,7 @@ Ovvero se sono entrambi abilitati in un passo in $c$ e quindi $e_1$ ed $e_2$ son
 
 Sia $\Sigma = (B, E, F, c_{in})$ un sistema elementare, $c \in C_{\Sigma}$, $e_1, e_2 \in E$
 Diremo che $e_1$ ed $e_2$ sono in **conflitto** in $c$ sse $c[e_1> \land c[e_2> \land \lnot c[\{e_1, e_2\}>$
-Ovvero se sono entrambi abilitati in $c$ ma l'occorrenza di uno disabilita l'altro, e quindi i due eventi nono sono indipendenti.
+Ovvero se sono entrambi abilitati in $c$ ma l'occorrenza di uno disabilita l'altro, e quindi i due eventi non sono indipendenti.
 
 Se gli eventi hanno una precondizione in comune c'è un conflitto **in avanti/forward**, mentre se hanno una postcondizione in comune c'è un conflitto **all'indietro/backward**.
 
