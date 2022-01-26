@@ -3348,3 +3348,166 @@ Se $B = \{x,y\}$ scriveremo $x \lor y$ per indicare $\lor B$ se esiste e $x \lan
 
 **DIAGRAMMI DI HASSE**
 A volte è utile rappresentare graficamente gli insiemi parzialmente ordinati. Se dovessimo però disegnare tutto l'insieme, disegnando un punto per ogni elemento dell'insieme e un arco per indicare che un elemento è più piccolo di un altro, otterremmo dei grafi estremamente complicati. Un modo per rappresentare un ordine parziale in modo più chiaro sono i diagrammi di Hasse in cui vengono omessi gli archi di simmetria e di transitività, ovvero tracciamo il grafo della relazione di successore immediato.
+
+
+
+**RETICOLI**
+Un reticolo è un insieme parzialmente ordinato $(L, \leq)$ tale che $\forall x,y \in L$ esistono $x \land y$ e $x \lor y$; questo vuol dire che join e meet esistono anche per ogni sottoinsieme finito di elementi di $L$.
+Un reticolo si dice ***completo*** se $\lor B$ e $\land B$ esistono per ogni $B \sube L$ anche infiniti.
+
+
+
+**FUNZIONI MONOTONE**
+Dati due insiemi parzialmente ordinati $(A, \leq)$ e $(B, \leq)$, una funzione $f:A \to B$ si dice ***monotona*** se $\forall x,y \in A$ vale $x\leq y \to f(x) \leq f(y)$
+La funzione può mappare due elementi distinti di $A$ su uno stesso elemento di $B$ *(notare il $\leq$)*
+
+
+
+**PUNTI FISSI**
+Consideriamo funzioni $f:X \to X$
+Un elemento $x \in X$ è un ***punto fisso*** di $f$ sse $f(x) = x$
+
+Se $(A, \leq)$ è un insieme parzialmente ordinato e $f: A \to A$ è una funzione monotona, possiamo chiederci se esistano un minimo ed un massimo punto fisso
+
+Consideriamo $A = 2^\N$ e $S \sube \N$
+
+1. $f(S) = S \cup \{2,7\}$
+   Per questa funzione qualsiasi insieme $S$ che contenga $2$ e $7$ è un punto fisso. In particolare, $\{2,7\}$ è il punto fisso più piccolo. $\N$ contiente $2$ e $7$ ed è il più grande punto fisso.
+2. $f(S) = S \cap \{2,7,8\}$
+   Per questa gli unici punti fissi sono $\wp (\{2,7,8\})$
+   Il più piccolo punto fisso è $\empty$ mentre il più grande è $\{2,7,8\}$
+
+<div style="page-break-after: always;"></div>
+
+### KNASTER-TARSKI
+
+**TEOREMA**: Sia $(L, \leq)$ un *reticolo completo* e $f: L \to L$ una *funzione monotona*. Allora $f$ ha un minimo ed un massimo punto fisso.
+
+Per semplicità consideriamo il caso $L = 2^A$ per un insieme $A$. Quindi $f: 2^A \to 2^A$.
+
+**MINIMO**
+
+1. Costruiamo l'insieme $Z = \{T \sube A\ |\ f(T) \sube T\}$
+   Gli elementi di $Z$ saranno chiamati *punti pre-fissi*; se $f$ ha qualche punto fisso, tutti questi saranno contenuti in $Z$ *(per via del $\sube$)*.
+
+   **OSSERVAZIONE**: L'insieme $Z$ non può essere vuoto poiché $f(A) \sube A$
+
+2. Poniamo $m = \bigcap Z$ notando che non è detto che $m \in Z$
+   Tuttavia, per costruzione di $m$, abbiamo che $\forall S \in Z$   $m \sube S$ e quindi, essendo $f$ monotona, $f(m) \sube f(S)$
+
+   Siccome $S \in Z$, $f(S) \sube S$ e quindi $f(m) \sube f(S) \sube S \Longrightarrow  f(m) \sube S$
+
+3. Sapendo che $f(m)$ è contenuto in tutti gli insiemi $S$ di $Z$, possiamo dire che $f(m)$ è contenuto anche nell'intersezione di tutti gli elementi di $Z$, ovvero $f(m) \sube \bigcap Z = m$
+
+   Ma se $f(m) \sube m$ allora $m \in Z$ per costruzione di $Z$
+   In particolare, essendo $m = \bigcap Z$, sappiamo anche che $m = \min Z$
+   Se dimostriamo che $m$ è punto fisso, dimostriamo che è il minimo punto fisso.
+
+4. Partiamo da $f(m) \sube m$ e applichiamo $f$ da entrambe le parti $f(f(m)) \sube f(m)$
+   Per definizione di $Z$      $f(m) \in Z$
+   Essendo però $m$ il più piccolo elemento di $Z$ abbiamo che $m \sube f(m)$
+
+   $f(m) \sube m \land m \sube f(m) \Longleftrightarrow m = f(m)$, ovvero $m$ è il minimo punto fisso di $f$.
+
+   
+
+**MASSIMO**
+
+1. Costruiamo l'insieme $Z = \{T \sube A\ |\ T \sube f(T)\}$
+   Gli elementi di $Z$ saranno chiamati *punti post-fissi*; se $f$ ha qualche punto fisso, tutti questi saranno contenuti in $Z$ *(per via del $\sube$)*.
+
+2. Poniamo $m = \bigcup Z$ notando che non è detto che $m \in Z$
+   Tuttavia, per costruzione di $m$, abbiamo che $\forall S \in Z$   $S \sube m$ e quindi, essendo $f$ monotona, $f(S) \sube f(m)$
+
+   Siccome $S \in Z$, $S \sube f(S)$ e quindi $S \sube f(S) \sube f(m) \Longrightarrow S \sube f(m)$
+
+3. Sapendo che $f(m)$ contiene tutti gli insiemi $S$ di $Z$, possiamo dire che $f(m)$ contiene anche nell'unione di tutti gli elementi di $Z$, ovvero $m= \bigcup Z \sube f(m)$
+
+   Ma se $m \sube f(m)$ allora $m \in Z$ per costruzione di $Z$
+   In particolare, essendo $m = \bigcup Z$, sappiamo anche che $m = \max Z$
+   Se dimostriamo che $m$ è punto fisso, dimostriamo che è il massimo punto fisso.
+
+4. Partiamo da $m \sube f(m)$ e applichiamo $f$ da entrambe le parti $f(m) \sube f(f(m))$
+   Per definizione di $Z$      $f(m) \in Z$
+   Essendo però $m$ il più grande elemento di $Z$ abbiamo che $f(m) \sube m$
+
+   $m \sube f(m) \land f(m) \sube m \Longleftrightarrow m = f(m)$, ovvero $m$ è il massimo punto fisso di $f$.
+
+### TEOREMA DI KLEENE
+
+Sia $f: 2^A \to 2^A$ monotona
+La funzione $f$ si dice ***continua*** se dati $X_1 \sube X_2 \sube\ ...\ X_i \sube\ ...$ e quindi $f(X_1) \sube f(X_2) \sube \ ...\ f(X_i)\ ...$ vale $f(\bigcup X_i) = \bigcup f(X_i)$
+
+Se $f$ è continua allora
+
+1. Il minimo punto fisso di $f$ si può ottenere calcolando
+   $f(\empty)$,   $f(f(\empty))$,   $f(f(f(\empty)))$,   $...$
+2. Il massimo punto di fisso di $f$ si può ottenere calcolando
+   $f(A)$,   $f(f(A))$,   $(f(f(f(A)))$,   $...$
+
+
+
+### UN ALGORITMO PER CTL
+
+Fissiamo un modello di Kripke $M = (Q,T,I)$
+Sia $\alpha$ una formula, definiamo l'**estensione** di $\alpha$: $[[\alpha]] = \{q \in Q\ |\ M,q \vDash \alpha\}$
+
+Consideriamo la formula $\alpha = AF\beta$ a cui associamo la funzione $f_\alpha : 2^Q \to 2^Q$
+Per ogni $H \sube Q$
+$f_\alpha(H) = [[\beta]] \cup \{q \in Q\ |\ \forall(q,q') \in T: q' \in H\}$
+
+Osserviamo che $f_\alpha(\empty) = [[\beta]]$
+**TEOREMA**: $[[\alpha]]$ è il minimo punto fisso di $f_\alpha$ e possiamo calcolarlo col teorema di Kleene
+
+
+
+Consideriamo la formula $\alpha = EG\beta$
+A questa formula associamo la funzione $g_\alpha : 2^Q \to 2^Q$
+Per ogni $H \sube Q$
+$g_\alpha(H) = [[\beta]] \cap \{q \in Q\ |\ \exists (q, q') \in T: q' \in H\}$
+
+Osserviamo che $g_\alpha(Q) = [[\beta]]$
+**TEOREMA**: $[[\alpha]]$ è il massimo punto fisso di $g_\alpha$ e possiamo calcolarlo col teorema di Kleene
+
+
+
+### ALGORITMI PER LTL
+
+Sappiamo che possiamo usare degli automi a stati finiti per riconoscere delle parole finite. Gli automi di Buchi $\mathcal B$ possono riconoscere parole infinite su un alfabeto finito, in particolare l'automa riconosce la parola se gli stati visitati consumandola passano infinite volte per almeno uno stato finale.
+
+Il problema $L(\mathcal B) = \empty$ è decidibile
+
+Possiamo usare questi automi per analizzare i cammini massimali infiniti e vedere se rispettano o meno una certa formula $\alpha$ considerando come stati finali $[[\alpha]]$.
+
+<img src="../../../Modelli/img/automiLTL.png" alt="scg" style="zoom:40%;" align="center" />
+
+Quindi per verificare se $\alpha$ è vera in $(M, q_0)$
+
+1. Costruiamo l'automa $\mathcal B \lnot \alpha$ corrispondente alla negazione di $\alpha$
+2. Trasformiamo $M$ in un automa etichettato da insiemi di proposizioni atomiche
+3. Calcoliamo il prodotto sincrono dei due automi $\mathcal{PS}$, ovvero un automa che fa avanzare gli altri due in parallelo
+4. Se $L(\mathcal{PS}) = \empty$ allora $M, q_0 \vDash \alpha$
+
+
+
+### IL CALCOLO $\mu$
+
+Il calcolo $\mu$ contiene al suo interno sia LTL che CTL che CTL<sup>*</sup> e permette permette di definire più proprietà. La sua peculiarità è che permette di definire formule ricorsive.
+
+Supponiamo di avere a disposizione un solo operatore temporale $X$. Come possiamo esprimere la proprietà $EF \alpha$?
+Notiamo che $EF \alpha \equiv \alpha \lor EX\alpha \lor EXEX\alpha \lor \ ...$
+
+Immaginiamo di "*raccogliere*" $EX$: $EF \alpha \equiv \alpha \lor EX(\alpha \lor EX \alpha \lor\ ...)$
+Notiamo che quello che c'è tra parentesi è esattamente $EF\alpha$ come definito prima, quindi
+$EF\alpha \equiv \alpha \lor EX(EF\alpha)$
+
+Il calcolo $\mu$ permette quindi di scrivere questo genere di formule ricorsive usando solo $X$ come operatore esplicitamente definito.
+
+
+
+### FAIRNESS
+
+Un'esecuzione è *fair* quando è imparziale rispetto agli eventi abilitati.
+Generalmente diciamo che un'esecuzione è ***debolmente fair*** se nessun evento rimane mai abilitato, sia perché viene eseguito, sia perché viene disabilitato dall'occorrenza di un altro evento in conflitto con esso.
+
+Un esecuzione è ***fortmente fair*** quando tutti gli eventi abilitati prima o poi vengono eseguiti, quindi, trasformando il grafo dei casi del sistema in un modello di Kripke, diremo che l'esecuzione è fortemente fair se $GF(e\ abilitato) \to GF(e\ scatta)$
