@@ -486,23 +486,35 @@ PrintLCS(B, v, i, j)
 return
 ```
 
+<div style="page-break-after: always;"></div>
+
+#### CONFRONTO TRA 3 SEQUENZE
+
+Vediamo ora come generalizzare il problema a più di due sequenze e, nello specifico, per tre sequenze; l'idea è adattare il *MTP* ad un caso tridimensionale immaginando di potersi spostare su tre dimensioni.
+
+Dal punto di vista biologico viene usato l'allineamento multiplo per via dell'evoluzione e, a causa di essa, succede spesso che la somiglianza debole tra due sequenze diventi molto forte se vengono allineate più sequenze; gli elementi multipli rivelano somiglianze subdole che l'allineamento a coppie non sempre rileva.
+
+<img src=".\img\2d3d.png" style="zoom:25%;" align="left" />Abbiamo visto che usiamo una matrice a due righe per rappresentare l'allineamento di due sequenze e, allo stesso modo, per allinearne tre usiamo una matrice a tre righe; di conseguenza il cammino che troveremo con l'*MTP* avrà tre coordinate.
 
 
 
+<img src=".\img\7facce.png" style="zoom:25%;" align="left" />Chiaramente, aumentando di dimensione, abbiamo anche più cammini che portano ad un punto: se nel caso 2D avevamo 3 lati possibili per ogni punto, nel caso 3D ne abbiamo 7 *(da sopra, da sinistra, dalla diagonale, da dietro e dalle diagonali delle facce che toccano il punto)*.
 
 
 
+Di conseguenza, il calcolo di ogni nodo diventa $s_{i,\ j,\ k} = \max \begin{cases} s_{i-1,\ j-1,\ k-1} &+ \delta(v_i,\ w_j,\ u_k) \\ s_{i-1,\ j-1,\ k} &+ \delta(v_i,\ w_j,\ \_) \\ s_{i-1,\ j,\ k-1} &+ \delta(v_i,\ \_,\ u_k) \\ s_{i,\ j-1,\ k-1} & +\delta(\_,\ w_j,\ u_k) \\ s_{i-1,\ j,\ k} &+\delta(v_i,\ \_,\ \_) \\ s_{i,\ j-1,\ k} &+\delta(\_,\ w_j,\ \_) \\ s_{i,\ j,\ k-1} &+\delta(\_,\ \_,\ u_k) \end{cases}$
 
 
 
+Notiamo che abbiamo esplicitato il peso calcolato dalla funzione $\delta$. Nel caso 2D non lo avevamo esplicitato poiché, assegnando solo alle diagonali peso unitario, $\delta(x,\ \_)$ era pari a $0$.
 
+Per tre sequenze di lunghezza $n$ l'algoritmo dinamico ha un tempo di circa $7n^3$, ovvero $O(n^3)$.
+Per $k$ sequenze si costruisce un *MTP* $k$-dimensionale con un tempo $(2^k -1)(n^k)$, ovvero $O(2^kn^k)$.
 
+**CONCLUSIONE**: l'algoritmo di programmazione dinamica per due sequenze è estendibile facilmente a $k$ sequenze, ma risulta impraticabile per via del tempo esponenziale.
 
-
-
-
-
-
+Chiaramente un allineamento multiplo induce l'allineamento a coppie delle varie componenti: non è banale però passare dagli allineamenti a coppie a quello multiplo e non sempre è possibile.
+Solitamente per l'allineamento multiplo vengono usate delle euristiche che non dipendono dalla programmazione dinamica.
 
 <div style="page-break-after: always;"></div>
 
@@ -901,4 +913,3 @@ Il principio si basa su una superficie matriciale su cui vengono attaccati dei *
 Ogni *probe* ibridizza con la sua versione complementare del frammento e tramite esame radiografico si determinano i *probes* che hanno ibridizzato col frammento per ricostruire lo spettro complementare del frammento da cui si può poi ricostruire il frammento tramite il de Bruijn graph.
 
 <div style="page-break-after: always;"></div>
-
