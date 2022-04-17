@@ -518,6 +518,157 @@ Solitamente per l'allineamento multiplo vengono usate delle euristiche che non d
 
 <div style="page-break-after: always;"></div>
 
+## FILOGENESI
+
+Con *filogenesi* ci riferiamo agli alberi evolutivi, ovvero degli alberi che descrivono le sequenze di eventi che hanno portato alle specie attuali. Questi alberi sono creati appunto dall'**evoluzione** che è dettata dalla *diversità degli individui* e dalle *mutazioni*, ovvero dai cambiamenti nelle sequenze di DNA.
+I dati utilizzati per creare questi alberi sono di diverso tipo; abbiamo sia dati **morfologici** *(osservabili come numero di gambe, lunghezza, ecc)* che dati **molecolari** come le *sequenze geniche* e le *sequenze proteiche*. Generalmente la radice di questi alberi *(se creata)* è rappresentata da un'insieme di specie distanti dalle specie di interesse.
+
+Le assunzioni usate per creare questi alberi stabiliscono che gli organismi vicini hanno genomi simili, che i geni simili hanno lo stesso antenato, che esiste un antenato universale per tutte le specie *(tuttavia questa cosa non è provata)* e che le differenze molecolari in geni con lo stesso antenato sono correlate al tempo di evoluzione.
+
+A livello teorico esiste un **evento di speciazione** che consiste nella creazione di specie differenti.
+
+Le sequenze di geni o di proteine possono essere omologhe *(con antenati comuni)* per ragioni differenti:
+
+- A causa di un evento di *speciazione*: questi geni prendono il nome di **geni ortologhi**
+- A causa di un evento di *duplicazione*: **geni paraloghi**
+  L'evento di duplicazione si verifica a causa dell'influenza dell'ambiente e porta alla duplicazione della parte del DNA che descrive il gene in altre parti del genoma. Questi eventi tuttavia non creano nuove specie.
+- A causa di un evento di *trasferimento orizzontale* *(e.g. scambio di materiale genetico tra virus e ospite)*: **geni xenologhi**
+
+
+
+I principali metodi di ricostruzione filogenetica sono
+
+- **Distanza**: combina ricorsivamente due nodi a minima distanza.
+  Per la distanza vengono usate delle matrici e si usano dei metodi di clustering per a combinazione dei nodi. Le matrici che descrivono le distanze soddisfano la disuguaglianza triangolare $d(i,k) \leq d(i,j) + d(j,k)$ e descrivono la distanza come una metrica, ovvero $d(i,i) =0$, $d(i,j) > 0$ per $i \neq j$ e $d(i,j) = d(j,i)$.
+- **Parsimonia**: si basano sulla riduzione al minimo del numero di cambiamenti.
+- **Maximum Likelihood**: costruisce l'albero più probabile rispetto ad un certo modello.
+
+Abbiamo visto come un obiettivo del mondo della bioinformatica sia quello di ricostruire l'***albero della vita***, ovvero l'albero di tutte le specie. Per fare ciò è necessaria una **riconciliazione** dell'evoluzione, ovvero è necessario trovare un *agreement* tra alberi diversi per le specie; questo non è necessario solo per via dei diversi alberi per le varie specie, ma anche perché metodi *(algoritmi)* diversi producono alberi diversi.
+
+Un aspetto fondamentale è che l'evoluzione non riguarda solo le specie; si usano gli alberi anche per inferire **aplotipi** da **genotipi**, per studiare l'**evoluzione dei tumori** *(usano degli alberi i cui nodi interni sono etichettati anche loro)* e anche per analizzare più sequenze.
+
+
+
+### FILOGENESI PERFETTA
+
+Definiamo il **principio della parsimonia** che definisce i metodi utilizzati per la filo genesi perfetta.
+I **metodi parsimonia** assumono che ogni specie sia caratterizzata da ***caratteri*** o ***attributi di stati***. Si costruisce un **albero di massima parsimonia** tale che abbia come foglie gli stati dei caratteri associati alle specie in input, mentre i nodi interni vengono etichettati con i caratteri inferiti *(ovvero delle specie antenate)* con i relativi cambiamenti lungo i rami e questi cambiamenti sono minimizzati.
+
+Ma cos'è quindi un **carattere**?
+Definiamo come **fenotipo** un carattere visibile *(ad esempio la presenza di gambe, di ali, ecc)*.
+Esistono tuttavia anche caratteri **genomici**, ovvero informazioni molecolari come ad esempio gli **Single Nucleotide Polymorphism *(SNP)*** che rappresentano le posizioni nel DNA nelle quali la popolazione differisce per lo $0.01\%$.
+
+I metodi cercati sono del tipo **Whole Genome Scale *(WGS)*** poiché prendendo una scala intera genomica possiamo avere vari caratteri genomici come
+
+- Combinazioni di proteine, ordinamento di un gene, composizione di un gene
+- Cambiamenti genomici rari
+- Inserzioni e delezioni di introni
+- Single Nucleotide Polymorphism *(SNP)* che caratterizzano gli aplotipi rispetto ai genotipi
+
+Ovviamente la scelta dei caratteri determinano la correttezza dell'albero ottenuto *(ad esempio se vogliamo un albero di evoluzione degli aplotipi andiamo ad usare gli SNP)*.
+
+I caratteri genomici sono **binari** e quindi hanno due stati: $0$ *(assenza del carattere)* o $1$ *(presenza del carattere)*.
+
+Esistono vari principi di parsimonia come:
+*(NOTA: l'input del metodo sono i nodi foglia)*
+
+- <img src=".\img\Dollo.png" style="zoom:60%;" align="right" />**DOLLO PARSIMONY**: in questo principio un carattere $c$ può cambiare dallo stato $0$ allo stato $1$ una sola volta, ma può cambiare più volte dallo stato $1$ allo stato $0$ *(reversal)*.
+  *(Osserviamo $c_1$)*
+
+  
+
+  
+
+  
+
+- <img src=".\img\sokal.png" style="zoom:60%;" align="right" />**CARMIN - SOKAL PARSIMONY**: in questo principio un carattere può cambiare dallo stato $0$ allo stato $1$ più volte, ma non può fare reversal. *(Osserviamo $c_2$)*
+  Solitamente questo principio viene evitato per le filogenesi tumorali poiché si assume che in quel caso non vi siano mutazioni su rami differenti *(la si sta mettendo in dubbio ultimamente)*.
+
+- **FILOGENESI PERFETTA**
+  La combinazione dei principi visti prima porta a quella che è chiamata filogenesi perfetta, ovvero un principio in cui una carattere può cambiare da $0$ a $1$ una sola volta e non può mai avere reversal. È interessante notare che risolvere la filogenesi perfetta richiede tempo lineare, mentre risolvere gli altri due principi è un problema NP - Completo.
+
+#### IL PROBLEMA DELLA FILOGENESI PERFETTA
+
+Abbiamo quindi detto che l'albero di una filogenesi perfetta per una matrice binaria $M$ di $n$ specie con $m$ caratteri è tale che
+
+- Ogni nodo $x$ dell'albero è annotato con un vettore $l_x$ lungo $m$ dove $l_x[j]$ è lo stato del carattere $c_j$
+- La radice è annotata da un vettore $0$ lungo $m$
+- Per ogni carattere $c_j$ c'è al più *(esattamente, non ha molto senso codificare una caratteristica che non appare mai)* un lato $e$, etichettato con $c_j$, dove $c_j$ cambia stato da $0$ a $1$
+- Ogni riga della matrice $M$ rappresenta un nodo foglia dell'albero
+
+<img src=".\img\filomatrice.png" style="zoom:40%;" />
+
+
+
+Il problema della filogenesi perfetta è definito come segue
+**INPUT**: Una matrice binaria $n \times m$ dove $n$ sono le specie sulle righe $s_i$ ed $m$ i caratteri sulle colonne $c_i$
+**OUTPUT**: Un albero di filogenesi perfetta, *se esiste* definito come descritto prima.
+
+Chiaramente non sempre esiste questo albero. Pensiamo a due specie che presentano rispettivamente il carattere $c_1 = 1$ $c_2 = 0$ e $c_1 = 0$ $c_2 = 1$; chiaramente non possiamo avere una terza specie che presenti entrambi i caratteri $c_1 = 1$ $c_2 = 1$, poiché questo implicherebbe il passaggio di stato di uno dei due caratteri da $0$ a $1$ più di un'unica volta.
+
+<img src=".\img\persistent.png" style="zoom:40%;" align="left" />Quindi la più piccola ***matrice proibita*** per la filogenesi perfetta è $\begin{bmatrix} 1 & 0 \\ 0 & 1 \\ 1 & 1 \end{bmatrix}$
+
+Un modello più rilassato che ammette la matrice proibita è quello dei **caratteri persistenti** che permette ad un carattere di fare una *back mutation*, ovvero permette ai caratteri di cambiare da $0$ a $1$ una sola volta e da $1$ a $0$ una sola volta.
+
+Questo modello è chiamato anche **Dollo - 1** perché permette appunto una *back mutation*. La filogenesi perfetta è una **Dollo - 0**.
+
+*INFO*: Al momento non è chiaro se il problema Dollo - 1 sia NP - Completo o meno, in Bicocca si sta provando a dimostrare che in realtà è in P. Questo problema viene usato attualmente nelle filogenesi tumorali.
+
+La Dollo - K con $k \geq 2$ è NP - Completo, ma esistono degli algoritmi parametrici.
+
+<div style="page-break-after: always;"></div>
+
+#### LAMINARITÀ
+
+Definiamo il set $O_j = \{i\ :\ M_{ij} = 1\}$ come il set di tutte le specie $i$ che hanno il carattere $c_j$ settato a $1$.
+
+Diciamo che una collezione di set $O_1,\ ...,\ O_n$ è **laminare** se per ogni coppia di set $O_i, O_j$ di questa collezione abbiamo che un set include l'altro oppure sono disgiunti.
+
+**Teorema**: Una matrice binaria $M$ ha una filogenesi perfetta se e solo se la collezione di colonne di $M$ è laminare.
+
+Tuttavia, possiamo notare che la non laminarità implica la presenza della matrice proibita più piccola.
+
+**Teorema**: Una matrice binaria $M$ ha una filogenesi perfetta se e solo se non contiene la più piccola matrice proibita.
+
+Un test di laminarità ottimale con un tempo $O(n\sdot m)$ consiste nel riordinare le colonne per numero di $1$ non crescenti e nel creare una matrice ausiliaria $L$ mentre si legge la matrice $M$ in cui si memorizza
+
+- Se $M_{ij} = 1$, $L_{ij} = k$ dove $k$ è la colonna più a destra ma alla sinistra della colonna $j$ tale che $M_{ik} = 1$, altrimenti $L_{ij} = -1$
+- Se $M_{ij} = 0$, allora $L_{ij} = 0$
+
+Successivamente si legge $L$ e, per ogni colonna $j$ di $L$ se $L_{ij} \neq L_{lj}$ e $L_{ij} \neq 0 \land L_{lj} \neq 0$ per qualche $i$ e qualche $j$, allora $M$ non è laminare.
+
+
+
+##### RICOSTRUZIONE ALBERO
+
+L'idea per ricostruire l'albero è leggere la matrice $M$ dopo averla ordinata per numero di $1$ e, notando che che se nella colonna rispettiva al carattere $c_i$ troviamo un $1$ significa che c'è sicuramente un arco etichettato con $c_1$ nell'albero, sappiamo che i caratteri più comuni *(con più numero di $1$)* saranno più vicini alla radice.
+Leggiamo quindi la matrice riga per riga, tenendo a mente che una riga rappresenta un nodo foglia, quindi possiamo costruire un percorso fino alla foglia ogni qual volta troviamo un $1$.
+Passando poi alle prossime righe controlleremo se l'arco relativo al carattere $c_i$ esiste già e faremo diramare il percorso dal nodo di arrivo di quell'arco, altrimenti faremo partire un altro arco dalla radice.
+
+Chiaramente, potremmo avere dei nodi etichettati con più specie in questo modo, quindi alla fine di tutto il processo bisogna diramare ogni nodo che ha più di una specie in modo che ogni specie corrisponda ad un nodo foglia.
+
+<img src=".\img\esempioCostruzione.png" style="zoom:40%;" />
+
+<div style="page-break-after: always;"></div>
+
+### TUMORI
+
+Un tumore è una conseguenza dell'accumulo di mutazioni *(a seguito di una mutazione **driver**)* che creano delle popolazioni cellulari accomunate dallo stesso set di mutazioni. Le caratteristiche dei tumori è che sono composti da sotto - cloni diversi.
+
+<img src=".\img\tumor.png" style="zoom:40%;" />
+
+<img src=".\img\VAF.png" style="zoom:40%;" align="right" />Generalmente per individuare le mutazioni si confronta un allineamento di alcune read con un reference e si analizza il numero di volte in cui si presenta un cambiamento.
+
+Si costruisce poi una matrice **Variant Allele Frequency** rappresentante i caratteri $c_1\ ...\ c_n$ *(che sono le mutazioni)* e le loro frequenze rispetto a dei *campioni*, ovvero a delle collezioni di read.
+
+Dalla matrice delle frequenze si cerca poi di ricostruire la composizione del campione e dei cloni che contiene e stabilirne una gerarchia, ovvero un ordine in termini evolutivi e quindi costruire l'albero di evoluzione delle mutazioni.
+
+Notiamo che i cloni possono apparire anche nei nodi interni dell'albero; osservando i cloni alle foglie è come se osservassimo l'evoluzione dei cloni.
+
+<img src=".\img\alberotum.png" style="zoom:40%;" />
+
+<div style="page-break-after: always;"></div>
+
 ## IL DATO DI SEQUENZIAMENTO
 
 Il *dato di sequenziamento* è quel dato che viene prodotto in laboratorio e viene usato sul calcolatore al fine di assemblare un genoma. Quindi i dati di sequenziamento sono sottostringhe del genoma.
