@@ -303,7 +303,7 @@ Esistono due tipi di mutazioni:
 Anche una singola mutazione può avere effetti giganteschi; ad esempio una mutazione nel gene *HBB* porta alla produzione di una proteina diversa che determina l'anemia mediterranea che può anche essere fatale.
 Va osservato tuttavia che la stessa patologia può essere associata a variazioni diverse, quindi non è detto, ad esempio, che tutte le forme di anemia siano date da questa specifica mutazione ed è questo il motivo per il quale va fatta un'indagine genetica per poter personalizzare la medicina in base alla mutazione.
 
-Vediamo un esempio di allignamento di sequenze:
+Vediamo un esempio di allineamento di sequenze:
 
 <img src=".\img\allign.png" style="zoom:30%;" />
 
@@ -311,7 +311,7 @@ L'allineamento può essere visto o come massimizzazione di coppie uguali o come 
 
 Chiaramente possiamo vedere un missmatch come un'inserzione in una delle due stringhe o come una delezione nell'altra *(sono operazioni simmetriche)*.
 
-Alle mutazioni viene assegnato uno schema di punteggio stabilito attraverso lo studio attraverso l'evoluzione delle probabilità che una base diventi un'altra.
+Alle mutazioni viene assegnato uno schema di punteggio stabilito attraverso lo studio dell'evoluzione delle probabilità che una base diventi un'altra.
 
 
 
@@ -661,11 +661,32 @@ Un tumore è una conseguenza dell'accumulo di mutazioni *(a seguito di una mutaz
 
 Si costruisce poi una matrice **Variant Allele Frequency** rappresentante i caratteri $c_1\ ...\ c_n$ *(che sono le mutazioni)* e le loro frequenze rispetto a dei *campioni*, ovvero a delle collezioni di read.
 
-Dalla matrice delle frequenze si cerca poi di ricostruire la composizione del campione e dei cloni che contiene e stabilirne una gerarchia, ovvero un ordine in termini evolutivi e quindi costruire l'albero di evoluzione delle mutazioni.
+Dalla matrice delle frequenze si cerca poi di ricostruire la composizione del campione e dei cloni che contiene e stabilirne una gerarchia, ovvero un ordine in termini evolutivi e quindi costruire l'albero di evoluzione delle mutazioni che si ottiene dalla scomposizione della matrice delle frequenze nelle matrici $B$ e $U$.
 
 Notiamo che i cloni possono apparire anche nei nodi interni dell'albero; osservando i cloni alle foglie è come se osservassimo l'evoluzione dei cloni.
 
 <img src=".\img\alberotum.png" style="zoom:40%;" />
+
+### APLOTIPI
+
+Per introdurre gli aplotipi dobbiamo prima parlare dei cromosomi: gli umani, che sono diploidi, hanno 23 coppie di cromosomi che sono quindi composti da due set, uno derivante dal padre e uno dalla madre. Il genoma umano è la collezione dei cromosomi e ogni coppia è costituita da un aplotipo materno e da un aplotipo paterno.
+
+Un ***aplotipo*** di un cromosoma è una sequenza di *nucleotidi* e ogni posizione prende il nome di *locus* il cui valore è un allele specifico. Il ***genotipo*** è la coppia di valori per locus di due aplotipi *(senza un ordinamento tra loro)*.
+
+<img src=".\img\aplogeno.png" style="zoom:20%;" />
+
+Le posizioni dove la coppia è costituita da alleli identici si dicono **omozigote**, altrimenti si dicono **eterozigote**. Di particolare interesse negli aplotipi sono gli **Single Nucleotide Polymorphism *(SNPs)***, ovvero i nucleotidi che caratterizzano la diversità nella popolazione. In particolare, si ha uno SNP quando nel $99.9\%$ dei casi tutti gli individui hanno una certa base in una data posizione, avendo il cosiddetto ***allele di maggioranza***, mentre lo $0.1\%$ ne ha una diversa, avendo l'***allele di minoranza*** *(si rilevano confrontando una popolazione)*.
+
+*ESEMPIO*
+Si hanno $S_1 = acc\bold tacga$ e $S_2 = acc \bold g acga$
+Abbiamo uno SNP nel locus 4. Ipotizzando che il $99.9\%$ della popolazione siano come l'individuo con la sequenza $S_1$, abbiamo che la base $t$ è l'allele di maggioranza, mentre la base $g$ è l'allele di minoranza.
+
+Gli aplotipi vengono rappresentati con dei vettori binari dove $0$ rappresenta l'allele di maggioranza e $1$ l'allele di minoranza, poiché i siti sono biallelici, cioè nella popolazione *(umana, le piante ad esempio sono poliploidi)* si osservano al più due alleli possibili. Dunque un aplotipo è un vettore binario, mentre il genotipo è un vettore di insiemi con due valori binari.
+
+*ESEMPIO*
+Siano gli aplotipi $1\ 1\ 0\ 0\ 1$ e $1\ 0\ 0\ 0\ 1$, il genotipo corrispondente è $\{1, 1\}\ \{1, 0\}\ \{0, 0\}\ \{0,0\}\ \{1,1\}$
+
+<img src=".\img\rappAplo.png" style="zoom:40%;" />
 
 <div style="page-break-after: always;"></div>
 
@@ -1064,3 +1085,145 @@ Il principio si basa su una superficie matriciale su cui vengono attaccati dei *
 Ogni *probe* ibridizza con la sua versione complementare del frammento e tramite esame radiografico si determinano i *probes* che hanno ibridizzato col frammento per ricostruire lo spettro complementare del frammento da cui si può poi ricostruire il frammento tramite il de Bruijn graph.
 
 <div style="page-break-after: always;"></div>
+
+## STRUTTURE DATI IN BIOINFORMATICA
+
+La gestione dei $k$-meri è fondamentale in bioinformatica vista la grandi quantità di dati prodotta in questo ambito.
+Uno dei concetti chiavi per trattare grandi moli di dati sono i ***fully-text-index*** che, dato un testo $T = t_1\ t_2\ ...\ t_n$, è una struttura dati costruita per tenere il testo in memoria e su cui si possono fare delle query che cercano delle posizioni e delle frequenze di sottostringhe in $T$. La particolarità di queste strutture è che hanno tempo sub-lineare rispetto a $n$ *(si pensi alla BWT)*.
+
+
+
+### HASHING
+
+Una struttura dati tipica per gestire questi dati sono le tabelle di hash.
+L'idea principale è che abbiamo delle chiavi $k_i$ che vengono mappate negli ingressi di una tabella tramite una funzione di hash. Più chiavi hashate possono essere mappate sulla stessa cella della tabella, specie se ho tante chiavi *(collisione)*.
+Solitamente le collisioni sono aspetti negativi delle funzioni di hash, tuttavia in questo caso possono essere positive poiché si possono trovare delle similarità tra gli oggetti che collidono nella stessa posizione.
+Questa tecnica prende il nome di **Local Sensitive Hashing**.
+
+L'idea è assegnare un *bucket* ad ogni oggetto *(tempo costante)* tramite la funzione di hash. Questo risulta utile per fare clustering di genomi simili.
+Questo viene fatto in due step:
+
+1. Le sequenze *(o parti di esse)* vengono riassunte in **sketch**, ovvero in rappresentazioni più piccole.
+2. Si confrontano gli sketch come chiavi di tabelle di hash, in modo da trovare le sequenze simili. Solitamente si ussa la *Jaccard distance* per il confronto.
+
+Funzioni di hash che assegnano lo stesso hash a elementi simili si dicono ***locality senstive***, in particolare si ha $P(h(x) = h(y))= s(x,y)$. Questo si presta molto bene alla distanza di Jaccart calcolata come $(A \cap B)/(A \cup B)$.
+
+Per confrontare due sequenze $x$ e $y$ si usano $t$ funzioni di hash andando a costruire sketch di $x = <h_1(x)\ ...\ h_t(x)>$ e di  $y = <h_1(y)\ ...\ h_t(y)>$. A questo punto la somiglianza tra $x$ e $y$ è $s(x,y) = \#h_i(x) = h_i(y) / t$. Praticamente si conta quante volte le due sequenze collidono.
+
+Questo viene fatto per le sequenze in bioinformatica estraendo i $k$-meri dalle sequenze *(che corrispondo a degli oggetti in un insieme)* e si ordinano lessicograficamente, si fanno delle permutazioni e si prende il valore minimo, che corrisponderà ad un certo $k$-mero.
+
+
+
+### STRUTTURE DI INDICIZZAZIONE
+
+Le strutture di indicizzazione sono fondamentali in bioinformatica essendo i genomi molto lunghi e per via delle numerose read.
+Vedremo Suffix Tree, il Suffix Array *(introdotta come supporto del suffix tree che occupa molto spazio)*, la Longest Common Prefix Array e la Burrow - Wheeler Transformation.
+
+
+
+#### NOTAZIONI
+
+Useremo $\Sigma$ per indicare un alfabeto finito, $T$ per indicare un testo di $n$ caratteri su $\Sigma$.
+$T[j:q]$ è la sottostringa di $T$ dalla posizione $j$ alla posizione $q$ e $T[j:]$ è il suffisso di $T$ che inizia in posizione $j$.
+
+
+
+#### SUFFIX ARRAY
+
+Il Suffix Array di un testo $T$ \$-terminato di $n$ caratteri è un array $S$ di $n$ interi tale che $S[i] = j$ se e solo se $T[j:]$ è l'$i$-esimo suffisso nell'ordinamento lessicografico dei suffissi di $T$. 
+Praticamente ci dice la posizione di inizio dell'$i$-esimo suffisso. Permette di fare una ricerca binaria per trovare un pattern in un testo in $O(m \log n)$.
+Si può accelerare salvando ad ogni iterazione la lunghezza del più lungo prefisso tra $P$ e $T[S[L]:]$ e $P$ e $T[S[R]:]$ in $L$ e $R$: quando partirà nuovamente il confronto con il suffisso di mezzo si potranno saltare i primi $\min(L,R)$ caratteri per via dell'ordinamento lessicografico. Questo accelerante non cambia l'ordine di grandezza dell'algoritmo però.
+
+Esiste anche il *suffix array inverso* $S^{-1}$ tale che $S^{-1}[j] = i$ sse $T[j:]$ è l'$i$-esimo suffisso.
+Ci dice in che posizione si trova lessicograficamente il $j$-esimo suffisso.
+
+
+
+#### SUFFIX TREE
+
+Il Suffix Tree consente di risolvere in tempo lineare molti problemi su stringhe ma occupa molta memoria in quanto contiene informazione *ripetuta* del testo.
+
+Il Suffix Tree di un testo $T$ lungo $n$ è un albero radicato dove le foglie ($n$) sono etichettate dagli interi da $1$ a $n$ e ogni nodo interno ha almeno due figli. Gli archi sono etichettati da una sottostringa di $T$ e non esistono due archi uscenti dallo stesso nodo che hanno etichetta che inizia con lo stesso carattere.
+La concatenazione delle etichette lungo il percorso dalla radice alla foglia $j$ è uguale al suffisso $T[j:]$.
+
+**NOTA**: Il Suffix Tree di un testo esiste se e solo se nessun suffisso di $T$ occorre come prefisso di qualche altro suffisso. Non potremmo più non avere archi uscenti dallo stesso nodo che iniziano con lo stesso carattere.
+Tuttavia possiamo imporre la condizione che dice che il Suffix Tree esiste se e solo se l'ultimo carattere di $T$ non occorre in nessun altra parte di $T$. Da qui nascono i testi \$-terminati.
+
+Dato un nodo del Suffix Tree $w$, la sua path label $L_w$ è la concatenazione delle etichette lungo il percorso dalla radice a $w$.
+La Path Label della foglia $j$ è il suffisso $T[j:]$, mentre la Path Label di un nodo interno $w$ sarà prefisso in almeno un suffisso di $T$.
+Chiaramente due nodi diversi non possono avere la stessa path label.
+
+Dato un nodo $w$, la String Depth è la lunghezza della sua Path Label $L_w$.
+Un ***dummy node*** è un falso nodo che separa l'etichetta di un arco in due stringhe.
+
+Per un nodo interno $w$, le $k$ foglie del sottoalbero radicato in $w$ danno le posizioni di inizio dei $k$ suffissi che condividono path label $L_w$ come preffiso.
+
+Si può cercare un pattern $P$ lungo $m$ in un testo lungo $n$ in cui occorre $k$ volte in tempo $O(m+k)$ cercando il nodo *(anche dummy)* $w$ che ha $P$ come path label *($O(m)$)* e si visita il suo sottoalbero elencandone le foglie *($O(k)$)*.
+
+Per costruire il Suffix Array dal Suffix Tree ci basta eseguire una visita in profondità dell'albero scegliendo però i nodi da esplorare in ordine lessicografico.
+
+
+
+#### LONGEST COMMON PREFIX ARRAY
+
+Dato un testo $T$ di $n$ caratteri, il LCP Array è un array di $n$ interi tale che $LCP[i] = l$ se e solo se $l$ è la lunghezza del più lungo prefisso comune tra $T[S[i]:]$ e $T[S[i-1]:]$.
+
+Esiste anche la ***lcp function***: $lcp(i,j)$ restituisce la lunghezza del più lungo prefisso comune tra $T[S[i]:]$ e $T[S[j]:]$ *(assumiamo $i \lt j$)*.
+In particolare questo valore sarà il minimo tra LCP[i+1], LCP[i+2], ..., LCP[j].
+
+Si dice quindi che la $lcp(i,j)$ è una *range minimum query* RMQ(LCP, i+1, j).
+
+Unendo suffix array e LCP array è possibile ridurre la complessità dell'algoritmo di ricerca di un pattern in un testo a $O(m + \log n)$.
+Ad ogni step della ricerca binaria vengono mantenuti quattro valori:
+
+1. Lunghezza $l$ del più lungo prefisso condiviso tra $P$ e $T[S[L]:]$
+2. Lunghezza $r$ del più lungo prefisso condiviso tra $P$ e $T[S[R]:]$
+3. Lunghezza del più lungo prefisso condiviso tra $T[S[L]:]$ e $T[S[q]:]$, ovvero $lcp(L,q)$
+4. Lunghezza del più lungo prefisso condiviso tra $T[S[q]:]$ e $T[S[R]:]$, ovvero $lcp(q,R)$
+
+Mentre i primi due sono facilmente calcolabili, gli ultimi due devono essere ricavati da un preprocessing del testo in modo da potervi accedere in tempo costante.
+
+Abbiamo tre casi:
+
+1. $l = r$
+
+   Visto che le due lunghezze sono uguali, $P$ condivide con $T[S[q]:]$ sempre un prefisso lungo $l=r$.
+   $P$ viene confrontato con $T[S[q]:]$ partendo quindi dalla posizione $l+1$.
+
+2. $l > r$
+
+   In questo caso $P$ condivide con $T[S[q]:]$ un prefisso lungo $r$.
+   Dobbiamo controllare:
+
+   1. $lcp(L,q) > l$
+
+      Questo significa che $P[l+1] \neq T[S[L]:][l+1]$ e che $T[S[L]:][l+1] = T[S[q]:][l+1]$
+
+      Di conseguenza, non dobbiamo nemmeno confrontare $P$ e $T[S[q]:]$.
+      Il nuovo intervallo di ricerca deve essere $q, R$.
+
+      $l$ e $r$ rimangono inalterati.
+
+   2. $lcp(L, q) < l$
+
+      Questo significa che $P[lcp(L,q)+1] = T[S[L]:][lcp(L,q)+1]$ e $T[S[L]:][lcp(L,q)+1] \neq T[S[q]:][lcp(L,q)+1]$
+
+      Anche qui non devo confrontare il pattern col suffisso di mezzo.
+      In questo caso il nuovo intervallo di ricerca è $L, q$.
+
+      $l$ rimane inalterato, $r$ va ricalcolato e sarà $lcp(L,q)$.
+
+   3. $lcp(L, q) = l$
+
+      Caso più sfortunato, non si può dire niente.
+      Si confronta $P$ con $T[S[q]:]$ dalla posizione $l+1$ e si decide il nuovo intervallo di ricerca. 
+
+3. $r > l$, duale del caso due.
+
+Il preprocessing avviene in tempo $O(n)$ e calcola $lcp(L,p)$ e $lcp(p,R)$ per ogni intervallo $[L,R]$ possibile.
+
+Questo viene fatto costruendo il *Search Interval Tree* che ha come nodi tutti i possibili intervalli di ricerca $[L, R]$. La radice è l'intervallo iniziale $[1, n]$ e ogni nodo interno ha un *left child* $[L,p]$ e un *right child* $[p,R]$.
+Si hanno quindi $n$ foglie $[f, f+1]$ *(per i testi pari ci sarà anche la foglia [1,1])*.
+
+Si fa poi una visita in profondità di questo albero e, risalendo, si calcolano i vari $lcp(L,p)$ e $lcp(p,R)$.
+Per come è fatta la LCP, una volta calcolate le foglie, possiamo calcolare i nodi interni prendendo i minimi delle loro foglie.
