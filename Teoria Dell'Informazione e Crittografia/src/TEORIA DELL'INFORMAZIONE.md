@@ -424,3 +424,39 @@ Ci dice cioè che la disuguaglianza di Kraft non vale solo per i codici istantan
 
    Supponiamo $K \leq 1$: per Kraft esiste un codice istantaneo con lunghezze $l_1,\ ...,\ l_q$.
    Ogni codice istantaneo è anche univocamente decodificabile.
+
+
+
+#### ALGORITMO HUFFMAN
+
+Vediamo ora un algoritmo greedy per la soluzione del problema di ottimo per trovare un codice istantaneo che minimizzi la lunghezza media.
+
+Facciamo però delle considerazioni su come deve essere fatto un codice ottimale:
+
+Se abbiamo le probabilità ordinate $p_1 \ge p_2 \ge\ ...\ \ge p_q$, allora le lunghezze che otterremmo saranno $l_1 \le l_2 \le\ ...\ \le l_q$. Se così non fosse il codice non avrebbe la lunghezza media più piccola possibile.
+
+Difatti con $p_m \gt p_n$ e $l_m \gt l_n$ abbiamo
+$p_ml_n + p_nl_m - p_ml_m - p_nl_n = p_m(l_n-l_m) - p_n(l_n - l_m) = (p_m - p_n)(l_n - l_m) \lt0 $
+
+Il che significa che la differenza di contributo prima e dopo lo scambio è negativa, cioè scambiando abbiamo abbassato la lunghezza media.
+
+Consideriamo codici binari, quindi con $r =2$.
+Consideriamo una sorgente con 5 simboli che escono con probabilità $0.4,\ 0.2,\ 0.2,\ 0.1,\ 0.1$.
+La scelta localmente ottima è prendere i due simboli meno probabili e costruire un nuovo simbolo come la combinazione di questi due che avrà quindi probabilità la somma delle loro probabilità.
+
+Costruiamo quindi una nuova sorgente fittizia con i quattro simboli che avranno probabilità $0.4,\ 0.2,\ 0.2,\ 0.2$. Procediamo allo stesso modo.
+
+Otteniamo una sorgente con tre simboli e probabilità $0.4,\ 0.4,\ 0.2$.
+Riduciamo ancora e otteniamo $0.6,\ 0.4$.
+
+Chiaramente un codice ottimali consiste nell'assegnare $0$ ad uno dei due simboli e $1$ all'altro. Tornando poi indietro andiamo ad allungare le codeword dei simboli aggregati aggiungendo uno $0$ e un $1$ **in coda** *(per non creare prefissi)*.
+Cambiando l'ordine in cui si inseriscono le codeword combinate si cambia la varianza delle lunghezze delle varie codeword risultanti. Generalmente si preferisce una varianza più bassa che corrisponde al mettere il simbolo combinato il più in alto possibile. Si osserva che più si mette in alto il simbolo combinato, più si abbassa la varianza. Se si rompe l'ordine delle probabilità non otteniamo più un codice ottimale.
+
+
+**DIMOSTRAZIONE**
+Dimostriamo per assurdo che l'algoritmo di Huffman produce un codice ottimo.
+Supponiamo che un altro algoritmo produca una lunghezza media $L' \lt L$.
+
+Notiamo che in entrambi gli alberi ci devono essere almeno due codeword che hanno lunghezza massima, altrimenti avremmo un nodo di decisione con un solo ramo. In particolare, in entrambi i casi avremmo un contributo $l_q(p_q + p_{q-1})$. Andando a condensare i sottoalberi riduciamo il contributo e in entrambi i casi arriviamo a $(l_q -1)(p_q + p_{q-1})$.
+
+Andando a condensare sempre di più arriviamo ad un albero con due sottoalberi con le codeword $0$ e $1$ per Huffman. Se $L' \lt L$, dovremmo avere $L' \lt 1$, che però è impossibile.
